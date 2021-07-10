@@ -1,0 +1,53 @@
+{
+    "global_params" : {
+        "train_en_file" : "data/en_valid.sample",
+        "train_de_file" : "data/de_valid.sample",
+        "valid_en_file" : "data/en_valid.sample",
+        "valid_de_file" : "data/de_valid.sample"
+    },
+
+    "encoder_params" : {
+        "tokenizer_path" : "tokenizers/en_tok",
+        "vocab_size" : 25000,
+        "min_freq" : 3,
+        "max_length" : 512,
+        "num_attn_heads" : 8,
+        "num_hidden_layers" : 8,
+        "hidden_size" : 512
+    },
+
+    "decoder_params" : {
+        "tokenizer_path" : "tokenizers/de_tok",
+        "vocab_size" : 25000,
+        "min_freq" : 3,
+        "max_length" : 256,
+        "num_attn_heads" : 8,
+        "num_hidden_layers" : 8,
+        "hidden_size" : 512
+    },
+
+    "model_params" : {
+        "lr": 1e-2,
+        "model_path" : "./models/model1"
+    },
+    "writer" : {
+        "comment" : "SIZE_5000_BATCH_10"
+    },
+    
+    "learning_rateA": 1e-2,
+    "batch_size" : 2,
+    "num_epochs" : 2,
+
+    "global_params_" : {
+        "train_en_file" : "data_/en_valid_.sample",
+        "train_de_file" : "data_/de_valid_.sample",
+        "valid_en_file" : "data_/en_valid_.sample",
+        "valid_de_file" : "data_/de_valid_.sample"
+    },
+
+    "model_params_" : {
+        "lr": 1e-2,
+        "model_path" : "./models/model2"
+    }
+  
+}
