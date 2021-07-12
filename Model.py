@@ -2,26 +2,29 @@ import torch
 import torch.nn.functional as F
 from transformers import BertModel, BertForMaskedLM, BertConfig, EncoderDecoderModel
 from losses import compute_loss1, compute_loss2
-from utils import _concat
+from utils import _concat, calc_bleu, loadTokenizer
 # run once
 # model1 = EncoderDecoderModel.from_encoder_decoder_pretrained('bert-base-uncased', 'bert-base-uncased') # initialize Bert2Bert from pre-trained checkpoints
 # model2 = EncoderDecoderModel.from_encoder_decoder_pretrained('bert-base-uncased', 'bert-base-uncased') # initialize Bert2Bert from pre-trained checkpoints
 # model1.save_pretrained(save_directory='./models/model1')
 # model2.save_pretrained(save_directory='./models/model2')
 
-
 class model:
-    def __init__(self, path1, path2, device, batch_size):
-        self.model1=EncoderDecoderModel.from_pretrained('./models/model1/')
-        self.model2=EncoderDecoderModel.from_pretrained('./models/model2/')
+    def __init__(self, device, batch_size, logging, config):
+        self.model1=EncoderDecoderModel.from_pretrained(config["model1"]['model_path'])
+        self.model2=EncoderDecoderModel.from_pretrained(config["model1"]['model_path'])
         self.device=device
         self.batch_size=batch_size
         if self.device=='cuda':
             self.model1.cuda()
             self.model2.cuda()
+        self.logger=logging
+        self.config=config
+        
+        
 
     # step 1
-    def train_model1(self, A_batch, train_dataloader, optimizer1, criterion):
+    def train_model1(self, A_batch, train_dataloader, optimizer1, tokenizer):
         self.model1.train()
         epoch_loss = 0
         self.model1.train()
@@ -39,17 +42,23 @@ class model:
                                 decoder_attention_mask=de_masks, labels=lm_labels.clone())
                 
             predictions = F.log_softmax(out[1], dim=2)
-            loss1=compute_loss1(predictions, de_output, a, self.batch_size, criterion, self.device)
+            loss1=compute_loss1(predictions, de_output, a, self.device)
             print(loss1)
             epoch_loss+=loss1.item()
-            loss1.backward(inputs=list(self.model1.parameters()), retain_graph=True,  create_graph=True) 
+            loss1.backward(inputs=list(self.model1.parameters()), retain_graph=True) 
+            torch.nn.utils.clip_grad_norm(self.model1.parameters(), self.config["model1"]['grad_clip'])
             optimizer1.step() # wt updation   
             print('step 1 instances gone:', (i+1)*self.batch_size)
 
-        print("Mean epoch loss for step 1:", (epoch_loss / num_train_batches))
+            if ((i+1)*self.batch_size)% self.config['report_freq'] == 0:
+                self.logger.info('loss after %d instances: %d', (i+1)*self.batch_size, loss1.item())
+                self.logger.info('bleu score after %d instances: %d', (i+1)*self.batch_size, calc_bleu(en_input, lm_labels, self.model1, tokenizer))
+        
+        self.logger.info('Mean epoch loss for step 1: %d', (epoch_loss / num_train_batches))
+        #print("Mean epoch loss for step 1:", (epoch_loss / num_train_batches))
         return ((epoch_loss / num_train_batches))
 
-    def train_model2(self, train_dataloader, optimizer2, criterion):
+    def train_model2(self, train_dataloader, optimizer2, tokenizer):
         epoch_loss=0
         optimizer2.zero_grad()
         self.model2.train()
@@ -62,19 +71,25 @@ class model:
             
             out=self.model2(input_ids=en_input, decoder_inputs_embeds=outputs.decoder_hidden_states[-1], labels=new_labels)
             predictions = F.log_softmax(out[1], dim=2)
-            loss2=compute_loss2(predictions, new_labels)
+            loss2=compute_loss2(predictions, new_labels, self.device)
 
             epoch_loss += loss2.item()
             loss2.backward(inputs=list(self.model2.parameters()), retain_graph=True)
+            torch.nn.utils.clip_grad_norm(self.model2.parameters(), self.config["model2"]['grad_clip'])
             optimizer2.step()
             print('step 2 instances gone:', (i+1)*self.batch_size)
+            if (i+1)%2 == 0:
+                self.logger.info('loss after %d instances: %d', (i+1)*self.batch_size, loss2.item())
+                self.logger.info('bleu score after %d instances: %d', (i+1)*self.batch_size, calc_bleu(en_input, new_labels, self.model2, tokenizer))
+
+        self.logger.info('Mean epoch loss for step 2: %d', (epoch_loss / num_train_batches))
         
-        print("Mean epoch loss for step 2:", (epoch_loss / num_train_batches))
+        #print("Mean epoch loss for step 2:", (epoch_loss / num_train_batches))
         return ((epoch_loss / num_train_batches))
 
     
         
-    def val_model2(self, valid_dataloader, optimizer3, criterion, A, A_batch, lr1, lr2):
+    def val_model2(self, valid_dataloader, optimizer3, A, A_batch, tokenizer):
         epoch_loss=0
         self.model2.train()
         a_ind=0
@@ -90,7 +105,7 @@ class model:
             out=self.model2(input_ids=en_input, attention_mask=en_masks, decoder_input_ids=de_output, 
                             decoder_attention_mask=de_masks, labels=de_output.clone())
             predictions = F.log_softmax(out[1], dim=2)
-            loss3 = compute_loss2(predictions, de_output)
+            loss3 = compute_loss2(predictions, de_output, self.device)
             print('loss3:', loss3)
             epoch_loss+=loss3.item()
 
@@ -120,7 +135,7 @@ class model:
             
             out=self.model2(input_ids=en_input, decoder_inputs_embeds=outputs.decoder_hidden_states[-1], labels=new_labels)
             predictions = F.log_softmax(out[1], dim=2)
-            loss2=compute_loss2(predictions, new_labels)
+            loss2=compute_loss2(predictions, new_labels, self.device)
             
             grads_p=torch.autograd.grad(loss2, self.model1.parameters(), allow_unused=True, retain_graph=True)
 
@@ -136,7 +151,7 @@ class model:
             
             out=self.model2(input_ids=en_input, decoder_inputs_embeds=outputs.decoder_hidden_states[-1], labels=new_labels)
             predictions = F.log_softmax(out[1], dim=2)
-            loss2=compute_loss2(predictions, new_labels)
+            loss2=compute_loss2(predictions, new_labels, self.device)
         
             grads_n = torch.autograd.grad(loss2, self.model1.parameters(), allow_unused=True, retain_graph=True)
 
@@ -188,12 +203,16 @@ class model:
             optimizer3.step()
             a_ind+=self.batch_size
             print('step 3 instances gone:', (i+1)*self.batch_size)
+            if (i+1)%2 == 0:
+                self.logger.info('loss after %d instances: %d', (i+1)*self.batch_size, loss2.item())
+                self.logger.info('bleu score after %d instances: %d', (i+1)*self.batch_size, calc_bleu(en_input, lm_labels, self.model2, tokenizer))
+
+        self.logger.info('Mean epoch loss for step 2: %d', (epoch_loss / len(valid_dataloader))) 
             
-            
-        print("Mean epoch loss for step 3:", (epoch_loss / len(valid_dataloader)))
+        #print("Mean epoch loss for step 3:", (epoch_loss / len(valid_dataloader)))
         return (epoch_loss / len(valid_dataloader))
 
     def save_model(self, save_directory):
-        self.model2.save_pretrained(save_directory='./'+ save_directory+'/model2')
-        self.model1.save_pretrained(save_directory='./'+ save_directory+'/model1')
+        self.model2.save_pretrained(save_directory= save_directory+'/model2')
+        self.model1.save_pretrained(save_directory= save_directory+'/model1')
 

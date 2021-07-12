@@ -1,5 +1,5 @@
 {
-    "global_params" : {
+    "dataset" : {
         "train_en_file" : "data/en_valid.sample",
         "train_de_file" : "data/de_valid.sample",
         "valid_en_file" : "data/en_valid.sample",
@@ -26,9 +26,13 @@
         "hidden_size" : 512
     },
 
-    "model_params" : {
+    "model1" : {
         "lr": 1e-2,
-        "model_path" : "./models/model1"
+        "model_path" : "./models/model1",
+        "learning_rate_min": 0.001,
+        "weight_decay": 3e-4,
+        "grad_clip": 5.0
+        
     },
     "writer" : {
         "comment" : "SIZE_5000_BATCH_10"
@@ -37,17 +41,26 @@
     "learning_rateA": 1e-2,
     "batch_size" : 2,
     "num_epochs" : 2,
+    "learning_rate_min": 0.001,
+    "report_freq": 2,
+    "model_path": "./saved_models",
+    "save": "EXP",
+    "grad_clip": 5.0,
+    
 
-    "global_params_" : {
+    "unlabeled" : {
         "train_en_file" : "data_/en_valid_.sample",
         "train_de_file" : "data_/de_valid_.sample",
         "valid_en_file" : "data_/en_valid_.sample",
         "valid_de_file" : "data_/de_valid_.sample"
     },
 
-    "model_params_" : {
+    "model2" : {
         "lr": 1e-2,
-        "model_path" : "./models/model2"
+        "model_path" : "./models/model2",
+        "learning_rate_min": 0.001,
+        "weight_decay": 3e-4,
+        "grad_clip": 5.0
     }
   
 }
