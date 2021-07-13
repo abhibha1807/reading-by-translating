@@ -5,4 +5,5 @@ nvidia-smi
 # source activate yxy
 conda install -c huggingface transformers
 conda install -c conda-forge tensorboard
+conda install -c pytorch torchtext
 python main_.py
