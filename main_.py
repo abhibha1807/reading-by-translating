@@ -10,7 +10,7 @@ from dataClass import TranslationDataset
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 from Model import TranslationModel
-from utils import createBatchesA, loadTokenizer
+from utils import createBatchesA
 # from trainTokenizer import train_tokenizer
 import os
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
