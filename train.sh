@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 nvidia-smi
-pip install tranformers
+conda install -c huggingface transformers
 python main_.py
