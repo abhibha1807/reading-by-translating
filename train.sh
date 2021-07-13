@@ -2,7 +2,8 @@
 nvidia-smi
 # conda env create -f environment.yml
 # conda update -n yxy -c defaults conda
-conda install -n base -c conda-forge tensorboard
+# conda install -n base -c conda-forge tensorboard
+conda install -n base -c conda-forge huggingface transformers
 source activate base
 # conda install -c huggingface transformers
 # conda install -c conda-forge tensorboard
