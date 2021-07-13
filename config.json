@@ -1,13 +1,13 @@
 {
     "dataset" : {
-        "train_en_file" : "dataset/en_valid.sample",
-        "train_de_file" : "dataset/de_valid.sample",
-        "valid_en_file" : "dataset/en_valid.sample",
-        "valid_de_file" : "dataset/de_valid.sample"
+        "train_en_file" : "./dataset/en_valid.sample",
+        "train_de_file" : "./dataset/de_valid.sample",
+        "valid_en_file" : "./dataset/en_valid.sample",
+        "valid_de_file" : "./dataset/de_valid.sample"
     },
 
     "encoder_params" : {
-        "tokenizer_path" : "tokenizers/en_tok",
+        "tokenizer_path" : "./tokenizers/en_tok",
         "vocab_size" : 25000,
         "min_freq" : 3,
         "max_length" : 512,
@@ -17,7 +17,7 @@
     },
 
     "decoder_params" : {
-        "tokenizer_path" : "tokenizers/de_tok",
+        "tokenizer_path" : "./tokenizers/de_tok",
         "vocab_size" : 25000,
         "min_freq" : 3,
         "max_length" : 256,
@@ -49,15 +49,15 @@
     
 
     "unlabeled" : {
-        "train_en_file" : "unlabeled/en_valid_.sample",
-        "train_de_file" : "unlabeled/de_valid_.sample",
-        "valid_en_file" : "unlabeled/en_valid_.sample",
-        "valid_de_file" : "unlabeled/de_valid_.sample"
+        "train_en_file" : "./unlabeled/en_valid_.sample",
+        "train_de_file" : "./unlabeled/de_valid_.sample",
+        "valid_en_file" : "./unlabeled/en_valid_.sample",
+        "valid_de_file" : "./unlabeled/de_valid_.sample"
     },
 
     "model2" : {
         "lr": 1e-2,
-        "model_path" : "./models/model2",
+        "model_path" : "./models/model1",
         "learning_rate_min": 0.001,
         "weight_decay": 3e-4,
         "grad_clip": 5.0

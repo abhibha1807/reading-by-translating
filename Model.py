@@ -216,4 +216,18 @@ class model:
         print('saving models')
         self.model2.save_pretrained(save_directory= save_directory+'/model2')
         self.model1.save_pretrained(save_directory= save_directory+'/model1')
+    
+    def infer(self, test_dataloader):
+        for i, ((en_input, en_masks, de_output, de_masks)) in enumerate(zip(test_dataloader)):
+            en_input = en_input.to(self.device) 
+            de_output = de_output.to(self.device)
+            en_masks = en_masks.to(self.device)
+            de_masks = de_masks.to(self.device)
+            lm_labels = de_output.clone().to(self.device)
 
+            out = self.model1(input_ids=en_input, attention_mask=en_masks, decoder_input_ids=de_output, 
+                                decoder_attention_mask=de_masks, labels=lm_labels.clone())
+                
+            predictions = F.log_softmax(out[1], dim=2)
+            loss=compute_loss1(predictions, de_output, self.device)
+            
