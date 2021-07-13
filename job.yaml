@@ -3,7 +3,7 @@ kind: Job # Deployment will automatically restart when killed. Use Pod if not ne
 metadata:
   labels:
     k8s-app: research
-  name: abhibha-darts-cifar10--test
+  name: abhibha-rbt-test
   namespace: ecepxie
 spec:
   template:
@@ -16,7 +16,7 @@ spec:
       - name: research
         image: gitlab-registry.nautilus.optiputer.net/vamsirk/research-containers
         imagePullPolicy: Always
-        workingDir: /abhibha-volume/DARTS-cifar10
+        workingDir: /abhibha-volume/reading-by-translating
         command: ["bash","train.sh"]
         resources:
           requests:
