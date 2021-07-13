@@ -1,9 +1,9 @@
 {
     "dataset" : {
-        "train_en_file" : "data/en_valid.sample",
-        "train_de_file" : "data/de_valid.sample",
-        "valid_en_file" : "data/en_valid.sample",
-        "valid_de_file" : "data/de_valid.sample"
+        "train_en_file" : "dataset/en_valid.sample",
+        "train_de_file" : "dataset/de_valid.sample",
+        "valid_en_file" : "dataset/en_valid.sample",
+        "valid_de_file" : "dataset/de_valid.sample"
     },
 
     "encoder_params" : {
@@ -49,10 +49,10 @@
     
 
     "unlabeled" : {
-        "train_en_file" : "data_/en_valid_.sample",
-        "train_de_file" : "data_/de_valid_.sample",
-        "valid_en_file" : "data_/en_valid_.sample",
-        "valid_de_file" : "data_/de_valid_.sample"
+        "train_en_file" : "unlabeled/en_valid_.sample",
+        "train_de_file" : "unlabeled/de_valid_.sample",
+        "valid_en_file" : "unlabeled/en_valid_.sample",
+        "valid_de_file" : "unlabeled/de_valid_.sample"
     },
 
     "model2" : {
