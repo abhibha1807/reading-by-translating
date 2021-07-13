@@ -24,4 +24,6 @@ dependencies:
   - pandas
   - opencv
   - matplotlib
+  - transformers=4.3
+  
 
