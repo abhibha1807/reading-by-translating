@@ -9,7 +9,7 @@ from transformers import BertTokenizerFast
 from dataClass import TranslationDataset 
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
-from Model import model
+from Model import TranslationModel
 from utils import createBatchesA, loadTokenizer
 # from trainTokenizer import train_tokenizer
 import os
@@ -62,7 +62,7 @@ def run():
     #train Bert tokenizers
     en_tokenizer, de_tokenizer=loadTokenizer(train_en_file, encparams, train_de_file, decparams)
 
-    mdl=model(device, batch_size, logging, config)
+    mdl=TranslationModel(device, batch_size, logging, config)
 
     optimizer1 = torch.optim.Adam(mdl.model1.parameters(), lr=model1params['lr'], weight_decay=model1params['weight_decay'])
     optimizer2 = torch.optim.Adam(mdl.model2.parameters(), lr=model2params['lr'],  weight_decay=model2params['weight_decay'])

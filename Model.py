@@ -9,7 +9,7 @@ from utils import _concat, calc_bleu, loadTokenizer
 # model1.save_pretrained(save_directory='./models/model1')
 # model2.save_pretrained(save_directory='./models/model2')
 
-class model:
+class TranslationModel:
     def __init__(self, device, batch_size, logging, config):
         self.model1=EncoderDecoderModel.from_pretrained(config["model1"]['model_path'])
         self.model2=EncoderDecoderModel.from_pretrained(config["model1"]['model_path'])
@@ -230,4 +230,3 @@ class model:
                 
             predictions = F.log_softmax(out[1], dim=2)
             loss=compute_loss1(predictions, de_output, self.device)
-            
