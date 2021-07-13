@@ -103,11 +103,11 @@ def run():
         scheduler3.step()
       
 
-        epoch_loss1 = mdl.train_model1(A_batch, train_dataloader, optimizer1, de_tokenizer)
+        epoch_loss1 = mdl.train_model1(A_batch, train_dataloader, optimizer1, de_tokenizer, criterion)
         writer.add_scalar('Loss/model1', epoch_loss1, epoch)
-        epoch_loss2 = mdl.train_model2(u_train_dataloader, optimizer2, de_tokenizer)# using the same training dataset for now.
+        epoch_loss2 = mdl.train_model2(u_train_dataloader, optimizer2, de_tokenizer, criterion)# using the same training dataset for now.
         writer.add_scalar('Loss/model2', epoch_loss2, epoch)
-        epoch_loss3 = mdl.val_model2( valid_dataloader, optimizer3, A, A_batch , de_tokenizer)
+        epoch_loss3 = mdl.val_model2( valid_dataloader, optimizer3, A, A_batch , de_tokenizer, criterion)
         writer.add_scalar('Loss/val', epoch_loss3, epoch)
         mdl.sav_model(config['model_path'])
     writer.close()

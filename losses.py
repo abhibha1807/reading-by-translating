@@ -1,7 +1,6 @@
 import torch
-from main_ import criterion
 #computes loss for step 1
-def compute_loss1(predictions, targets, a, device):
+def compute_loss1(predictions, targets, a, device, criterion):
 
     predictions = predictions[:, :-1, :].contiguous()
     targets = targets[:, 1:]
@@ -13,7 +12,7 @@ def compute_loss1(predictions, targets, a, device):
     return y
 
 #computes loss for step 2 and 3
-def compute_loss2(predictions, targets, device):
+def compute_loss2(predictions, targets, device, criterion):
 
     predictions = predictions[:, :-1, :].contiguous()
     targets = targets[:, 1:]
