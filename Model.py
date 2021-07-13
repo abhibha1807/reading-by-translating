@@ -4,10 +4,10 @@ from transformers import BertModel, BertForMaskedLM, BertConfig, EncoderDecoderM
 from losses import compute_loss1, compute_loss2
 from utils import _concat, calc_bleu, loadTokenizer
 # run once
-# model1 = EncoderDecoderModel.from_encoder_decoder_pretrained('bert-base-uncased', 'bert-base-uncased') # initialize Bert2Bert from pre-trained checkpoints
-# model2 = EncoderDecoderModel.from_encoder_decoder_pretrained('bert-base-uncased', 'bert-base-uncased') # initialize Bert2Bert from pre-trained checkpoints
-# model1.save_pretrained(save_directory='./models/model1')
-# model2.save_pretrained(save_directory='./models/model2')
+model1 = EncoderDecoderModel.from_encoder_decoder_pretrained('bert-base-uncased', 'bert-base-uncased') # initialize Bert2Bert from pre-trained checkpoints
+model2 = EncoderDecoderModel.from_encoder_decoder_pretrained('bert-base-uncased', 'bert-base-uncased') # initialize Bert2Bert from pre-trained checkpoints
+model1.save_pretrained(save_directory='./models/model1')
+model2.save_pretrained(save_directory='./models/model2')
 
 class TranslationModel:
     def __init__(self, device, batch_size, logging, config):
