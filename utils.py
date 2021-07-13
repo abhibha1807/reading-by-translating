@@ -2,6 +2,8 @@ import torch
 from torch.utils.data import Dataset
 import torchtext
 from torchtext.data.metrics import bleu_score
+from transformers import BertTokenizerFast
+import os
 
 def calc_bleu(en_input, lm_labels, model, tokenizer):
   gen_op=model.generate(input_ids=en_input, decoder_start_token_id=0) 
@@ -40,9 +42,9 @@ def _concat(xs, device):
     p.append(x.view(-1).to(device))
   return (torch.cat(p).to(device))
 
-  def loadTokenizer(train_en_file, encparams, train_de_file, decparams):
-    en_tok_path = encparams["tokenizer_path"]
-    en_tokenizer = BertTokenizerFast(os.path.join(en_tok_path, "vocab.txt"))
-    de_tok_path = decparams["tokenizer_path"]
-    de_tokenizer = BertTokenizerFast(os.path.join(de_tok_path, "vocab.txt"))
-    return (en_tokenizer, de_tokenizer)
+def loadTokenizer(train_en_file, encparams, train_de_file, decparams):
+  en_tok_path = encparams["tokenizer_path"]
+  en_tokenizer = BertTokenizerFast(os.path.join(en_tok_path, "vocab.txt"))
+  de_tok_path = decparams["tokenizer_path"]
+  de_tokenizer = BertTokenizerFast(os.path.join(de_tok_path, "vocab.txt"))
+  return (en_tokenizer, de_tokenizer)

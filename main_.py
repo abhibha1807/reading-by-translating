@@ -5,12 +5,11 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
-from transformers import BertTokenizerFast
 from dataClass import TranslationDataset 
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 from Model import TranslationModel
-from utils import createBatchesA
+from utils import createBatchesA, loadTokenizer
 # from trainTokenizer import train_tokenizer
 import os
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
