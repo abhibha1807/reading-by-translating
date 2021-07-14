@@ -12,6 +12,7 @@ nvidia-smi
 # conda install -c pytorch torchtext
 source ../rbt/bin/activate
 echo $VIRTUAL_ENV
+echo $PYTHONPATH
 # alias python=python3.6
 pwd
 ../rbt/bin/python3.6 --version
