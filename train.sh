@@ -12,11 +12,11 @@ nvidia-smi
 # conda install -c pytorch torchtext
 source ../rbt/bin/activate
 echo $VIRTUAL_ENV
-echo $PYTHONPATH
-export PYTHONPATH="$PWD"
-echo $PYTHONPATH
+# echo $PYTHONPATH
+# export PYTHONPATH="$PWD"
+# echo $PYTHONPATH
 # alias python=python3.6
 pwd
-../rbt/bin/python3.6 --version
-../rbt/bin/python3.6 -c "import sys; print('\n'.join(sys.path))"
-../rbt/bin/python3.6 main_.py
+/abhibha-volume/rbt/bin/python --version
+/abhibha-volume/rbt/bin/python -c "import sys; print('\n'.join(sys.path))"
+/abhibha-volume/rbt/bin/python main_.py
