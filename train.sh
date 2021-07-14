@@ -12,4 +12,5 @@ nvidia-smi
 # conda install -c pytorch torchtext
 source ../rbt/bin/activate
 echo $VIRTUAL_ENV
+python --version
 python main_.py
