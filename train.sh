@@ -13,6 +13,8 @@ nvidia-smi
 source ../rbt/bin/activate
 echo $VIRTUAL_ENV
 echo $PYTHONPATH
+export PYTHONPATH="$PWD/reading-by-translating"
+echo $PYTHONPATH
 # alias python=python3.6
 pwd
 ../rbt/bin/python3.6 --version
