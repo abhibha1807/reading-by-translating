@@ -12,6 +12,7 @@ nvidia-smi
 # conda install -c pytorch torchtext
 source ../rbt/bin/activate
 echo $VIRTUAL_ENV
+which python
 # echo $PYTHONPATH
 # export PYTHONPATH="$PWD"
 # echo $PYTHONPATH
