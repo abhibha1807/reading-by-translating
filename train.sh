@@ -13,6 +13,6 @@ nvidia-smi
 source ../rbt/bin/activate
 echo $VIRTUAL_ENV
 # alias python=python3.6
-python3.6 --version
-python -c "import sys; print('\n'.join(sys.path))"
-python3.6 main_.py
+../abhibha-volume/rbt/lib/python3.6 --version
+../abhibha-volume/rbt/lib/python3.6 -c "import sys; print('\n'.join(sys.path))"
+../abhibha-volume/rbt/lib/python3.6 main_.py
