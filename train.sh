@@ -10,9 +10,11 @@ nvidia-smi
 # conda install -c huggingface transformers
 # conda install -c conda-forge tensorboard
 # conda install -c pytorch torchtext
-export PATH="$PATH:/abhibha-volume/rbt/bin/python"
-set -e 
-source //abhibha-volume/rbt/bin/activate
+# export PATH="$PATH:/abhibha-volume/rbt/bin/python"
+# set -e 
+# source //abhibha-volume/rbt/bin/activate
+eval "$(conda shell.bash hook)"
+conda activate ../rbt
 echo $VIRTUAL_ENV
 which python
 pip list --local
