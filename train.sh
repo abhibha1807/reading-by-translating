@@ -14,6 +14,6 @@ source ../rbt/bin/activate
 echo $VIRTUAL_ENV
 # alias python=python3.6
 pwd
-../rbt/lib/python3.6 --version
-../rbt/lib/python3.6 -c "import sys; print('\n'.join(sys.path))"
-../rbt/lib/python3.6 main_.py
+../rbt/bin/python3.6 --version
+../rbt/bin/python3.6 -c "import sys; print('\n'.join(sys.path))"
+../rbt/bin/python3.6 main_.py
