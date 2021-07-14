@@ -10,7 +10,8 @@ nvidia-smi
 # conda install -c huggingface transformers
 # conda install -c conda-forge tensorboard
 # conda install -c pytorch torchtext
-source ../rbt/bin/activate
+set -e 
+source //abhibha-volume/rbt/bin/activate
 echo $VIRTUAL_ENV
 which python
 pip list --local
