@@ -13,6 +13,7 @@ nvidia-smi
 source ../rbt/bin/activate
 echo $VIRTUAL_ENV
 which python
+pip list --local
 # echo $PYTHONPATH
 # export PYTHONPATH="$PWD"
 # echo $PYTHONPATH
