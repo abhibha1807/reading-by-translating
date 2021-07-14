@@ -11,4 +11,5 @@ nvidia-smi
 # conda install -c conda-forge tensorboard
 # conda install -c pytorch torchtext
 source ../rbt/bin/activate
+echo $VIRTUAL_ENV
 python main_.py
