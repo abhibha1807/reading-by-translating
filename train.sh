@@ -14,7 +14,7 @@ nvidia-smi
 # set -e 
 # source //abhibha-volume/rbt/bin/activate
 eval "$(conda shell.bash hook)"
-conda activate ../rbt
+conda activate ../../opt/conda/envs/rbt-conda
 echo $VIRTUAL_ENV
 which python
 pip list --local
