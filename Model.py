@@ -122,9 +122,10 @@ class TranslationModel:
 
             '''
             Implementation of chain rule: eq 8,9 and 10
-            Note: conidering E and F in the paper as Wo -> first MT model's weights
+            Note: conidering E and F in the paper as Wo -> first MT model's weights, W as weights of
+            second MT model, A as matrix A and L as loss at step 3
             delL/delA = delWo/delA x delW/delWo x delL/delW 
-            Use hessian vector product calculated using finite difference approximation
+            Hessian vector product calculated using finite difference approximation
             to calculate above mentioned chain rule.
             '''
 
