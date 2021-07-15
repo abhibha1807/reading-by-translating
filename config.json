@@ -1,9 +1,9 @@
 {
     "dataset" : {
-        "train_en_file" : "./dataset/en_valid.sample",
-        "train_de_file" : "./dataset/de_valid.sample",
-        "valid_en_file" : "./dataset/en_valid.sample",
-        "valid_de_file" : "./dataset/de_valid.sample"
+        "train_en_file" : "./data/en_valid.sample",
+        "train_de_file" : "./data/de_valid.sample",
+        "valid_en_file" : "./data/en_valid.sample",
+        "valid_de_file" : "./data/de_valid.sample"
     },
 
     "encoder_params" : {
@@ -46,14 +46,8 @@
     "model_path": "./saved_models",
     "save": "EXP",
     "grad_clip": 5.0,
+    "unlabled_percent":10,
     
-
-    "unlabeled" : {
-        "train_en_file" : "./unlabeled/en_valid_.sample",
-        "train_de_file" : "./unlabeled/de_valid_.sample",
-        "valid_en_file" : "./unlabeled/en_valid_.sample",
-        "valid_de_file" : "./unlabeled/de_valid_.sample"
-    },
 
     "model2" : {
         "lr": 1e-2,

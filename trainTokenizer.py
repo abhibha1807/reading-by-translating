@@ -28,23 +28,22 @@ def train_tokenizer(filename, params):
     tokenizer.save_model(save_location)
 
 
+if __name__ == '__main__':
+    '''
+    Load training data and train BertWordPieceTokenizer
+    '''
 
-#load data and train tokenizer
+    configfile = "config.json"
+    with open(configfile, "r") as f:
+        config = json.load(f)
 
-configfile = "config.json"
-# Read the params
-with open(configfile, "r") as f:
-    config = json.load(f)
+    dataset = config["dataset"]
+    encparams = config["encoder_params"]
+    decparams = config["decoder_params"]
 
-globalparams = config["global_params"]
-encparams = config["encoder_params"]
-decparams = config["decoder_params"]
+    train_en_file = dataset["train_en_file"]
+    train_de_file = dataset["train_de_file"]
 
-# Get the dataset files
-train_en_file = globalparams["train_en_file"]
-train_de_file = globalparams["train_de_file"]
-
-# Train the tokenizers
-train_tokenizer(train_en_file, encparams)
-train_tokenizer(train_de_file, decparams)
+    train_tokenizer(train_en_file, encparams)
+    train_tokenizer(train_de_file, decparams)
 

@@ -22,19 +22,14 @@ class TranslationDataset(data.Dataset):
         # Read the EN lines
         num_inp_lines = 0
         with open(inp_file, "r", encoding='utf-8') as ef:
-            # try:
             for line in ef:
                 # print(line)
                 enc = self.inp_tokenizer.encode(line.strip(), add_special_tokens=True, max_length=self.inp_maxlength)
                 self.encoded_inp.append(torch.tensor(enc))
                 num_inp_lines += 1
-                if num_inp_lines==10:
-                    break
-            # except:
-            #     print(num_inp_lines)
-            #     pass
-                
-                
+                # if num_inp_lines==10:
+                #     break
+        
 
         # read the DE lines
         num_targ_lines = 0
@@ -43,8 +38,8 @@ class TranslationDataset(data.Dataset):
                 enc = self.targ_tokenizer.encode(line.strip(), add_special_tokens=True, max_length=self.targ_maxlength)
                 self.encoded_targ.append(torch.tensor(enc))
                 num_targ_lines += 1
-                if num_targ_lines==10:
-                    break
+                # if num_targ_lines==10:
+                #     break
                 
         assert (num_inp_lines==num_targ_lines), "Mismatch in EN and DE lines"
         print("Read", num_inp_lines, "lines from EN and DE files.")

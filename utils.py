@@ -5,6 +5,13 @@ from torchtext.data.metrics import bleu_score
 from transformers import BertTokenizerFast
 import os
 
+'''
+Implements suppplementary functions
+calc_bleu: calculate the bleu score for a batch
+createBatchesA: dataloader class for A
+loadTokenizer: loads trained BertWordPieceTokenizer.
+'''
+
 def calc_bleu(en_input, lm_labels, model, tokenizer):
   gen_op=model.generate(input_ids=en_input, decoder_start_token_id=0) 
   print(gen_op)

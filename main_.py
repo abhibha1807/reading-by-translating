@@ -1,7 +1,11 @@
 import sys
 import os
+import time
+import glob
 import json
 import torch
+import utils
+import argparse
 import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
@@ -10,7 +14,6 @@ from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 from Model import TranslationModel
 from utils import createBatchesA, loadTokenizer
-# from trainTokenizer import train_tokenizer
 import os
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 torch.autograd.set_detect_anomaly(True)
@@ -30,14 +33,24 @@ logging.basicConfig(
         logging.StreamHandler()
     ]
 )
+parser = argparse.ArgumentParser("rbt")
+parser.add_argument('--config', type=str, default='config.json', help='config file')
+args = parser.parse_args()
+
+args.save = 'search-{}-{}'.format(args.save, time.strftime("%Y%m%d-%H%M%S"))
+utils.create_exp_dir(args.save, scripts_to_save=glob.glob('*.py'))
+
 
 def run():
-    configfile = "config.json"
-    # Read the params
+    '''
+    Function responsible for loading data, tokenizers, optimizers, schedulers
+    and executing the main training loop 
+    '''
+    configfile = args.config
     with open(configfile, "r") as f:
         config = json.load(f)
     dataset = config["dataset"]
-    unlabeled = config["unlabeled"]
+    # unlabeled = config["unlabeled"]
     encparams = config["encoder_params"]
     decparams = config["decoder_params"]
     model1params = config["model1"]
@@ -53,40 +66,48 @@ def run():
     train_de_file = dataset["train_de_file"]
     valid_en_file = dataset["valid_en_file"]
     valid_de_file = dataset["valid_de_file"]
-    u_train_en_file = unlabeled["train_en_file"]
-    u_train_de_file = unlabeled["train_de_file"]
-
-
+    unlabeled_size=config["unlabeled_percent"]
     
-    #train Bert tokenizers
+    #load BertWordPieceTokenizer
     en_tokenizer, de_tokenizer=loadTokenizer(train_en_file, encparams, train_de_file, decparams)
 
+    #initialize models.
     mdl=TranslationModel(device, batch_size, logging, config)
 
     optimizer1 = torch.optim.Adam(mdl.model1.parameters(), lr=model1params['lr'], weight_decay=model1params['weight_decay'])
     optimizer2 = torch.optim.Adam(mdl.model2.parameters(), lr=model2params['lr'],  weight_decay=model2params['weight_decay'])
     criterion = nn.NLLLoss(ignore_index=de_tokenizer.pad_token_id)
 
+    #training and validation datasets
     train_dataset = TranslationDataset(train_en_file, train_de_file, en_tokenizer, de_tokenizer, enc_maxlength, dec_maxlength)
-    train_dataloader = torch.utils.data.DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=False, \
+    valid_dataset = TranslationDataset(valid_en_file, valid_de_file, en_tokenizer, de_tokenizer, enc_maxlength, dec_maxlength)
+
+
+    unlabeled_amount = int(dataset.__len__() * unlabeled_size)
+    
+    #splitting the dataset into unlabeled and training datasets
+    train_set, unlabeled_set = torch.utils.data.random_split(train_dataset, [
+                (dataset.__len__() - unlabeled_amount), 
+                unlabeled_amount
+    ])
+
+    train_dataloader = torch.utils.data.DataLoader(dataset=train_set, batch_size=batch_size, shuffle=False, \
                                             drop_last=True, num_workers=1, collate_fn=train_dataset.collate_function)
 
-    valid_dataset = TranslationDataset(valid_en_file, valid_de_file, en_tokenizer, de_tokenizer, enc_maxlength, dec_maxlength)
+    unlabeled_dataloader = torch.utils.data.DataLoader(dataset=unlabeled_set, batch_size=batch_size, shuffle=False, \
+                                            drop_last=True, num_workers=1, collate_fn=unlabeled_set.collate_function)
+
+
     valid_dataloader = torch.utils.data.DataLoader(dataset=valid_dataset, batch_size=batch_size, shuffle=False, \
                                             drop_last=True, num_workers=1, collate_fn=valid_dataset.collate_function)
-
-    u_train_dataset = TranslationDataset(u_train_en_file, u_train_de_file, en_tokenizer, de_tokenizer, enc_maxlength, dec_maxlength)
-    u_train_dataloader = torch.utils.data.DataLoader(dataset=u_train_dataset, batch_size=batch_size, shuffle=False, \
-                                            drop_last=True, num_workers=1, collate_fn=train_dataset.collate_function)
- 
     
     
+    #initiliaze matrix A
     A=torch.rand(len(train_dataset), requires_grad=True, device ='cpu')
     optimizer3 = torch.optim.SGD([A], lr=config["learning_rateA"])
-
-    #create batches for A
     torch.multiprocessing.freeze_support()
     A_batch = DataLoader(createBatchesA(A), batch_size=batch_size)
+    
     writer = SummaryWriter()
 
     scheduler1 = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer1, float(config['num_epochs']), eta_min=model1params["learning_rate_min"])
@@ -101,14 +122,14 @@ def run():
         scheduler2.step()
         scheduler3.step()
       
-
         epoch_loss1 = mdl.train_model1(A_batch, train_dataloader, optimizer1, de_tokenizer, criterion)
         writer.add_scalar('Loss/model1', epoch_loss1, epoch)
-        epoch_loss2 = mdl.train_model2(u_train_dataloader, optimizer2, de_tokenizer, criterion)# using the same training dataset for now.
+        epoch_loss2 = mdl.train_model2(unlabeled_dataloader, optimizer2, de_tokenizer, criterion)# using the same training dataset for now.
         writer.add_scalar('Loss/model2', epoch_loss2, epoch)
         epoch_loss3 = mdl.val_model2( valid_dataloader, optimizer3, A, A_batch , de_tokenizer, criterion)
         writer.add_scalar('Loss/val', epoch_loss3, epoch)
         mdl.sav_model(config['model_path'])
+
     writer.close()
 
 if __name__ == '__main__':

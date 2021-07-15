@@ -3,12 +3,23 @@ import torch.nn.functional as F
 from transformers import BertModel, BertForMaskedLM, BertConfig, EncoderDecoderModel
 from losses import compute_loss1, compute_loss2
 from utils import _concat, calc_bleu, loadTokenizer
-# run once
+
+'''
+Run once to load BERT encoder-decoder models from hugging face library and 
+save them in the 'models' directory
+'''
 model1 = EncoderDecoderModel.from_encoder_decoder_pretrained('bert-base-uncased', 'bert-base-uncased') # initialize Bert2Bert from pre-trained checkpoints
 model2 = EncoderDecoderModel.from_encoder_decoder_pretrained('bert-base-uncased', 'bert-base-uncased') # initialize Bert2Bert from pre-trained checkpoints
 model1.save_pretrained(save_directory='./models/model1')
 model2.save_pretrained(save_directory='./models/model2')
 
+'''
+MT model class to load pretrained models from the 'models' directory and performs 
+training according to the  pipeline described in the RBT paper. Training occurs in 3 steps
+1) Train first MT model using matrix A to calculate loss
+2) Train second MT model on a dataset created by first MT model on the unlabeled dataset
+3) Estimate A by reducing the validation loss of second MT model on validation set of MT dataset
+'''
 class TranslationModel:
     def __init__(self, device, batch_size, logging, config):
         self.model1=EncoderDecoderModel.from_pretrained(config["model1"]['model_path'])
@@ -21,9 +32,7 @@ class TranslationModel:
         self.logger=logging
         self.config=config
         
-        
 
-    # step 1
     def train_model1(self, A_batch, train_dataloader, optimizer1, tokenizer, criterion):
         self.model1.train()
         epoch_loss = 0
@@ -43,12 +52,11 @@ class TranslationModel:
                 
             predictions = F.log_softmax(out[1], dim=2)
             loss1=compute_loss1(predictions, de_output, a, self.device, criterion)
-            print(loss1)
             epoch_loss+=loss1.item()
             loss1.backward(inputs=list(self.model1.parameters()), retain_graph=True) 
             torch.nn.utils.clip_grad_norm(self.model1.parameters(), self.config["model1"]['grad_clip'])
             optimizer1.step() # wt updation   
-            print('step 1 instances gone:', (i+1)*self.batch_size)
+            #print('step 1 instances gone:', (i+1)*self.batch_size)
 
             if ((i+1)*self.batch_size)% self.config['report_freq'] == 0:
                 self.logger.info('loss after %d instances: %d', (i+1)*self.batch_size, loss1.item())
@@ -58,12 +66,12 @@ class TranslationModel:
         #print("Mean epoch loss for step 1:", (epoch_loss / num_train_batches))
         return ((epoch_loss / num_train_batches))
 
-    def train_model2(self, train_dataloader, optimizer2, tokenizer, criterion):
+    def train_model2(self, unlabeled_dataloader, optimizer2, tokenizer, criterion):
         epoch_loss=0
         optimizer2.zero_grad()
         self.model2.train()
-        num_train_batches = len(train_dataloader)
-        for i, (en_input, en_masks, de_output, de_masks) in enumerate(train_dataloader):
+        num_train_batches = len(unlabeled_dataloader)
+        for i, (en_input, en_masks, de_output, de_masks) in enumerate(unlabeled_dataloader):
             en_input = en_input.to(self.device)
             outputs=self.model1(input_ids=en_input, decoder_input_ids=en_input, output_hidden_states=True, return_dict=True)
             predictions = F.log_softmax(outputs.logits, dim=2)
@@ -77,8 +85,9 @@ class TranslationModel:
             loss2.backward(inputs=list(self.model2.parameters()), retain_graph=True)
             torch.nn.utils.clip_grad_norm(self.model2.parameters(), self.config["model2"]['grad_clip'])
             optimizer2.step()
-            print('step 2 instances gone:', (i+1)*self.batch_size)
-            if (i+1)%2 == 0:
+            #print('step 2 instances gone:', (i+1)*self.batch_size)
+            
+            if ((i+1)*self.batch_size)% self.config['report_freq'] == 0:
                 self.logger.info('loss after %d instances: %d', (i+1)*self.batch_size, loss2.item())
                 self.logger.info('bleu score after %d instances: %d', (i+1)*self.batch_size, calc_bleu(en_input, new_labels, self.model2, tokenizer))
 
@@ -106,13 +115,21 @@ class TranslationModel:
                             decoder_attention_mask=de_masks, labels=de_output.clone())
             predictions = F.log_softmax(out[1], dim=2)
             loss3 = compute_loss2(predictions, de_output, self.device, criterion)
-            print('loss3:', loss3)
+            # print('loss3:', loss3)
             epoch_loss+=loss3.item()
 
             loss3.backward(inputs=list(self.model2.parameters()), retain_graph=True)
 
+            '''
+            Implementation of chain rule: eq 8,9 and 10
+            Note: conidering E and F in the paper as Wo -> first MT model's weights
+            delL/delA = delWo/delA x delW/delWo x delL/delW 
+            Use hessian vector product calculated using finite difference approximation
+            to calculate above mentioned chain rule.
+            '''
+
             # compute hessian vector product
-            # calculate delW/delE x delL/delW
+            # calculate delW/delWo x delL/delW 
             r=1e-2
             vector=[]
             for param in self.model2.parameters():
@@ -166,7 +183,7 @@ class TranslationModel:
                 else:
                     vector.append(torch.ones(1, device=self.device))
 
-            # calculate delE/delA x delL/delE
+            # calculate delL/delA = delWo/delA x delW/delWo x delL/delW 
             for p, v in zip(self.model1.parameters(), vector):
                 p.to(self.device)
                 p.data.add_(alpha=R, other=v)
@@ -217,6 +234,7 @@ class TranslationModel:
         self.model2.save_pretrained(save_directory= save_directory+'/model2')
         self.model1.save_pretrained(save_directory= save_directory+'/model1')
     
+    #TO-DO
     def infer(self, test_dataloader, criterion):
         for i, ((en_input, en_masks, de_output, de_masks)) in enumerate(zip(test_dataloader)):
             en_input = en_input.to(self.device) 
