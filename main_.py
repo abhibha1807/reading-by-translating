@@ -84,13 +84,13 @@ def run():
 
     print('before train:', len(train_dataset))
     print('before valid:', len(valid_dataset))
-    unlabeled_amount = int(dataset.__len__() * unlabeled_size)
+    unlabeled_amount = int(len(train_dataset) * unlabeled_size)
     print('len of u:', unlabeled_amount)
-    print('len of dataset:', dataset.__len__())
+    print('len of dataset:', len(train_dataset))
     
     #splitting the dataset into unlabeled and training datasets
     train_set, unlabeled_set = torch.utils.data.random_split(train_dataset, [
-                (dataset.__len__() - unlabeled_amount), 
+                (len(train_dataset) - unlabeled_amount), 
                 unlabeled_amount
     ])
 
