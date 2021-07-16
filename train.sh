@@ -31,7 +31,7 @@ pwd
 # cd abhibha-volume
 source rbt/bin/activate
 which pip
-python -m pip install --upgrade pip
+/abhibha-volume/rbt/bin/python -m pip install --upgrade pip
 which python
 pip3 list --local
 # cd reading-by-translating
