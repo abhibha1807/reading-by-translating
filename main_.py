@@ -29,7 +29,7 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s %(message)s",
     handlers=[
-        logging.FileHandler("debug"+strftime("%Y-%m-%d %H:%M:%S", gmtime())+".log"),
+        logging.FileHandler("debug"+strftime("%Y-%m-%d_%H:%M:%S", gmtime())+".log"),
         logging.StreamHandler()
     ]
 )
@@ -101,6 +101,9 @@ def run():
     valid_dataloader = torch.utils.data.DataLoader(dataset=valid_dataset, batch_size=batch_size, shuffle=False, \
                                             drop_last=True, num_workers=1, collate_fn=valid_dataset.collate_function)
     
+    print('train:', train_dataloader.shape)
+    print('unlabeled:', train_dataloader.shape)
+    print('valid:', train_dataloader.shape)
     
     #initiliaze matrix A
     A=torch.rand(len(train_dataset), requires_grad=True, device ='cpu')
