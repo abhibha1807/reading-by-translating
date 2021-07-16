@@ -26,6 +26,7 @@ nvidia-smi
 # /abhibha-volume/rbt/bin/python --version
 # /abhibha-volume/rbt/bin/python -c "import sys; print('\n'.join(sys.path))"
 # /abhibha-volume/rbt/bin/python main_.py
+pwd
 cd abhibha-volume
 source rbt/bin/activate
 which python
