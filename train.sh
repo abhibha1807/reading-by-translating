@@ -30,7 +30,8 @@ nvidia-smi
 pwd
 # cd abhibha-volume
 source ./rbt/bin/activate
-python -m pip3 install --upgrade pip3
+which pip
+python -m pip install --upgrade pip
 which python
 pip3 list --local
 # cd reading-by-translating
