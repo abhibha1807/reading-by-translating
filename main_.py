@@ -104,9 +104,9 @@ def run():
     valid_dataloader = torch.utils.data.DataLoader(dataset=valid_dataset, batch_size=batch_size, shuffle=False, \
                                             drop_last=True, num_workers=1, collate_fn=valid_dataset.collate_function)
     
-    print('train:', train_dataloader.shape)
-    print('unlabeled:', train_dataloader.shape)
-    print('valid:', train_dataloader.shape)
+    print('train:', len(train_dataloader))
+    print('unlabeled:', len(unlabeled_dataloader))
+    print('valid:', len(valid_dataloader.shape))
 
     #initiliaze matrix A
     A=torch.rand(len(train_dataset), requires_grad=True, device ='cpu')
