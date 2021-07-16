@@ -30,6 +30,6 @@ pwd
 # cd abhibha-volume
 source rbt/bin/activate
 which python
-pip3 list --local
+/abhibha-volume/rbt/lib/python3.6/site-packages/pip3 list --local
 # cd reading-by-translating
 /abhibha-volume/rbt/bin/python /abhibha-volume/reading-by-translating/main_.py
