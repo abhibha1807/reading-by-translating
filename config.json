@@ -46,7 +46,7 @@
     "model_path": "./saved_models",
     "save": "EXP",
     "grad_clip": 5.0,
-    "unlabeled_percent":10,
+    "unlabeled_percent":0.1,
     
 
     "model2" : {
