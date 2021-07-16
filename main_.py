@@ -82,8 +82,11 @@ def run():
     train_dataset = TranslationDataset(train_en_file, train_de_file, en_tokenizer, de_tokenizer, enc_maxlength, dec_maxlength)
     valid_dataset = TranslationDataset(valid_en_file, valid_de_file, en_tokenizer, de_tokenizer, enc_maxlength, dec_maxlength)
 
-
+    print('before train:', len(train_dataset))
+    print('before valid:', len(valid_dataset))
     unlabeled_amount = int(dataset.__len__() * unlabeled_size)
+    print('len of u:', unlabeled_amount)
+    print('len of dataset:', dataset.__len__())
     
     #splitting the dataset into unlabeled and training datasets
     train_set, unlabeled_set = torch.utils.data.random_split(train_dataset, [
@@ -104,7 +107,7 @@ def run():
     print('train:', train_dataloader.shape)
     print('unlabeled:', train_dataloader.shape)
     print('valid:', train_dataloader.shape)
-    
+
     #initiliaze matrix A
     A=torch.rand(len(train_dataset), requires_grad=True, device ='cpu')
     optimizer3 = torch.optim.SGD([A], lr=config["learning_rateA"])
