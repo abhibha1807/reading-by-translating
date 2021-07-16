@@ -37,8 +37,8 @@ parser = argparse.ArgumentParser("rbt")
 parser.add_argument('--config', type=str, default='config.json', help='config file')
 args = parser.parse_args()
 
-args.save = 'search-{}-{}'.format(args.save, time.strftime("%Y%m%d-%H%M%S"))
-utils.create_exp_dir(args.save, scripts_to_save=glob.glob('*.py'))
+# args.save = 'search-{}-{}'.format(args.save, time.strftime("%Y%m%d-%H%M%S"))
+# utils.create_exp_dir(args.save, scripts_to_save=glob.glob('*.py'))
 
 
 def run():
