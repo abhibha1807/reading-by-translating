@@ -3,6 +3,10 @@ import os
 import json
 from tokenizers import BertWordPieceTokenizer
 from tokenizers.processors import BertProcessing
+import argparse
+parser = argparse.ArgumentParser("rbt")
+parser.add_argument('--config', type=str, default='config.json', help='config file')
+args = parser.parse_args()
 
 def train_tokenizer(filename, params):
     """
@@ -32,8 +36,7 @@ if __name__ == '__main__':
     '''
     Load training data and train BertWordPieceTokenizer
     '''
-
-    configfile = "config.json"
+    configfile = args.config
     with open(configfile, "r") as f:
         config = json.load(f)
 

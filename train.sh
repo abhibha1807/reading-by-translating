@@ -13,16 +13,22 @@ nvidia-smi
 # export PATH="$PATH:/abhibha-volume/rbt/bin/python"
 # set -e 
 # source //abhibha-volume/rbt/bin/activate
-eval "$(conda shell.bash hook)"
-conda activate rbt-conda
-echo $VIRTUAL_ENV
-which python
-pip list --local
+# eval "$(conda shell.bash hook)"
+# conda activate rbt-conda
+# echo $VIRTUAL_ENV
+# which python
+# pip list --local
 # echo $PYTHONPATH
 # export PYTHONPATH="$PWD"
 # echo $PYTHONPATH
 # alias python=python3.6
-pwd
-/abhibha-volume/rbt/bin/python --version
-/abhibha-volume/rbt/bin/python -c "import sys; print('\n'.join(sys.path))"
-/abhibha-volume/rbt/bin/python main_.py
+# pwd
+# /abhibha-volume/rbt/bin/python --version
+# /abhibha-volume/rbt/bin/python -c "import sys; print('\n'.join(sys.path))"
+# /abhibha-volume/rbt/bin/python main_.py
+cd abhibha-volume
+source rbt/bin/activate
+which python
+pip list --local
+cd reading-by-translating
+python main_.py
