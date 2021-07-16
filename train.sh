@@ -27,9 +27,9 @@ nvidia-smi
 # /abhibha-volume/rbt/bin/python -c "import sys; print('\n'.join(sys.path))"
 # /abhibha-volume/rbt/bin/python main_.py
 pwd
-cd abhibha-volume
+# cd abhibha-volume
 source rbt/bin/activate
 which python
-pip list --local
-cd reading-by-translating
-python main_.py
+# pip list --local
+# cd reading-by-translating
+/abhibha-volume/rbt/bin/python /abhibha-volume/reading-by-translating main_.py
