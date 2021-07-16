@@ -17,7 +17,7 @@ spec:
         image: gitlab-registry.nautilus.optiputer.net/vamsirk/research-containers
         imagePullPolicy: Always
         workingDir: /abhibha-volume/
-        command: ["bash","train.sh"]
+        command: ["bash","/abhibha-volume/reading-by-translating/train.sh"]
         resources:
           requests:
             memory: "8Gi"
