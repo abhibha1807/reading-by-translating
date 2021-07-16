@@ -98,7 +98,7 @@ def run():
                                             drop_last=True, num_workers=1, collate_fn=train_dataset.collate_function)
 
     unlabeled_dataloader = torch.utils.data.DataLoader(dataset=unlabeled_set, batch_size=batch_size, shuffle=False, \
-                                            drop_last=True, num_workers=1, collate_fn=unlabeled_set.collate_function)
+                                            drop_last=True, num_workers=1, collate_fn=train_dataset.collate_function)
 
 
     valid_dataloader = torch.utils.data.DataLoader(dataset=valid_dataset, batch_size=batch_size, shuffle=False, \
