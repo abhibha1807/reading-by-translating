@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#/usr/bin/env bash
 #/abhibha-volume/rbt/bin python 
 
 nvidia-smi
@@ -41,4 +41,4 @@ pwd
 source activate /abhibha-volume/envs
 conda info --envs
 which python
-python main_.py
+python /abhibha-volume/reading-by-translating/main_.py
