@@ -1,5 +1,6 @@
-#/usr/bin/env bash
-#!/abhibha-volume/rbt/bin python  
+#!/usr/bin/env bash
+#/abhibha-volume/rbt/bin python 
+
 nvidia-smi
 # conda env create -f environment.yml
 # conda update -n yxy -c defaults conda
@@ -29,11 +30,15 @@ nvidia-smi
 # /abhibha-volume/rbt/bin/python main_.py
 pwd
 # cd abhibha-volume
-source rbt/bin/activate
-which pip
-cd rbt/bin
-./pip install --upgrade pip
-which python
-pip3 list --local
+# source rbt/bin/activate
+# which pip
+# cd rbt/bin
+# ./pip install --upgrade pip
+# which python
+# pip3 list --local
 # cd reading-by-translating
-/abhibha-volume/rbt/bin/python /abhibha-volume/reading-by-translating/main_.py
+# /abhibha-volume/rbt/bin/python /abhibha-volume/reading-by-translating/main_.py
+source activate /abhibha-volume/envs
+conda info --envs
+which python
+python main_.py
