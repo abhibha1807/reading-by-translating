@@ -56,7 +56,7 @@ class TranslationModel:
             loss1=compute_loss1(predictions, de_output, a, self.device, criterion)
             epoch_loss+=loss1.item()
             loss1.backward(inputs=list(self.model1.parameters()), retain_graph=True) 
-            torch.nn.utils.clip_grad_norm(self.model1.parameters(), self.config["model1"]['grad_clip'])
+            torch.nn.utils.clip_grad_norm_(self.model1.parameters(), self.config["model1"]['grad_clip'])
             optimizer1.step() # wt updation  
             scheduler1.step() 
             #print('step 1 instances gone:', (i+1)*self.batch_size)
@@ -86,7 +86,7 @@ class TranslationModel:
 
             epoch_loss += loss2.item()
             loss2.backward(inputs=list(self.model2.parameters()), retain_graph=True)
-            torch.nn.utils.clip_grad_norm(self.model2.parameters(), self.config["model2"]['grad_clip'])
+            torch.nn.utils.clip_grad_norm_(self.model2.parameters(), self.config["model2"]['grad_clip'])
             optimizer2.step()
             scheduler2.step()
             #print('step 2 instances gone:', (i+1)*self.batch_size)

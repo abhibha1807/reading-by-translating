@@ -14,21 +14,21 @@ loadTokenizer: loads trained BertWordPieceTokenizer.
 
 def calc_bleu(en_input, lm_labels, model, tokenizer):
   gen_op=model.generate(input_ids=en_input, decoder_start_token_id=0) 
-  print(gen_op)
+  # print(gen_op)
   candidate=(tokenizer.batch_decode(gen_op))
   reference=(tokenizer.batch_decode(lm_labels))
 
-  print(candidate)
-  print(reference)
+  # print(candidate)
+  # print(reference)
   for i in range(len(candidate)):
     score=0
     can = candidate[i].split(' ')
-    print(can)
+    # print(can)
     ref = reference[i].split(' ')
-    print(ref)
+    # print(ref)
     while (len(can)<len(ref)):
       can.append('[PAD]')
-    print(len(can), len(ref))
+    #print(len(can), len(ref))
     score+=(bleu_score(can, ref))
   return(score/en_input.shape[0])
 
