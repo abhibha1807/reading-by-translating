@@ -220,7 +220,7 @@ class TranslationModel:
                                 decoder_attention_mask=de_masks, labels=lm_labels.clone())
                 
             predictions = F.log_softmax(out[1], dim=2)
-            loss1=compute_loss1(predictions, de_output, a, criterion)    
+            loss1=compute_loss1(predictions, de_output, a, self.device, criterion)    
 
             grads_p=torch.autograd.grad(loss1, a, allow_unused=True, retain_graph=True)
 
