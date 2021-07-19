@@ -29,7 +29,7 @@ class TranslationModel:
         print(device)
         print('model in device:', self.device)
         self.model1 = self.model1.cuda()
-        self.model2 = self.model2.cuda()
+        # self.model2 = self.model2.cuda()
         self.logger=logging
         self.config=config
         
@@ -59,12 +59,13 @@ class TranslationModel:
             torch.nn.utils.clip_grad_norm_(self.model1.parameters(), self.config["model1"]['grad_clip'])
             optimizer1.step() # wt updation  
             scheduler1.step() 
+            
             #print('step 1 instances gone:', (i+1)*self.batch_size)
 
             if ((i+1)*self.batch_size)% self.config['report_freq'] == 0:
                 self.logger.info('loss after %d instances: %d', (i+1)*self.batch_size, epoch_loss)
                 self.logger.info('bleu score after %d instances: %d', (i+1)*self.batch_size, calc_bleu(en_input, lm_labels, self.model1, tokenizer))
-        
+
         self.logger.info('Mean epoch loss for step 1: %d', (epoch_loss / num_train_batches))
         #print("Mean epoch loss for step 1:", (epoch_loss / num_train_batches))
         return ((epoch_loss / num_train_batches))
