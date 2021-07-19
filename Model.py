@@ -62,7 +62,7 @@ class TranslationModel:
             #print('step 1 instances gone:', (i+1)*self.batch_size)
 
             if ((i+1)*self.batch_size)% self.config['report_freq'] == 0:
-                self.logger.info('loss after %d instances: %d', (i+1)*self.batch_size, loss1.item())
+                self.logger.info('loss after %d instances: %d', (i+1)*self.batch_size, epoch_loss)
                 self.logger.info('bleu score after %d instances: %d', (i+1)*self.batch_size, calc_bleu(en_input, lm_labels, self.model1, tokenizer))
         
         self.logger.info('Mean epoch loss for step 1: %d', (epoch_loss / num_train_batches))
@@ -92,7 +92,7 @@ class TranslationModel:
             #print('step 2 instances gone:', (i+1)*self.batch_size)
             
             if ((i+1)*self.batch_size)% self.config['report_freq'] == 0:
-                self.logger.info('loss after %d instances: %d', (i+1)*self.batch_size, loss2.item())
+                self.logger.info('loss after %d instances: %d', (i+1)*self.batch_size, epoch_loss)
                 self.logger.info('bleu score after %d instances: %d', (i+1)*self.batch_size, calc_bleu(en_input, new_labels, self.model2, tokenizer))
 
         self.logger.info('Mean epoch loss for step 2: %d', (epoch_loss / num_train_batches))
@@ -124,6 +124,7 @@ class TranslationModel:
 
             loss3.backward(inputs=list(self.model2.parameters()), retain_graph=True)
 
+            
             '''
             Implementation of chain rule: eq 8,9 and 10
             Note: conidering E and F in the paper as Wo -> first MT model's weights, W as weights of
@@ -138,16 +139,19 @@ class TranslationModel:
             r=1e-2
             vector=[]
             for param in self.model2.parameters():
-                param.to(self.device)
+                # param.to(self.device)
                 if param.grad!=None:
-                    vector.append(param.grad.data.to(self.device))
+                    # vector.append(param.grad.data.to(self.device))
+                    vector.append(param.grad.data)
                 else:
-                    vector.append(torch.ones(1).to(self.device))
+                    # vector.append(torch.ones(1).to(self.device))
+                    vector.append(torch.ones(1))
             
-            R = r / _concat(vector, self.device).norm().to(self.device)
+            #R = r / _concat(vector, self.device).norm().to(self.device)
+            R = r / _concat(vector, self.device).norm()
             print(R)
             for p, v in zip(self.model2.parameters(), vector):
-                p.data.to(self.device)
+                # p.data.to(self.device)
                 p.data.add_(alpha=R, other=v)
                         
             #calculate loss
@@ -162,7 +166,7 @@ class TranslationModel:
             grads_p=torch.autograd.grad(loss2, self.model1.parameters(), allow_unused=True, retain_graph=True)
 
             for p, v in zip(self.model2.parameters(), vector):
-                p.data.to(self.device)
+                # p.data.to(self.device)
                 p.data.sub_(alpha=2 * R, other=v)
                
             
@@ -178,19 +182,21 @@ class TranslationModel:
             grads_n = torch.autograd.grad(loss2, self.model1.parameters(), allow_unused=True, retain_graph=True)
 
             for p, v in zip(self.model2.parameters(), vector):
-                p.data.to(self.device)
+                # p.data.to(self.device)
                 p.data.add_(R, v)
 
             vector=[]
             for x,y in zip(grads_p, grads_n):
                 if x!=None and y!=None:
-                    vector.append(((x - y).div_(2 * R)).to(self.device))
+                    # vector.append(((x - y).div_(2 * R)).to(self.device))
+                    vector.append(((x - y).div_(2 * R)))
                 else:
-                    vector.append(torch.ones(1, device=self.device))
+                    # vector.append(torch.ones(1, device=self.device))
+                    vector.append(torch.ones(1))
 
             # calculate delL/delA = delWo/delA x delW/delWo x delL/delW 
             for p, v in zip(self.model1.parameters(), vector):
-                p.to(self.device)
+                #p.to(self.device)
                 p.data.add_(alpha=R, other=v)
                 
             #calculate loss
@@ -203,7 +209,7 @@ class TranslationModel:
             grads_p=torch.autograd.grad(loss1, a, allow_unused=True, retain_graph=True)
 
             for p, v in zip(self.model1.parameters(), vector):
-                p.to(self.device)
+                #p.to(self.device)
                 p.data.sub_(2 * R, v)
             
             #calculate loss
@@ -216,7 +222,7 @@ class TranslationModel:
             grads_n=torch.autograd.grad(loss1, a, allow_unused=True, retain_graph=True)
 
             for p, v in zip(self.model1.parameters(), vector):
-                p.to(self.device)
+                #p.to(self.device)
                 p.data.add_(R, v)
 
             A.grad[a_ind:a_ind+self.batch_size]=[(x - y).div_(2 * R) for x, y in zip(grads_p, grads_n)][0]
@@ -227,7 +233,7 @@ class TranslationModel:
             a_ind+=self.batch_size
             print('step 3 instances gone:', (i+1)*self.batch_size)
             if (i+1)%2 == 0:
-                self.logger.info('loss after %d instances: %d', (i+1)*self.batch_size, loss2.item())
+                self.logger.info('loss after %d instances: %d', (i+1)*self.batch_size, epoch_loss)
                 self.logger.info('bleu score after %d instances: %d', (i+1)*self.batch_size, calc_bleu(en_input, lm_labels, self.model2, tokenizer))
 
         self.logger.info('Mean epoch loss for step 2: %d', (epoch_loss / len(valid_dataloader))) 
