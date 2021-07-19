@@ -46,8 +46,10 @@ class createBatchesA(Dataset):
 def _concat(xs, device):
   p=[]
   for x in xs:
-    p.append(x.view(-1).to(device))
-  return (torch.cat(p).to(device))
+    #p.append(x.view(-1).to(device))
+    p.append(x.view(-1))
+  #return (torch.cat(p).to(device))
+  return (torch.cat(p))
 
 def loadTokenizer(train_en_file, encparams, train_de_file, decparams):
   en_tok_path = encparams["tokenizer_path"]
