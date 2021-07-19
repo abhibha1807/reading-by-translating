@@ -74,8 +74,8 @@ def run():
     #initialize models.
     mdl=TranslationModel(device, batch_size, logging, config)
 
-    optimizer1 = torch.optim.Adam(mdl.model1.parameters(), lr=model1params['lr'], weight_decay=model1params['weight_decay'])
-    optimizer2 = torch.optim.Adam(mdl.model2.parameters(), lr=model2params['lr'],  weight_decay=model2params['weight_decay'])
+    optimizer1 = torch.optim.Adam(mdl.model1.parameters(), lr=model1params['lr'], weight_decay=model1params['weight_decay']).to(device) 
+    optimizer2 = torch.optim.Adam(mdl.model2.parameters(), lr=model2params['lr'],  weight_decay=model2params['weight_decay']).to(device) 
     criterion = nn.NLLLoss(ignore_index=de_tokenizer.pad_token_id)
 
     #training and validation datasets
@@ -109,8 +109,8 @@ def run():
     print('valid:', len(valid_dataset))
 
     #initiliaze matrix A
-    A=torch.rand(len(train_dataset), requires_grad=True, device =device)
-    optimizer3 = torch.optim.SGD([A], lr=config["learning_rateA"])
+    A=torch.rand(len(train_dataset), requires_grad=True, device = device)
+    optimizer3 = torch.optim.SGD([A], lr=config["learning_rateA"]).to(device) 
     torch.multiprocessing.freeze_support()
     A_batch = DataLoader(createBatchesA(A), batch_size=batch_size)
     
@@ -124,15 +124,12 @@ def run():
     for epoch in range(config["num_epochs"]):
         print('\n')
         print("Starting epoch", epoch+1)
-        scheduler1.step()
-        scheduler2.step()
-        scheduler3.step()
       
-        epoch_loss1 = mdl.train_model1(A_batch, train_dataloader, optimizer1, de_tokenizer, criterion)
+        epoch_loss1 = mdl.train_model1(A_batch, train_dataloader, optimizer1, de_tokenizer, criterion, scheduler1)
         writer.add_scalar('Loss/model1', epoch_loss1, epoch)
-        epoch_loss2 = mdl.train_model2(unlabeled_dataloader, optimizer2, de_tokenizer, criterion)# using the same training dataset for now.
+        epoch_loss2 = mdl.train_model2(unlabeled_dataloader, optimizer2, de_tokenizer, criterion, scheduler2)# using the same training dataset for now.
         writer.add_scalar('Loss/model2', epoch_loss2, epoch)
-        epoch_loss3 = mdl.val_model2( valid_dataloader, optimizer3, A, A_batch , de_tokenizer, criterion)
+        epoch_loss3 = mdl.val_model2( valid_dataloader, optimizer3, A, A_batch , de_tokenizer, criterion, scheduler3)
         writer.add_scalar('Loss/val', epoch_loss3, epoch)
         mdl.sav_model(config['model_path'])
 

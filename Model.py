@@ -27,19 +27,21 @@ class TranslationModel:
         self.device=device
         self.batch_size=batch_size
         if self.device=='cuda':
+            print('model in device:', self.device)
             self.model1.cuda()
             self.model2.cuda()
         self.logger=logging
         self.config=config
         
 
-    def train_model1(self, A_batch, train_dataloader, optimizer1, tokenizer, criterion):
+    def train_model1(self, A_batch, train_dataloader, optimizer1, tokenizer, criterion, scheduler1):
         self.model1.train()
         epoch_loss = 0
-        self.model1.train()
         optimizer1.zero_grad()
         num_train_batches = len(train_dataloader)
+
         for i, ((en_input, en_masks, de_output, de_masks), a) in enumerate(zip(train_dataloader, A_batch)):
+            
             optimizer1.zero_grad()
             en_input = en_input.to(self.device) 
             de_output = de_output.to(self.device)
@@ -48,14 +50,15 @@ class TranslationModel:
             lm_labels = de_output.clone().to(self.device)
 
             out = self.model1(input_ids=en_input, attention_mask=en_masks, decoder_input_ids=de_output, 
-                                decoder_attention_mask=de_masks, labels=lm_labels.clone())
+                                decoder_attention_mask=de_masks, labels=lm_labels)
                 
             predictions = F.log_softmax(out[1], dim=2)
             loss1=compute_loss1(predictions, de_output, a, self.device, criterion)
             epoch_loss+=loss1.item()
             loss1.backward(inputs=list(self.model1.parameters()), retain_graph=True) 
             torch.nn.utils.clip_grad_norm(self.model1.parameters(), self.config["model1"]['grad_clip'])
-            optimizer1.step() # wt updation   
+            optimizer1.step() # wt updation  
+            scheduler1.step() 
             #print('step 1 instances gone:', (i+1)*self.batch_size)
 
             if ((i+1)*self.batch_size)% self.config['report_freq'] == 0:
@@ -66,7 +69,7 @@ class TranslationModel:
         #print("Mean epoch loss for step 1:", (epoch_loss / num_train_batches))
         return ((epoch_loss / num_train_batches))
 
-    def train_model2(self, unlabeled_dataloader, optimizer2, tokenizer, criterion):
+    def train_model2(self, unlabeled_dataloader, optimizer2, tokenizer, criterion, scheduler2):
         epoch_loss=0
         optimizer2.zero_grad()
         self.model2.train()
@@ -85,6 +88,7 @@ class TranslationModel:
             loss2.backward(inputs=list(self.model2.parameters()), retain_graph=True)
             torch.nn.utils.clip_grad_norm(self.model2.parameters(), self.config["model2"]['grad_clip'])
             optimizer2.step()
+            scheduler2.step()
             #print('step 2 instances gone:', (i+1)*self.batch_size)
             
             if ((i+1)*self.batch_size)% self.config['report_freq'] == 0:
@@ -98,7 +102,7 @@ class TranslationModel:
 
     
         
-    def val_model2(self, valid_dataloader, optimizer3, A, A_batch, tokenizer, criterion):
+    def val_model2(self, valid_dataloader, optimizer3, A, A_batch, tokenizer, criterion, scheduler3):
         epoch_loss=0
         self.model2.train()
         a_ind=0
@@ -219,6 +223,7 @@ class TranslationModel:
           
             # torch.nn.utils.clip_grad_norm_(A, 1e-2) 
             optimizer3.step()
+            scheduler3.step()
             a_ind+=self.batch_size
             print('step 3 instances gone:', (i+1)*self.batch_size)
             if (i+1)%2 == 0:
