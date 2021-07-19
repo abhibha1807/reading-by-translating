@@ -29,7 +29,10 @@ def calc_bleu(en_input, lm_labels, model, tokenizer):
     while (len(can)<len(ref)):
       can.append('[PAD]')
     print(len(can), len(ref))
-    score+=(bleu_score(can, ref))
+    try:
+      score+=(bleu_score(can, ref))
+    except:
+      pass
   return(score/en_input.shape[0])
 
 # creates a dataloader for weight matrix A 

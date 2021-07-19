@@ -73,7 +73,8 @@ class TranslationModel:
         epoch_loss=0
         optimizer2.zero_grad()
         self.model2.train()
-        num_train_batches = len(unlabeled_dataloader)
+        # num_train_batches = len(unlabeled_dataloader)
+        num_train_batches = 2
         for i, (en_input, en_masks, de_output, de_masks) in enumerate(unlabeled_dataloader):
             en_input = en_input.to(self.device)
             outputs=self.model1(input_ids=en_input, decoder_input_ids=en_input, output_hidden_states=True, return_dict=True)
