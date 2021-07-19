@@ -74,8 +74,8 @@ def run():
     #initialize models.
     mdl=TranslationModel(device, batch_size, logging, config)
 
-    optimizer1 = torch.optim.Adam(mdl.model1.parameters(), lr=model1params['lr'], weight_decay=model1params['weight_decay']).to(device) 
-    optimizer2 = torch.optim.Adam(mdl.model2.parameters(), lr=model2params['lr'],  weight_decay=model2params['weight_decay']).to(device) 
+    optimizer1 = torch.optim.Adam(mdl.model1.parameters(), lr=model1params['lr'], weight_decay=model1params['weight_decay'])
+    optimizer2 = torch.optim.Adam(mdl.model2.parameters(), lr=model2params['lr'],  weight_decay=model2params['weight_decay'])
     criterion = nn.NLLLoss(ignore_index=de_tokenizer.pad_token_id)
 
     #training and validation datasets
@@ -110,7 +110,7 @@ def run():
 
     #initiliaze matrix A
     A=torch.rand(len(train_dataset), requires_grad=True, device = device)
-    optimizer3 = torch.optim.SGD([A], lr=config["learning_rateA"]).to(device) 
+    optimizer3 = torch.optim.SGD([A], lr=config["learning_rateA"])
     torch.multiprocessing.freeze_support()
     A_batch = DataLoader(createBatchesA(A), batch_size=batch_size)
     
