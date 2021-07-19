@@ -141,11 +141,11 @@ class TranslationModel:
             for param in self.model2.parameters():
                 # param.to(self.device)
                 if param.grad!=None:
-                    # vector.append(param.grad.data.to(self.device))
-                    vector.append(param.grad.data)
+                    vector.append(param.grad.data.to(self.device))
+                    #vector.append(param.grad.data)
                 else:
-                    # vector.append(torch.ones(1).to(self.device))
-                    vector.append(torch.ones(1))
+                    vector.append(torch.ones(1).to(self.device))
+                    #vector.append(torch.ones(1))
             
             #R = r / _concat(vector, self.device).norm().to(self.device)
             R = r / _concat(vector, self.device).norm()
@@ -153,7 +153,7 @@ class TranslationModel:
             for p, v in zip(self.model2.parameters(), vector):
                 # p.data.to(self.device)
                 p.data.add_(alpha=R, other=v)
-                p.data.to(self.device)
+                #p.data.to(self.device)
                         
             #calculate loss
             outputs=self.model1(input_ids=en_input, decoder_input_ids=en_input, output_hidden_states=True, return_dict=True)
