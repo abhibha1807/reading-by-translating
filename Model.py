@@ -125,6 +125,10 @@ class TranslationModel:
 
             loss3.backward(inputs=list(self.model2.parameters()), retain_graph=True)
 
+            if ((i+1)*self.batch_size)% self.config['report_freq'] == 0:
+                self.logger.info('loss after %d instances: %d', (i+1)*self.batch_size, epoch_loss)
+                self.logger.info('bleu score after %d instances: %d', (i+1)*self.batch_size, calc_bleu(en_input, lm_labels, self.model2, tokenizer))
+
             
             '''
             Implementation of chain rule: eq 8,9 and 10
@@ -260,11 +264,8 @@ class TranslationModel:
             scheduler3.step()
             a_ind+=self.batch_size
             print('step 3 instances gone:', (i+1)*self.batch_size)
-            if (i+1)%2 == 0:
-                self.logger.info('loss after %d instances: %d', (i+1)*self.batch_size, epoch_loss)
-                self.logger.info('bleu score after %d instances: %d', (i+1)*self.batch_size, calc_bleu(en_input, lm_labels, self.model2, tokenizer))
-
-        self.logger.info('Mean epoch loss for step 2: %d', (epoch_loss / len(valid_dataloader))) 
+          
+        self.logger.info('Mean epoch loss for step 3: %d', (epoch_loss / len(valid_dataloader))) 
             
         #print("Mean epoch loss for step 3:", (epoch_loss / len(valid_dataloader)))
         return (epoch_loss / len(valid_dataloader))
