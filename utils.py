@@ -49,7 +49,9 @@ def _concat(xs, device):
     #p.append(x.view(-1).to(device))
     p.append(x.view(-1))
   #return (torch.cat(p).to(device))
-  return (torch.cat(p))
+  y=torch.cat(p)
+  print(y)
+  return y
 
 def loadTokenizer(train_en_file, encparams, train_de_file, decparams):
   en_tok_path = encparams["tokenizer_path"]
