@@ -23,12 +23,12 @@ def calc_bleu(en_input, lm_labels, model, tokenizer):
   for i in range(len(candidate)):
     score=0
     can = candidate[i].split(' ')
-    print(can)
+    #print(can)
     ref = reference[i].split(' ')
-    print(ref)
+    #print(ref)
     while (len(can)<len(ref)):
       can.append('[PAD]')
-    print(len(can), len(ref))
+    #print(len(can), len(ref))
     try:
       score+=(bleu_score(can, ref))
     except:
