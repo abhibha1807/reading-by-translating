@@ -27,10 +27,9 @@ class TranslationModel:
         self.device=device
         self.batch_size=batch_size
         print(device)
-        if device=='cuda':
-            print('model in device:', self.device)
-            self.model1.cuda()
-            self.model2.cuda()
+        print('model in device:', self.device)
+        self.model1 = self.model1.cuda()
+        self.model2 = self.model2.cuda()
         self.logger=logging
         self.config=config
         
