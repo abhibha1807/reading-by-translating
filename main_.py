@@ -137,7 +137,7 @@ def run():
         torch.cuda.empty_cache()
         epoch_loss3 = mdl.val_model2( valid_dataloader, optimizer3, A, A_batch , de_tokenizer, criterion, scheduler3)
         writer.add_scalar('Loss/val', epoch_loss3, epoch)
-        #mdl.save_model(config['model_path'])
+        mdl.save_model(config['model_path'])
 
     writer.close()
 

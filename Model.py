@@ -65,6 +65,15 @@ class TranslationModel:
             if ((i+1)*self.batch_size)% self.config['report_freq'] == 0:
                 self.logger.info('loss after %d instances: %d', (i+1)*self.batch_size, epoch_loss)
                 self.logger.info('bleu score after %d instances: %d', (i+1)*self.batch_size, calc_bleu(en_input, lm_labels, self.model1, tokenizer))
+            
+            del en_input
+            del de_output
+            del en_masks
+            del de_masks
+            del lm_labels
+            del out
+            del loss1
+
 
         self.logger.info('Mean epoch loss for step 1: %d', (epoch_loss / num_train_batches))
         #print("Mean epoch loss for step 1:", (epoch_loss / num_train_batches))
@@ -96,6 +105,14 @@ class TranslationModel:
             if ((i+1)*self.batch_size)% self.config['report_freq'] == 0:
                 self.logger.info('loss after %d instances: %d', (i+1)*self.batch_size, epoch_loss)
                 self.logger.info('bleu score after %d instances: %d', (i+1)*self.batch_size, calc_bleu(en_input, new_labels, self.model2, tokenizer))
+
+            del en_input
+            del de_output
+            del en_masks
+            del de_masks
+            del new_labels
+            del out
+            del loss2
 
         self.logger.info('Mean epoch loss for step 2: %d', (epoch_loss / num_train_batches))
         
