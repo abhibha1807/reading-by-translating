@@ -110,7 +110,7 @@ def run():
     print('valid:', len(valid_dataset))
 
     #initiliaze matrix A
-    A=torch.rand(len(train_dataset), requires_grad=True, device = device)
+    A=torch.rand(len(train_dataset), requires_grad=True, device = 'cpu')
     optimizer3 = torch.optim.SGD([A], lr=config["learning_rateA"])
     torch.multiprocessing.freeze_support()
     A_batch = DataLoader(createBatchesA(A), batch_size=batch_size)
