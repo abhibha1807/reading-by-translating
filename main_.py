@@ -21,7 +21,7 @@ torch.autograd.set_detect_anomaly(True)
 import logging 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print("Using device:", device)
-from pynvml import *
+# from pynvml import *
 import logging
 from time import gmtime, strftime
 
@@ -135,25 +135,35 @@ def run():
         epoch_loss1 = mdl.train_model1(A_batch, train_dataloader, optimizer1, de_tokenizer, criterion, scheduler1)
         writer.add_scalar('Loss/model1', epoch_loss1, epoch)
 
+        t = torch.cuda.get_device_properties(0).total_memory
+        r = torch.cuda.memory_reserved(0) 
+        a = torch.cuda.memory_allocated(0)
+        f = r-a  # free inside reserved
+        print('freeeee:', f)
        
-        nvmlInit()
-        h = nvmlDeviceGetHandleByIndex(0)
-        info = nvmlDeviceGetMemoryInfo(h)
-        print(f'total    : {info.total}')
-        print(f'free     : {info.free}')
-        print(f'used     : {info.used}')
+        # nvmlInit()
+        # h = nvmlDeviceGetHandleByIndex(0)
+        # info = nvmlDeviceGetMemoryInfo(h)
+        # print(f'total    : {info.total}')
+        # print(f'free     : {info.free}')
+        # print(f'used     : {info.used}')
 
         # mdl.model2 =  mdl.model2.cuda()
         epoch_loss2 = mdl.train_model2(unlabeled_dataloader, optimizer2, de_tokenizer, criterion, scheduler2)# using the same training dataset for now.
         writer.add_scalar('Loss/model2', epoch_loss2, epoch)
         
-      
-        nvmlInit()
-        h = nvmlDeviceGetHandleByIndex(0)
-        info = nvmlDeviceGetMemoryInfo(h)
-        print(f'total    : {info.total}')
-        print(f'free     : {info.free}')
-        print(f'used     : {info.used}')
+        t = torch.cuda.get_device_properties(0).total_memory
+        r = torch.cuda.memory_reserved(0) 
+        a = torch.cuda.memory_allocated(0)
+        f = r-a  # free inside reserved
+        print('freeeee:', f)
+        
+        # nvmlInit()
+        # h = nvmlDeviceGetHandleByIndex(0)
+        # info = nvmlDeviceGetMemoryInfo(h)
+        # print(f'total    : {info.total}')
+        # print(f'free     : {info.free}')
+        # print(f'used     : {info.used}')
 
         epoch_loss3 = mdl.val_model2(valid_dataloader, optimizer3, A, A_batch , de_tokenizer, criterion, scheduler3)
         writer.add_scalar('Loss/val', epoch_loss3, epoch)
