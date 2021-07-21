@@ -50,7 +50,7 @@ def run():
     if not torch.cuda.is_available():
         logging.info('no gpu device available')
         sys.exit(1)
-        
+
     configfile = args.config
     with open(configfile, "r") as f:
         config = json.load(f)

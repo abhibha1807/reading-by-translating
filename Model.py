@@ -65,6 +65,7 @@ class TranslationModel:
             if ((i+1)*self.batch_size)% self.config['report_freq'] == 0:
                 self.logger.info('loss after %d instances: %d', (i+1)*self.batch_size, epoch_loss)
                 self.logger.info('bleu score after %d instances: %d', (i+1)*self.batch_size, calc_bleu(en_input, lm_labels, self.model1, tokenizer))
+                break
             
         self.logger.info('Mean epoch loss for step 1: %d', (epoch_loss / num_train_batches))
         #print("Mean epoch loss for step 1:", (epoch_loss / num_train_batches))
@@ -74,8 +75,8 @@ class TranslationModel:
         epoch_loss=0
         optimizer2.zero_grad()
         self.model2.train()
-        # num_train_batches = len(unlabeled_dataloader)
-        num_train_batches = 2
+        num_train_batches = len(unlabeled_dataloader)
+        # num_train_batches = 2
         for i, (en_input, en_masks, de_output, de_masks) in enumerate(unlabeled_dataloader):
             en_input = en_input.to(self.device)
             outputs=self.model1(input_ids=en_input, decoder_input_ids=en_input, output_hidden_states=True, return_dict=True)
@@ -118,12 +119,12 @@ class TranslationModel:
             lm_labels = de_output.clone().to(self.device)
             
             out=self.model2(input_ids=en_input, attention_mask=en_masks, decoder_input_ids=de_output, 
-                            decoder_attention_mask=de_masks, labels=de_output.clone())
+                            decoder_attention_mask=de_masks, labels=lm_labels)
             predictions = F.log_softmax(out[1], dim=2)
             loss3 = compute_loss2(predictions, de_output, 'cpu', criterion)
             # print('loss3:', loss3)
             epoch_loss+=loss3.item()
-
+            del out
             loss3.backward(inputs=list(self.model2.parameters()), retain_graph=True)
 
             if ((i+1)*self.batch_size)% self.config['report_freq'] == 0:
@@ -169,9 +170,11 @@ class TranslationModel:
             out=self.model2(input_ids=en_input, decoder_inputs_embeds=outputs.decoder_hidden_states[-1], labels=new_labels)
             predictions = F.log_softmax(out[1], dim=2)
             loss2=compute_loss2(predictions, new_labels, 'cpu', criterion)
+            print('loss2:', loss2)
             
             grads_p=torch.autograd.grad(loss2, self.model1.parameters(), allow_unused=True, retain_graph=True)
-
+            print('gradsp:', (grads_p)[0])
+            
             del loss2
             del predictions
             del out 
@@ -187,13 +190,13 @@ class TranslationModel:
             outputs=self.model1(input_ids=en_input, decoder_input_ids=en_input, output_hidden_states=True, return_dict=True)
             predictions = F.log_softmax(outputs.logits, dim=2)
             values, new_labels = torch.max(predictions, 2)
-            
+            del values
             out=self.model2(input_ids=en_input, decoder_inputs_embeds=outputs.decoder_hidden_states[-1], labels=new_labels)
             predictions = F.log_softmax(out[1], dim=2)
             loss2=compute_loss2(predictions, new_labels, 'cpu', criterion)
         
             grads_n = torch.autograd.grad(loss2, self.model1.parameters(), allow_unused=True, retain_graph=True)
-
+            print('gradsn:', (grads_n)[0])
             del loss2
             del predictions
             del out 
@@ -203,6 +206,8 @@ class TranslationModel:
             for p, v in zip(self.model2.parameters(), vector):
                 # p.data.to(self.device)
                 p.data.add_(R, v)
+            
+            del vector
 
             vector=[]
             for x,y in zip(grads_p, grads_n):
@@ -223,13 +228,15 @@ class TranslationModel:
                 
             #calculate loss
             out = self.model1(input_ids=en_input, attention_mask=en_masks, decoder_input_ids=de_output, 
-                                decoder_attention_mask=de_masks, labels=lm_labels.clone())
+                                decoder_attention_mask=de_masks, labels=lm_labels)
                 
             predictions = F.log_softmax(out[1], dim=2)
             loss1=compute_loss1(predictions, de_output, a, 'cpu', criterion)    
-
+            print('loss1:', loss1)
+            
             grads_p=torch.autograd.grad(loss1, a, allow_unused=True, retain_graph=True)
-
+            print('gradsp:', (grads_p)[0])
+            
             for p, v in zip(self.model1.parameters(), vector):
                 p.to(self.device)
                 p.data.sub_(2 * R, v)
@@ -246,7 +253,7 @@ class TranslationModel:
             loss1=compute_loss1(predictions, de_output, a, 'cpu', criterion)    
 
             grads_n=torch.autograd.grad(loss1, a, allow_unused=True, retain_graph=True)
-
+            print('gradsn:', (grads_n)[0])
             del out
             del predictions
             del loss1
