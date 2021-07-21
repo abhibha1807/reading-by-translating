@@ -74,6 +74,7 @@ class TranslationModel:
         del loss1
         del out
         del predictions
+
         self.logger.info('Mean epoch loss for step 1: %d', (epoch_loss / num_train_batches))
         #print("Mean epoch loss for step 1:", (epoch_loss / num_train_batches))
         return ((epoch_loss / num_train_batches))
@@ -122,7 +123,7 @@ class TranslationModel:
         
     def val_model2(self, valid_dataloader, optimizer3, A, A_batch, tokenizer, criterion, scheduler3):
         epoch_loss=0
-        self.model2.eval()
+        self.model2.train()
         a_ind=0
         optimizer3.zero_grad()
         A.grad=torch.zeros(len(A), device='cpu')
