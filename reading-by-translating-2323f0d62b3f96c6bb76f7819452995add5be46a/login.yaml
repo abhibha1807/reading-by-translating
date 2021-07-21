@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: abhibha-login
+spec:
+  containers:
+  - name: vol-container
+    image: gitlab-registry.nautilus.optiputer.net/yol070/research-containers/research-login-v2
+    command: ["/bin/bash"]
+    args: ["-c", "sleep infinity"]
+    resources:
+      requests:
+        memory: "8Gi"
+        cpu: 2
+      limits:
+        nvidia.com/gpu: 1
+        memory: "8Gi"
+        cpu: 2
+    volumeMounts:
+    - name: abhibha-volume     #use your own volune path
+      mountPath: /abhibha-volume
+  restartPolicy: Never
+  volumes:
+    - name: abhibha-volume
+      persistentVolumeClaim:
+        claimName: abhibha-volume
