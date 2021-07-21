@@ -66,14 +66,14 @@ class TranslationModel:
                 self.logger.info('loss after %d instances: %d', (i+1)*self.batch_size, epoch_loss)
                 self.logger.info('bleu score after %d instances: %d', (i+1)*self.batch_size, calc_bleu(en_input, lm_labels, self.model1, tokenizer))
                 # break
-        del en_input
-        del de_output
-        del en_masks
-        del de_masks
-        del lm_labels
-        del loss1
-        del out
-        del predictions
+        # del en_input
+        # del de_output
+        # del en_masks
+        # del de_masks
+        # del lm_labels
+        # del loss1
+        # del out
+        # del predictions
 
         self.logger.info('Mean epoch loss for step 1: %d', (epoch_loss / num_train_batches))
         #print("Mean epoch loss for step 1:", (epoch_loss / num_train_batches))
@@ -106,14 +106,14 @@ class TranslationModel:
                 self.logger.info('loss after %d instances: %d', (i+1)*self.batch_size, epoch_loss)
                 self.logger.info('bleu score after %d instances: %d', (i+1)*self.batch_size, calc_bleu(en_input, new_labels, self.model2, tokenizer))
 
-        del en_input
-        del de_output
-        del en_masks
-        del de_masks
-        del new_labels
-        del loss2
-        del out
-        del predictions
+        # del en_input
+        # del de_output
+        # del en_masks
+        # del de_masks
+        # del new_labels
+        # del loss2
+        # del out
+        # del predictions
         self.logger.info('Mean epoch loss for step 2: %d', (epoch_loss / num_train_batches))
         
         #print("Mean epoch loss for step 2:", (epoch_loss / num_train_batches))
@@ -123,10 +123,11 @@ class TranslationModel:
         
     def val_model2(self, valid_dataloader, optimizer3, A, A_batch, tokenizer, criterion, scheduler3):
         epoch_loss=0
-        self.model2.train()
+        self.model2.eval()
         a_ind=0
         optimizer3.zero_grad()
         A.grad=torch.zeros(len(A), device='cpu')
+        print('len A.grad:', len(A.grad))
         for i, ((en_input, en_masks, de_output, de_masks), a) in enumerate(zip(valid_dataloader, A_batch)):
             en_input = en_input.to(self.device)
             de_output = de_output.to(self.device)
