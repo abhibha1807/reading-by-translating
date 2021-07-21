@@ -148,7 +148,7 @@ class TranslationModel:
             #print(len(vector))
             #print('vector 0:', vector[0])
             # R = r / _concat(vector).norm().to(device)
-            R = r / _concat(vector).norm().to(self.device)
+            R = r / _concat(vector, self.device).norm().to(self.device)
 
             print(R)
             print(vector[0])
