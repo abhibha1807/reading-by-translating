@@ -120,11 +120,11 @@ def run():
     A_batch = DataLoader(createBatchesA(A), batch_size=batch_size)
     
     writer = SummaryWriter()
-
     scheduler1 = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer1, float(config['num_epochs']), eta_min=model1params["learning_rate_min"])
     scheduler2 = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer2, float(config['num_epochs']), eta_min=model2params["learning_rate_min"])
     scheduler3 = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer3, float(config['num_epochs']), eta_min=config["learning_rate_min"])
 
+    
     #main training loop
     for epoch in range(config["num_epochs"]):
         print('\n')
@@ -138,7 +138,7 @@ def run():
         epoch_loss2 = mdl.train_model2(unlabeled_dataloader, optimizer2, de_tokenizer, criterion, scheduler2)# using the same training dataset for now.
         writer.add_scalar('Loss/model2', epoch_loss2, epoch)
         gc.collect()
-        torch.cuda.empty_cache()
+        torch.cuda.empty_cache() 
         epoch_loss3 = mdl.val_model2( valid_dataloader, optimizer3, A, A_batch , de_tokenizer, criterion, scheduler3)
         writer.add_scalar('Loss/val', epoch_loss3, epoch)
         mdl.save_model(config['model_path'])
