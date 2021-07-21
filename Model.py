@@ -74,7 +74,6 @@ class TranslationModel:
         del loss1
         del out
         del predictions
-
         self.logger.info('Mean epoch loss for step 1: %d', (epoch_loss / num_train_batches))
         #print("Mean epoch loss for step 1:", (epoch_loss / num_train_batches))
         return ((epoch_loss / num_train_batches))
