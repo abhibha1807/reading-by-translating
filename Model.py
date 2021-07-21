@@ -222,7 +222,7 @@ class TranslationModel:
             del new_labels
 
             for p, v in zip(self.model2.parameters(), vector):
-                # p.data.to(self.device)
+                p.data.to(self.device)
                 p.data.add_(R, v)
             
             del vector
