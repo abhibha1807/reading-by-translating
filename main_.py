@@ -47,6 +47,10 @@ def run():
     Function responsible for loading data, tokenizers, optimizers, schedulers
     and executing the main training loop 
     '''
+    if not torch.cuda.is_available():
+        logging.info('no gpu device available')
+        sys.exit(1)
+        
     configfile = args.config
     with open(configfile, "r") as f:
         config = json.load(f)
