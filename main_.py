@@ -139,8 +139,8 @@ def run():
         epoch_loss2 = mdl.train_model2(unlabeled_dataloader, optimizer2, de_tokenizer, criterion, scheduler2)# using the same training dataset for now.
         writer.add_scalar('Loss/model2', epoch_loss2, epoch)
         
-        # epoch_loss3 = mdl.val_model2( valid_dataloader, optimizer3, A, A_batch , de_tokenizer, criterion, scheduler3)
-        # writer.add_scalar('Loss/val', epoch_loss3, epoch)
+        epoch_loss3 = mdl.val_model2( valid_dataloader, optimizer3, A, A_batch , de_tokenizer, criterion, scheduler3)
+        writer.add_scalar('Loss/val', epoch_loss3, epoch)
         
         # mdl.save_model(config['model_path'])
 
