@@ -35,70 +35,72 @@ class TranslationModel:
         
 
     def train_model1(self, A_batch, train_dataloader, optimizer1, tokenizer, criterion, scheduler1):
-        self.model1.train()
-        epoch_loss = 0
-        optimizer1.zero_grad()
-        num_train_batches = len(train_dataloader)
-
-        for i, ((en_input, en_masks, de_output, de_masks), a) in enumerate(zip(train_dataloader, A_batch)):
-            
+        with torch.no_grad():
+            self.model1.train()
+            epoch_loss = 0
             optimizer1.zero_grad()
-            en_input = en_input.to(self.device) 
-            de_output = de_output.to(self.device)
-            en_masks = en_masks.to(self.device)
-            de_masks = de_masks.to(self.device)
-            lm_labels = de_output.clone().to(self.device)
+            num_train_batches = len(train_dataloader)
 
-            out = self.model1(input_ids=en_input, attention_mask=en_masks, decoder_input_ids=de_output, 
-                                decoder_attention_mask=de_masks, labels=lm_labels)
+            for i, ((en_input, en_masks, de_output, de_masks), a) in enumerate(zip(train_dataloader, A_batch)):
                 
-            predictions = F.log_softmax(out[1], dim=2)
-            loss1=compute_loss1(predictions, de_output, a, self.device , criterion)
-            epoch_loss+=loss1.item()
-            loss1.backward(inputs=list(self.model1.parameters()), retain_graph=True) 
-            torch.nn.utils.clip_grad_norm_(self.model1.parameters(), self.config["model1"]['grad_clip'])
-            optimizer1.step() # wt updation  
-            scheduler1.step() 
-            
-            #print('step 1 instances gone:', (i+1)*self.batch_size)
+                optimizer1.zero_grad()
+                en_input = en_input.to(self.device) 
+                de_output = de_output.to(self.device)
+                en_masks = en_masks.to(self.device)
+                de_masks = de_masks.to(self.device)
+                lm_labels = de_output.clone().to(self.device)
 
-            if ((i+1)*self.batch_size)% self.config['report_freq'] == 0:
-                self.logger.info('loss after %d instances: %d', (i+1)*self.batch_size, epoch_loss)
-                self.logger.info('bleu score after %d instances: %d', (i+1)*self.batch_size, calc_bleu(en_input, lm_labels, self.model1, tokenizer))
-                break
+                out = self.model1(input_ids=en_input, attention_mask=en_masks, decoder_input_ids=de_output, 
+                                    decoder_attention_mask=de_masks, labels=lm_labels)
+                    
+                predictions = F.log_softmax(out[1], dim=2)
+                loss1=compute_loss1(predictions, de_output, a, self.device , criterion)
+                epoch_loss+=loss1.item()
+                loss1.backward(inputs=list(self.model1.parameters()), retain_graph=True) 
+                torch.nn.utils.clip_grad_norm_(self.model1.parameters(), self.config["model1"]['grad_clip'])
+                optimizer1.step() # wt updation  
+                scheduler1.step() 
+                
+                #print('step 1 instances gone:', (i+1)*self.batch_size)
+
+                if ((i+1)*self.batch_size)% self.config['report_freq'] == 0:
+                    self.logger.info('loss after %d instances: %d', (i+1)*self.batch_size, epoch_loss)
+                    self.logger.info('bleu score after %d instances: %d', (i+1)*self.batch_size, calc_bleu(en_input, lm_labels, self.model1, tokenizer))
+                    break
 
         self.logger.info('Mean epoch loss for step 1: %d', (epoch_loss / num_train_batches))
         #print("Mean epoch loss for step 1:", (epoch_loss / num_train_batches))
         return ((epoch_loss / num_train_batches))
 
     def train_model2(self, unlabeled_dataloader, optimizer2, tokenizer, criterion, scheduler2):
-        epoch_loss=0
-        optimizer2.zero_grad()
-        self.model2.train()
-        num_train_batches = len(unlabeled_dataloader)
-        # num_train_batches = 2
-        for i, (en_input, en_masks, de_output, de_masks) in enumerate(unlabeled_dataloader):
+        with torch.no_grad():
+            epoch_loss=0
             optimizer2.zero_grad()
-            en_input = en_input.to(self.device)
-            outputs=self.model1(input_ids=en_input, decoder_input_ids=en_input, output_hidden_states=True, return_dict=True)
-            predictions = F.log_softmax(outputs.logits, dim=2)
-            values, new_labels = torch.max(predictions, 2)
-            
-            out=self.model2(input_ids=en_input, decoder_inputs_embeds=outputs.decoder_hidden_states[-1], labels=new_labels)
-            predictions = F.log_softmax(out[1], dim=2)
-            loss2=compute_loss2(predictions, new_labels, self.device, criterion)
+            self.model2.train()
+            num_train_batches = len(unlabeled_dataloader)
+            # num_train_batches = 2
+            for i, (en_input, en_masks, de_output, de_masks) in enumerate(unlabeled_dataloader):
+                optimizer2.zero_grad()
+                en_input = en_input.to(self.device)
+                outputs=self.model1(input_ids=en_input, decoder_input_ids=en_input, output_hidden_states=True, return_dict=True)
+                predictions = F.log_softmax(outputs.logits, dim=2)
+                values, new_labels = torch.max(predictions, 2)
+                
+                out=self.model2(input_ids=en_input, decoder_inputs_embeds=outputs.decoder_hidden_states[-1], labels=new_labels)
+                predictions = F.log_softmax(out[1], dim=2)
+                loss2=compute_loss2(predictions, new_labels, self.device, criterion)
 
-            epoch_loss += loss2.item()
-            loss2.backward(inputs=list(self.model2.parameters()), retain_graph=True)
-            torch.nn.utils.clip_grad_norm_(self.model2.parameters(), self.config["model2"]['grad_clip'])
-            optimizer2.step()
-            scheduler2.step()
-            #print('step 2 instances gone:', (i+1)*self.batch_size)
-            
-            if ((i+1)*self.batch_size)% self.config['report_freq'] == 0:
-                self.logger.info('loss after %d instances: %d', (i+1)*self.batch_size, epoch_loss)
-                self.logger.info('bleu score after %d instances: %d', (i+1)*self.batch_size, calc_bleu(en_input, new_labels, self.model2, tokenizer))
-                break
+                epoch_loss += loss2.item()
+                loss2.backward(inputs=list(self.model2.parameters()), retain_graph=True)
+                torch.nn.utils.clip_grad_norm_(self.model2.parameters(), self.config["model2"]['grad_clip'])
+                optimizer2.step()
+                scheduler2.step()
+                #print('step 2 instances gone:', (i+1)*self.batch_size)
+                
+                if ((i+1)*self.batch_size)% self.config['report_freq'] == 0:
+                    self.logger.info('loss after %d instances: %d', (i+1)*self.batch_size, epoch_loss)
+                    self.logger.info('bleu score after %d instances: %d', (i+1)*self.batch_size, calc_bleu(en_input, new_labels, self.model2, tokenizer))
+                    break
 
         self.logger.info('Mean epoch loss for step 2: %d', (epoch_loss / num_train_batches))
         
@@ -156,7 +158,7 @@ class TranslationModel:
             # print(p.shape, v.shape,c)
             #print('before:', p.data, v)
                 p.data.to(self.device)
-                print(p.data)
+                # print(p.data)
                 p.data.add_(alpha=R, other=v)
                 #print('after:', p.data)
                 # break
@@ -239,7 +241,7 @@ class TranslationModel:
             print('loss1:', loss1)
 
             grads_p=torch.autograd.grad(loss1, a, allow_unused=True, retain_graph=True)
-            grads_p[0].to(self.device)
+            # grads_p[0].to(self.device)
             print('grads_p:', grads_p[0])
 
             for p, v in zip(self.model1.parameters(), vector):
@@ -261,7 +263,7 @@ class TranslationModel:
             #print('loss1:', loss1)
 
             grads_n=torch.autograd.grad(loss1, a, allow_unused=True, retain_graph=True)
-            grads_n[0].to(self.device)
+            # grads_n[0].to(self.device)
             print('grads_n:', grads_n[0])
 
             del out
