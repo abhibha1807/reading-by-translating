@@ -29,7 +29,7 @@ class TranslationModel:
         print(device)
         print('model in device:', self.device)
         self.model1 = self.model1.cuda()
-        # self.model2 = self.model2.cuda()
+        self.model2 = self.model2.cuda()
         self.logger=logging
         self.config=config
         
@@ -65,15 +65,7 @@ class TranslationModel:
             if ((i+1)*self.batch_size)% self.config['report_freq'] == 0:
                 self.logger.info('loss after %d instances: %d', (i+1)*self.batch_size, epoch_loss)
                 self.logger.info('bleu score after %d instances: %d', (i+1)*self.batch_size, calc_bleu(en_input, lm_labels, self.model1, tokenizer))
-                # break
-        # del en_input
-        # del de_output
-        # del en_masks
-        # del de_masks
-        # del lm_labels
-        # del loss1
-        # del out
-        # del predictions
+                break
 
         self.logger.info('Mean epoch loss for step 1: %d', (epoch_loss / num_train_batches))
         #print("Mean epoch loss for step 1:", (epoch_loss / num_train_batches))
@@ -86,6 +78,7 @@ class TranslationModel:
         num_train_batches = len(unlabeled_dataloader)
         # num_train_batches = 2
         for i, (en_input, en_masks, de_output, de_masks) in enumerate(unlabeled_dataloader):
+            optimizer2.zero_grad()
             en_input = en_input.to(self.device)
             outputs=self.model1(input_ids=en_input, decoder_input_ids=en_input, output_hidden_states=True, return_dict=True)
             predictions = F.log_softmax(outputs.logits, dim=2)
@@ -105,15 +98,8 @@ class TranslationModel:
             if ((i+1)*self.batch_size)% self.config['report_freq'] == 0:
                 self.logger.info('loss after %d instances: %d', (i+1)*self.batch_size, epoch_loss)
                 self.logger.info('bleu score after %d instances: %d', (i+1)*self.batch_size, calc_bleu(en_input, new_labels, self.model2, tokenizer))
+                break
 
-        # del en_input
-        # del de_output
-        # del en_masks
-        # del de_masks
-        # del new_labels
-        # del loss2
-        # del out
-        # del predictions
         self.logger.info('Mean epoch loss for step 2: %d', (epoch_loss / num_train_batches))
         
         #print("Mean epoch loss for step 2:", (epoch_loss / num_train_batches))

@@ -114,7 +114,7 @@ def run():
     print('valid:', len(valid_dataset))
 
     #initiliaze matrix A
-    A=torch.rand(len(train_dataset), requires_grad=True, device = 'cpu')
+    A=torch.rand(len(train_dataset), requires_grad=True)
     print('len A:', len(A))
     optimizer3 = torch.optim.SGD([A], lr=config["learning_rateA"])
     torch.multiprocessing.freeze_support()
@@ -134,19 +134,15 @@ def run():
       
         epoch_loss1 = mdl.train_model1(A_batch, train_dataloader, optimizer1, de_tokenizer, criterion, scheduler1)
         writer.add_scalar('Loss/model1', epoch_loss1, epoch)
-        
-        gc.collect()
-        torch.cuda.empty_cache()
 
-        mdl.model2 =  mdl.model2.cuda()
+        # mdl.model2 =  mdl.model2.cuda()
         epoch_loss2 = mdl.train_model2(unlabeled_dataloader, optimizer2, de_tokenizer, criterion, scheduler2)# using the same training dataset for now.
         writer.add_scalar('Loss/model2', epoch_loss2, epoch)
         
-        gc.collect()
-        epoch_loss3 = mdl.val_model2( valid_dataloader, optimizer3, A, A_batch , de_tokenizer, criterion, scheduler3)
-        writer.add_scalar('Loss/val', epoch_loss3, epoch)
+        # epoch_loss3 = mdl.val_model2( valid_dataloader, optimizer3, A, A_batch , de_tokenizer, criterion, scheduler3)
+        # writer.add_scalar('Loss/val', epoch_loss3, epoch)
         
-        mdl.save_model(config['model_path'])
+        # mdl.save_model(config['model_path'])
 
     writer.close()
 
