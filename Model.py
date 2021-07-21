@@ -115,6 +115,8 @@ class TranslationModel:
         A.grad=torch.zeros(len(A), device='cpu')
         print('len A.grad:', len(A.grad))
         for i, ((en_input, en_masks, de_output, de_masks), a) in enumerate(zip(valid_dataloader, A_batch)):
+            optimizer3.zero_grad()
+
             en_input = en_input.to(self.device)
             de_output = de_output.to(self.device)
             en_masks = en_masks.to(self.device)
@@ -149,16 +151,14 @@ class TranslationModel:
             r=1e-2
             vector=[]
             for param in self.model2.parameters():
-                # param.to(self.device)
+                param.to(self.device)
                 if param.grad!=None:
                     vector.append(param.grad.data.to(self.device))
-                    #vector.append(param.grad.data)
                 else:
                     vector.append(torch.ones(1).to(self.device))
-                    #vector.append(torch.ones(1))
-            
+
             #R = r / _concat(vector, self.device).norm().to(self.device)
-            R = r / _concat(vector, 'cpu').norm()
+            R = r / _concat(vector, 'cuda').norm().to('cpu')
             print(R)
             for p, v in zip(self.model2.parameters(), vector):
                 p.data.to(self.device)
@@ -201,81 +201,82 @@ class TranslationModel:
         
             grads_n = torch.autograd.grad(loss2, self.model1.parameters(), allow_unused=True, retain_graph=True)
             print('gradsn:', (grads_n)[0])
-            del loss2
-            del predictions
-            del out 
-            del outputs
-            del new_labels
 
             for p, v in zip(self.model2.parameters(), vector):
                 p.data.to(self.device)
                 p.data.add_(R, v)
             
+            del loss2
+            del predictions
+            del out 
+            del outputs
+            del new_labels
+            
             del vector
 
-            vector=[]
-            for x,y in zip(grads_p, grads_n):
-                if x!=None and y!=None:
-                    vector.append(((x - y).div_(2 * R)).to(self.device))
-                    #vector.append(((x - y).div_(2 * R)))
-                else:
-                    vector.append(torch.ones(1, device=self.device))
-                    #vector.append(torch.ones(1))
+            # vector=[]
+            # for x,y in zip(grads_p, grads_n):
+            #     if x!=None and y!=None:
+            #         vector.append(((x - y).div_(2 * R)).to(self.device))
+            #         #vector.append(((x - y).div_(2 * R)))
+            #     else:
+            #         vector.append(torch.ones(1, device=self.device))
+            #         #vector.append(torch.ones(1))
             
-            del grads_n
-            del grads_p
+            # del grads_n
+            # del grads_p
 
-            # calculate delL/delA = delWo/delA x delW/delWo x delL/delW 
-            for p, v in zip(self.model1.parameters(), vector):
-                p.to(self.device)
-                p.data.add_(alpha=R, other=v)
+            # # calculate delL/delA = delWo/delA x delW/delWo x delL/delW 
+            # for p, v in zip(self.model1.parameters(), vector):
+            #     p.to(self.device)
+            #     p.data.add_(alpha=R, other=v)
                 
-            #calculate loss
-            out = self.model1(input_ids=en_input, attention_mask=en_masks, decoder_input_ids=de_output, 
-                                decoder_attention_mask=de_masks, labels=lm_labels)
+            # #calculate loss
+            # out = self.model1(input_ids=en_input, attention_mask=en_masks, decoder_input_ids=de_output, 
+            #                     decoder_attention_mask=de_masks, labels=lm_labels)
                 
-            predictions = F.log_softmax(out[1], dim=2)
-            loss1=compute_loss1(predictions, de_output, a, 'cpu', criterion)    
-            print('loss1:', loss1)
+            # predictions = F.log_softmax(out[1], dim=2)
+            # loss1=compute_loss1(predictions, de_output, a, 'cpu', criterion)    
+            # print('loss1:', loss1)
             
-            grads_p=torch.autograd.grad(loss1, a, allow_unused=True, retain_graph=True)
-            print('gradsp:', (grads_p)[0])
+            # grads_p=torch.autograd.grad(loss1, a, allow_unused=True, retain_graph=True)
+            # print('gradsp:', (grads_p)[0])
             
-            for p, v in zip(self.model1.parameters(), vector):
-                p.to(self.device)
-                p.data.sub_(2 * R, v)
+            # for p, v in zip(self.model1.parameters(), vector):
+            #     p.to(self.device)
+            #     p.data.sub_(2 * R, v)
 
-            del out
-            del predictions
-            del loss1
+            # del out
+            # del predictions
+            # del loss1
             
-            #calculate loss
-            out = self.model1(input_ids=en_input, attention_mask=en_masks, decoder_input_ids=de_output, 
-                                decoder_attention_mask=de_masks, labels=lm_labels.clone())
+            # #calculate loss
+            # out = self.model1(input_ids=en_input, attention_mask=en_masks, decoder_input_ids=de_output, 
+            #                     decoder_attention_mask=de_masks, labels=lm_labels.clone())
                 
-            predictions = F.log_softmax(out[1], dim=2)
-            loss1=compute_loss1(predictions, de_output, a, 'cpu', criterion)    
+            # predictions = F.log_softmax(out[1], dim=2)
+            # loss1=compute_loss1(predictions, de_output, a, 'cpu', criterion)    
 
-            grads_n=torch.autograd.grad(loss1, a, allow_unused=True, retain_graph=True)
-            print('gradsn:', (grads_n)[0])
-            del out
-            del predictions
-            del loss1
+            # grads_n=torch.autograd.grad(loss1, a, allow_unused=True, retain_graph=True)
+            # print('gradsn:', (grads_n)[0])
+            # del out
+            # del predictions
+            # del loss1
 
-            for p, v in zip(self.model1.parameters(), vector):
-                p.to(self.device)
-                p.data.add_(R, v)
+            # for p, v in zip(self.model1.parameters(), vector):
+            #     p.to(self.device)
+            #     p.data.add_(R, v)
 
-            A.grad[a_ind:a_ind+self.batch_size]=[(x - y).div_(2 * R) for x, y in zip(grads_p, grads_n)][0]
+            # A.grad[a_ind:a_ind+self.batch_size]=[(x - y).div_(2 * R) for x, y in zip(grads_p, grads_n)][0]
 
-            del grads_p
-            del grads_n
+            # del grads_p
+            # del grads_n
           
-            # torch.nn.utils.clip_grad_norm_(A, 1e-2) 
-            optimizer3.step()
-            scheduler3.step()
-            a_ind+=self.batch_size
-            print('step 3 instances gone:', (i+1)*self.batch_size)
+            # # torch.nn.utils.clip_grad_norm_(A, 1e-2) 
+            # optimizer3.step()
+            # scheduler3.step()
+            # a_ind+=self.batch_size
+            # print('step 3 instances gone:', (i+1)*self.batch_size)
           
         self.logger.info('Mean epoch loss for step 3: %d', (epoch_loss / len(valid_dataloader))) 
             
