@@ -120,27 +120,46 @@ def run():
     A_batch = DataLoader(createBatchesA(A), batch_size=batch_size)
     
     writer = SummaryWriter()
+<<<<<<< HEAD
     scheduler1 = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer1, float(config['num_epochs']), eta_min=model1params["learning_rate_min"])
     scheduler2 = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer2, float(config['num_epochs']), eta_min=model2params["learning_rate_min"])
     scheduler3 = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer3, float(config['num_epochs']), eta_min=config["learning_rate_min"])
+=======
+>>>>>>> 262f9b12a9fc57ebc72acf626987497f9f8403e5
 
     
     #main training loop
     for epoch in range(config["num_epochs"]):
+        scheduler1 = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer1, float(config['num_epochs']), eta_min=model1params["learning_rate_min"])
+
         print('\n')
         print("Starting epoch", epoch+1)
       
         epoch_loss1 = mdl.train_model1(A_batch, train_dataloader, optimizer1, de_tokenizer, criterion, scheduler1)
         writer.add_scalar('Loss/model1', epoch_loss1, epoch)
+        
+        del scheduler1
         gc.collect()
         torch.cuda.empty_cache()
+
         mdl.model2 =  mdl.model2.cuda()
+        scheduler2 = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer2, float(config['num_epochs']), eta_min=model2params["learning_rate_min"])
         epoch_loss2 = mdl.train_model2(unlabeled_dataloader, optimizer2, de_tokenizer, criterion, scheduler2)# using the same training dataset for now.
         writer.add_scalar('Loss/model2', epoch_loss2, epoch)
+        
+        del scheduler2
         gc.collect()
+<<<<<<< HEAD
         torch.cuda.empty_cache() 
+=======
+        torch.cuda.empty_cache()
+        
+        scheduler3 = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer3, float(config['num_epochs']), eta_min=config["learning_rate_min"])
+>>>>>>> 262f9b12a9fc57ebc72acf626987497f9f8403e5
         epoch_loss3 = mdl.val_model2( valid_dataloader, optimizer3, A, A_batch , de_tokenizer, criterion, scheduler3)
         writer.add_scalar('Loss/val', epoch_loss3, epoch)
+        
+        del scheduler3
         mdl.save_model(config['model_path'])
 
     writer.close()
