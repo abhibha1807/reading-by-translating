@@ -122,7 +122,7 @@ class TranslationModel:
                             decoder_attention_mask=de_masks, labels=lm_labels)
             predictions = F.log_softmax(out[1], dim=2)
             loss3 = compute_loss2(predictions, de_output, 'cpu', criterion)
-            # print('loss3:', loss3)
+            print('loss3:', loss3)
             epoch_loss+=loss3.item()
             del out
             loss3.backward(inputs=list(self.model2.parameters()), retain_graph=True)
@@ -173,6 +173,7 @@ class TranslationModel:
             print('loss2:', loss2)
             
             grads_p=torch.autograd.grad(loss2, self.model1.parameters(), allow_unused=True, retain_graph=True)
+            
             print('gradsp:', (grads_p)[0])
             
             del loss2
