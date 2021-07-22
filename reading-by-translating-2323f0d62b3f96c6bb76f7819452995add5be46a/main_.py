@@ -79,7 +79,7 @@ def run():
     criterion = nn.NLLLoss(ignore_index=de_tokenizer.pad_token_id)
 
     #initiliaze matrix A
-    A=torch.rand(100, requires_grad=True, device = device)
+    A=torch.rand(20, requires_grad=True, device = device)
     optimizer3 = torch.optim.SGD([A], lr=config["learning_rateA"])
     
     torch.multiprocessing.freeze_support()
@@ -112,7 +112,7 @@ def run():
         inst=5
         end=start+inst
         a_ind=0
-        for i in range(1):
+        for i in range(5):
             print(start, end)
             train_dataset = TranslationDataset(train_en_file, train_de_file, en_tokenizer, de_tokenizer, enc_maxlength, dec_maxlength, start, end, inst)
             valid_dataset = TranslationDataset(valid_en_file, valid_de_file, en_tokenizer, de_tokenizer, enc_maxlength, dec_maxlength, start, end, inst)
