@@ -103,10 +103,10 @@ class TranslationModel:
 
     
         
-    def val_model2(self, valid_dataloader, optimizer3, A, A_batch, tokenizer, criterion, scheduler3):
+    def val_model2(self, valid_dataloader, optimizer3, A, A_batch, tokenizer, criterion, scheduler3, a_ind):
         epoch_loss=0
         self.model2.train()
-        a_ind=0
+        # a_ind=0
         optimizer3.zero_grad()
         A.grad=torch.zeros(len(A), device=self.device)
         for i, ((en_input, en_masks, de_output, de_masks), a) in enumerate(zip(valid_dataloader, A_batch)):
@@ -279,7 +279,7 @@ class TranslationModel:
         self.logger.info('Mean epoch loss for step 2: %d', (epoch_loss / len(valid_dataloader))) 
             
         #print("Mean epoch loss for step 3:", (epoch_loss / len(valid_dataloader)))
-        return (epoch_loss / len(valid_dataloader))
+        return (epoch_loss / len(valid_dataloader), a_ind)
 
     def save_model(self, save_directory):
         print('saving models')
