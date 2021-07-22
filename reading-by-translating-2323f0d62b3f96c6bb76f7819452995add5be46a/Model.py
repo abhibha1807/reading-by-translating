@@ -127,8 +127,8 @@ class TranslationModel:
 
             t = torch.cuda.get_device_properties(0).total_memory
             r = torch.cuda.memory_reserved(0) 
-            a = torch.cuda.memory_allocated(0)
-            f = r-a  # free inside reserved
+            al = torch.cuda.memory_allocated(0)
+            f = r-al  # free inside reserved
             print('freeeee:', f)
             
             '''
@@ -162,8 +162,8 @@ class TranslationModel:
                 #p.data.to(self.device)
             t = torch.cuda.get_device_properties(0).total_memory
             r = torch.cuda.memory_reserved(0) 
-            a = torch.cuda.memory_allocated(0)
-            f = r-a  # free inside reserved
+            al = torch.cuda.memory_allocated(0)
+            f = r-al  # free inside reserved
             print('freeeee:', f)
                         
             #calculate loss
