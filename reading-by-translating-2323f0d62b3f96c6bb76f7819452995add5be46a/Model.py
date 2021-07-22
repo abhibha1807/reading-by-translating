@@ -272,7 +272,7 @@ class TranslationModel:
             scheduler3.step()
             a_ind+=self.batch_size
             print('step 3 instances gone:', (i+1)*self.batch_size)
-            if (i+1)%2 == 0:
+            if ((i+1)*self.batch_size)% self.config['report_freq'] == 0:
                 self.logger.info('loss after %d instances: %d', (i+1)*self.batch_size, epoch_loss)
                 self.logger.info('bleu score after %d instances: %d', (i+1)*self.batch_size, calc_bleu(en_input, lm_labels, self.model2, tokenizer))
 
