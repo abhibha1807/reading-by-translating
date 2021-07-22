@@ -78,60 +78,99 @@ def run():
     optimizer2 = torch.optim.Adam(mdl.model2.parameters(), lr=model2params['lr'],  weight_decay=model2params['weight_decay'])
     criterion = nn.NLLLoss(ignore_index=de_tokenizer.pad_token_id)
 
-    #training and validation datasets
-    train_dataset = TranslationDataset(train_en_file, train_de_file, en_tokenizer, de_tokenizer, enc_maxlength, dec_maxlength)
-    valid_dataset = TranslationDataset(valid_en_file, valid_de_file, en_tokenizer, de_tokenizer, enc_maxlength, dec_maxlength)
-
-    print('before train:', len(train_dataset))
-    print('before valid:', len(valid_dataset))
-    unlabeled_amount = int(len(train_dataset) * unlabeled_size)
-    print('len of u:', unlabeled_amount)
-    print('len of dataset:', len(train_dataset))
-    
-    #splitting the dataset into unlabeled and training datasets
-    train_set, unlabeled_set = torch.utils.data.random_split(train_dataset, [
-                (len(train_dataset) - unlabeled_amount), 
-                unlabeled_amount
-    ])
-
-    train_dataloader = torch.utils.data.DataLoader(dataset=train_set, batch_size=batch_size, shuffle=False, \
-                                            drop_last=True, num_workers=1, collate_fn=train_dataset.collate_function)
-
-    unlabeled_dataloader = torch.utils.data.DataLoader(dataset=unlabeled_set, batch_size=batch_size, shuffle=False, \
-                                            drop_last=True, num_workers=1, collate_fn=train_dataset.collate_function)
-
-
-    valid_dataloader = torch.utils.data.DataLoader(dataset=valid_dataset, batch_size=batch_size, shuffle=False, \
-                                            drop_last=True, num_workers=1, collate_fn=valid_dataset.collate_function)
-    
-    print('train:', len(train_set))
-    print('unlabeled:', len(unlabeled_set))
-    print('valid:', len(valid_dataset))
-
     #initiliaze matrix A
-    A=torch.rand(len(train_dataset), requires_grad=True, device = device)
+    A=torch.rand(100, requires_grad=True, device = device)
     optimizer3 = torch.optim.SGD([A], lr=config["learning_rateA"])
+    
     torch.multiprocessing.freeze_support()
     A_batch = DataLoader(createBatchesA(A), batch_size=batch_size)
-    
+
     writer = SummaryWriter()
 
     scheduler1 = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer1, float(config['num_epochs']), eta_min=model1params["learning_rate_min"])
     scheduler2 = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer2, float(config['num_epochs']), eta_min=model2params["learning_rate_min"])
     scheduler3 = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer3, float(config['num_epochs']), eta_min=config["learning_rate_min"])
 
-    #main training loop
+
+    #training and validation datasets
+    # train_dataset = TranslationDataset(train_en_file, train_de_file, en_tokenizer, de_tokenizer, enc_maxlength, dec_maxlength)
+    # valid_dataset = TranslationDataset(valid_en_file, valid_de_file, en_tokenizer, de_tokenizer, enc_maxlength, dec_maxlength)
+
+    # print('before train:', len(train_dataset))
+    # print('before valid:', len(valid_dataset))
+    # unlabeled_amount = int(len(train_dataset) * unlabeled_size)
+    # print('len of u:', unlabeled_amount)
+    # print('len of dataset:', len(train_dataset))
+    
+    #splitting the dataset into unlabeled and training datasets
+    # train_set, unlabeled_set = torch.utils.data.random_split(train_dataset, [
+    #             (len(train_dataset) - unlabeled_amount), 
+    #             unlabeled_amount
+    # ])
     for epoch in range(config["num_epochs"]):
-        print('\n')
-        print("Starting epoch", epoch+1)
-      
-        epoch_loss1 = mdl.train_model1(A_batch, train_dataloader, optimizer1, de_tokenizer, criterion, scheduler1)
-        writer.add_scalar('Loss/model1', epoch_loss1, epoch)
-        epoch_loss2 = mdl.train_model2(unlabeled_dataloader, optimizer2, de_tokenizer, criterion, scheduler2)# using the same training dataset for now.
-        writer.add_scalar('Loss/model2', epoch_loss2, epoch)
-        epoch_loss3 = mdl.val_model2( valid_dataloader, optimizer3, A, A_batch , de_tokenizer, criterion, scheduler3)
-        writer.add_scalar('Loss/val', epoch_loss3, epoch)
-        #mdl.save_model(config['model_path'])
+        start=0
+        inst=10
+        end=start+inst
+        for i in range(1):
+            print(start, end)
+            train_dataset = TranslationDataset(train_en_file, train_de_file, en_tokenizer, de_tokenizer, enc_maxlength, dec_maxlength, start, end, inst)
+            valid_dataset = TranslationDataset(valid_en_file, valid_de_file, en_tokenizer, de_tokenizer, enc_maxlength, dec_maxlength, start, end, inst)
+            start=start+inst
+            end=end+inst
+
+            print('before train:', len(train_dataset))
+            print('before valid:', len(valid_dataset))
+            unlabeled_amount = int(len(train_dataset) * unlabeled_size)
+            print('len of u:', unlabeled_amount)
+            print('len of dataset:', len(train_dataset))
+
+            #splitting the dataset into unlabeled and training datasets
+            train_set, unlabeled_set = torch.utils.data.random_split(train_dataset, [
+                        (len(train_dataset) - unlabeled_amount), 
+                        unlabeled_amount
+            ])
+
+            train_dataloader = torch.utils.data.DataLoader(dataset=train_set, batch_size=batch_size, shuffle=False, \
+                                                    drop_last=True, num_workers=1, collate_fn=train_dataset.collate_function)
+
+            unlabeled_dataloader = torch.utils.data.DataLoader(dataset=unlabeled_set, batch_size=batch_size, shuffle=False, \
+                                                    drop_last=True, num_workers=1, collate_fn=train_dataset.collate_function)
+
+
+            valid_dataloader = torch.utils.data.DataLoader(dataset=valid_dataset, batch_size=batch_size, shuffle=False, \
+                                                    drop_last=True, num_workers=1, collate_fn=valid_dataset.collate_function)
+            
+            print('train:', len(train_set))
+            print('unlabeled:', len(unlabeled_set))
+            print('valid:', len(valid_dataset))
+          
+            #main training loop
+            
+            print('\n')
+            print("Starting epoch", epoch+1)
+            t = torch.cuda.get_device_properties(0).total_memory
+            r = torch.cuda.memory_reserved(0) 
+            a = torch.cuda.memory_allocated(0)
+            f = r-a  # free inside reserved
+            print('freeeee:', f)
+        
+            epoch_loss1 = mdl.train_model1(A_batch, train_dataloader, optimizer1, de_tokenizer, criterion, scheduler1)
+            writer.add_scalar('Loss/model1', epoch_loss1, epoch)
+            t = torch.cuda.get_device_properties(0).total_memory
+            r = torch.cuda.memory_reserved(0) 
+            a = torch.cuda.memory_allocated(0)
+            f = r-a  # free inside reserved
+            print('freeeee:', f)
+            epoch_loss2 = mdl.train_model2(unlabeled_dataloader, optimizer2, de_tokenizer, criterion, scheduler2)# using the same training dataset for now.
+            writer.add_scalar('Loss/model2', epoch_loss2, epoch)
+            t = torch.cuda.get_device_properties(0).total_memory
+            r = torch.cuda.memory_reserved(0) 
+            a = torch.cuda.memory_allocated(0)
+            f = r-a  # free inside reserved
+            print('freeeee:', f)
+            epoch_loss3 = mdl.val_model2( valid_dataloader, optimizer3, A, A_batch , de_tokenizer, criterion, scheduler3)
+            writer.add_scalar('Loss/val', epoch_loss3, epoch)
+            #mdl.save_model(config['model_path'])
 
     writer.close()
 
