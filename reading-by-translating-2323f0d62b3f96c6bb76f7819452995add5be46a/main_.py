@@ -111,10 +111,7 @@ def run():
         start=0
         inst=10
         end=start+inst
-<<<<<<< HEAD
-=======
         a_ind=0
->>>>>>> a5ce7df897010dcf38481b148723d62908c532e4
         for i in range(1):
             print(start, end)
             train_dataset = TranslationDataset(train_en_file, train_de_file, en_tokenizer, de_tokenizer, enc_maxlength, dec_maxlength, start, end, inst)
@@ -172,11 +169,7 @@ def run():
             a = torch.cuda.memory_allocated(0)
             f = r-a  # free inside reserved
             print('freeeee:', f)
-<<<<<<< HEAD
-            epoch_loss3 = mdl.val_model2( valid_dataloader, optimizer3, A, A_batch , de_tokenizer, criterion, scheduler3)
-=======
             epoch_loss3, a_ind = mdl.val_model2( valid_dataloader, optimizer3, A, A_batch , de_tokenizer, criterion, scheduler3, a_ind)
->>>>>>> a5ce7df897010dcf38481b148723d62908c532e4
             writer.add_scalar('Loss/val', epoch_loss3, epoch)
             #mdl.save_model(config['model_path'])
 
