@@ -125,6 +125,11 @@ class TranslationModel:
 
             loss3.backward(inputs=list(self.model2.parameters()), retain_graph=True)
 
+            t = torch.cuda.get_device_properties(0).total_memory
+            r = torch.cuda.memory_reserved(0) 
+            a = torch.cuda.memory_allocated(0)
+            f = r-a  # free inside reserved
+            print('freeeee:', f)
             
             '''
             Implementation of chain rule: eq 8,9 and 10
@@ -155,6 +160,11 @@ class TranslationModel:
                 p.data.to(self.device)
                 p.data.add_(alpha=R, other=v)
                 #p.data.to(self.device)
+            t = torch.cuda.get_device_properties(0).total_memory
+            r = torch.cuda.memory_reserved(0) 
+            a = torch.cuda.memory_allocated(0)
+            f = r-a  # free inside reserved
+            print('freeeee:', f)
                         
             #calculate loss
             outputs=self.model1(input_ids=en_input, decoder_input_ids=en_input, output_hidden_states=True, return_dict=True)
@@ -251,12 +261,14 @@ class TranslationModel:
                 p.data.add_(R, v)
 
             A.grad[a_ind:a_ind+self.batch_size]=[(x - y).div_(2 * R) for x, y in zip(grads_p, grads_n)][0]
-
+            print(A.grad)
             del grads_p
             del grads_n
           
             # torch.nn.utils.clip_grad_norm_(A, 1e-2) 
+            print('before A:', A)
             optimizer3.step()
+            print('finallyyyy:', A) 
             scheduler3.step()
             a_ind+=self.batch_size
             print('step 3 instances gone:', (i+1)*self.batch_size)

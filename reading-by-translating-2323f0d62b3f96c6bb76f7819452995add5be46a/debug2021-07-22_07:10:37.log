@@ -1,0 +1,102 @@
+2021-07-22 07:11:47,205 loss after 2 instances: 21
+2021-07-22 07:11:47,489 bleu score after 2 instances: 0
+2021-07-22 07:11:48,037 loss after 4 instances: 36
+2021-07-22 07:11:48,324 bleu score after 4 instances: 0
+2021-07-22 07:11:48,831 loss after 6 instances: 53
+2021-07-22 07:11:49,118 bleu score after 6 instances: 0
+2021-07-22 07:11:49,700 loss after 8 instances: 67
+2021-07-22 07:11:49,982 bleu score after 8 instances: 0
+2021-07-22 07:11:50,483 loss after 10 instances: 82
+2021-07-22 07:11:50,764 bleu score after 10 instances: 0
+2021-07-22 07:11:51,257 loss after 12 instances: 97
+2021-07-22 07:11:51,529 bleu score after 12 instances: 0
+2021-07-22 07:11:52,042 loss after 14 instances: 117
+2021-07-22 07:11:52,327 bleu score after 14 instances: 0
+2021-07-22 07:11:52,841 loss after 16 instances: 123
+2021-07-22 07:11:53,120 bleu score after 16 instances: 0
+2021-07-22 07:11:53,618 loss after 18 instances: 136
+2021-07-22 07:11:53,891 bleu score after 18 instances: 0
+2021-07-22 07:11:54,398 loss after 20 instances: 157
+2021-07-22 07:11:54,675 bleu score after 20 instances: 0
+2021-07-22 07:11:55,173 loss after 22 instances: 165
+2021-07-22 07:11:55,452 bleu score after 22 instances: 0
+2021-07-22 07:11:55,963 loss after 24 instances: 180
+2021-07-22 07:11:56,244 bleu score after 24 instances: 0
+2021-07-22 07:11:56,743 loss after 26 instances: 195
+2021-07-22 07:11:57,019 bleu score after 26 instances: 0
+2021-07-22 07:11:57,538 loss after 28 instances: 207
+2021-07-22 07:11:57,827 bleu score after 28 instances: 0
+2021-07-22 07:11:58,310 loss after 30 instances: 214
+2021-07-22 07:11:58,592 bleu score after 30 instances: 0
+2021-07-22 07:11:59,111 loss after 32 instances: 226
+2021-07-22 07:11:59,399 bleu score after 32 instances: 0
+2021-07-22 07:11:59,912 loss after 34 instances: 245
+2021-07-22 07:12:00,193 bleu score after 34 instances: 0
+2021-07-22 07:12:00,697 loss after 36 instances: 261
+2021-07-22 07:12:00,974 bleu score after 36 instances: 0
+2021-07-22 07:12:01,504 loss after 38 instances: 272
+2021-07-22 07:12:01,797 bleu score after 38 instances: 0
+2021-07-22 07:12:02,315 loss after 40 instances: 285
+2021-07-22 07:12:02,599 bleu score after 40 instances: 0
+2021-07-22 07:12:03,092 loss after 42 instances: 293
+2021-07-22 07:12:03,361 bleu score after 42 instances: 0
+2021-07-22 07:12:03,889 loss after 44 instances: 302
+2021-07-22 07:12:04,174 bleu score after 44 instances: 0
+2021-07-22 07:12:04,687 loss after 46 instances: 312
+2021-07-22 07:12:04,973 bleu score after 46 instances: 0
+2021-07-22 07:12:05,495 loss after 48 instances: 330
+2021-07-22 07:12:05,789 bleu score after 48 instances: 0
+2021-07-22 07:12:06,292 loss after 50 instances: 336
+2021-07-22 07:12:06,568 bleu score after 50 instances: 0
+2021-07-22 07:12:07,114 loss after 52 instances: 344
+2021-07-22 07:12:07,406 bleu score after 52 instances: 0
+2021-07-22 07:12:07,910 loss after 54 instances: 354
+2021-07-22 07:12:08,187 bleu score after 54 instances: 0
+2021-07-22 07:12:08,697 loss after 56 instances: 365
+2021-07-22 07:12:08,982 bleu score after 56 instances: 0
+2021-07-22 07:12:09,488 loss after 58 instances: 370
+2021-07-22 07:12:09,765 bleu score after 58 instances: 0
+2021-07-22 07:12:10,269 loss after 60 instances: 382
+2021-07-22 07:12:10,551 bleu score after 60 instances: 0
+2021-07-22 07:12:11,062 loss after 62 instances: 392
+2021-07-22 07:12:11,345 bleu score after 62 instances: 0
+2021-07-22 07:12:11,867 loss after 64 instances: 395
+2021-07-22 07:12:12,159 bleu score after 64 instances: 0
+2021-07-22 07:12:12,671 loss after 66 instances: 397
+2021-07-22 07:12:12,961 bleu score after 66 instances: 0
+2021-07-22 07:12:13,474 loss after 68 instances: 405
+2021-07-22 07:12:13,750 bleu score after 68 instances: 0
+2021-07-22 07:12:14,259 loss after 70 instances: 418
+2021-07-22 07:12:14,546 bleu score after 70 instances: 0
+2021-07-22 07:12:15,062 loss after 72 instances: 430
+2021-07-22 07:12:15,352 bleu score after 72 instances: 0
+2021-07-22 07:12:15,852 loss after 74 instances: 438
+2021-07-22 07:12:16,130 bleu score after 74 instances: 0
+2021-07-22 07:12:16,640 loss after 76 instances: 447
+2021-07-22 07:12:16,928 bleu score after 76 instances: 0
+2021-07-22 07:12:17,432 loss after 78 instances: 457
+2021-07-22 07:12:17,713 bleu score after 78 instances: 0
+2021-07-22 07:12:18,211 loss after 80 instances: 464
+2021-07-22 07:12:18,488 bleu score after 80 instances: 0
+2021-07-22 07:12:19,007 loss after 82 instances: 467
+2021-07-22 07:12:19,308 bleu score after 82 instances: 0
+2021-07-22 07:12:19,800 loss after 84 instances: 473
+2021-07-22 07:12:20,074 bleu score after 84 instances: 0
+2021-07-22 07:12:20,584 loss after 86 instances: 484
+2021-07-22 07:12:20,867 bleu score after 86 instances: 0
+2021-07-22 07:12:21,361 loss after 88 instances: 490
+2021-07-22 07:12:21,632 bleu score after 88 instances: 0
+2021-07-22 07:12:22,148 loss after 90 instances: 497
+2021-07-22 07:12:22,432 bleu score after 90 instances: 0
+2021-07-22 07:12:22,528 Mean epoch loss for step 1: 11
+2021-07-22 07:12:23,529 loss after 2 instances: 32
+2021-07-22 07:12:23,794 bleu score after 2 instances: 0
+2021-07-22 07:12:24,574 loss after 4 instances: 59
+2021-07-22 07:12:24,846 bleu score after 4 instances: 0
+2021-07-22 07:12:25,623 loss after 6 instances: 103
+2021-07-22 07:12:25,919 bleu score after 6 instances: 0
+2021-07-22 07:12:26,699 loss after 8 instances: 122
+2021-07-22 07:12:26,976 bleu score after 8 instances: 0
+2021-07-22 07:12:27,768 loss after 10 instances: 127
+2021-07-22 07:12:28,058 bleu score after 10 instances: 0
+2021-07-22 07:12:28,109 Mean epoch loss for step 2: 63

@@ -1,0 +1,30 @@
+2021-07-22 07:44:35,757 loss after 2 instances: 19
+2021-07-22 07:44:36,040 bleu score after 2 instances: 0
+2021-07-22 07:44:36,585 loss after 4 instances: 37
+2021-07-22 07:44:36,864 bleu score after 4 instances: 0
+2021-07-22 07:44:37,370 loss after 6 instances: 53
+2021-07-22 07:44:37,646 bleu score after 6 instances: 0
+2021-07-22 07:44:38,233 loss after 8 instances: 64
+2021-07-22 07:44:38,514 bleu score after 8 instances: 0
+2021-07-22 07:44:38,609 Mean epoch loss for step 1: 16
+2021-07-22 07:44:38,714 Mean epoch loss for step 2: 0
+2021-07-22 07:44:44,381 loss after 4 instances: 54
+2021-07-22 07:44:44,664 bleu score after 4 instances: 0
+2021-07-22 07:44:50,022 loss after 8 instances: 115
+2021-07-22 07:44:50,295 bleu score after 8 instances: 0
+2021-07-22 07:44:53,066 Mean epoch loss for step 2: 28
+2021-07-22 07:44:53,716 loss after 2 instances: -2801
+2021-07-22 07:44:53,985 bleu score after 2 instances: 0
+2021-07-22 07:44:54,513 loss after 4 instances: 5181
+2021-07-22 07:44:54,783 bleu score after 4 instances: 0
+2021-07-22 07:44:55,289 loss after 6 instances: 18765
+2021-07-22 07:44:55,561 bleu score after 6 instances: 0
+2021-07-22 07:44:56,088 loss after 8 instances: 23056
+2021-07-22 07:44:56,379 bleu score after 8 instances: 0
+2021-07-22 07:44:56,430 Mean epoch loss for step 1: 5764
+2021-07-22 07:44:56,537 Mean epoch loss for step 2: 0
+2021-07-22 07:45:02,193 loss after 4 instances: 57
+2021-07-22 07:45:02,485 bleu score after 4 instances: 0
+2021-07-22 07:45:07,823 loss after 8 instances: 114
+2021-07-22 07:45:08,088 bleu score after 8 instances: 0
+2021-07-22 07:45:10,885 Mean epoch loss for step 2: 28
