@@ -157,7 +157,7 @@ def run():
         a = torch.cuda.memory_allocated(0)
         f = r-a  # free inside reserved
         print('freeeee:', f)
-        
+
         # nvmlInit()
         # h = nvmlDeviceGetHandleByIndex(0)
         # info = nvmlDeviceGetMemoryInfo(h)

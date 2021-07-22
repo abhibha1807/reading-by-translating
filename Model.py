@@ -132,6 +132,12 @@ class TranslationModel:
             epoch_loss+=loss3.item()
 
             loss3.backward(inputs=list(self.model2.parameters()), retain_graph=True)
+
+            t = torch.cuda.get_device_properties(0).total_memory
+            r = torch.cuda.memory_reserved(0) 
+            a = torch.cuda.memory_allocated(0)
+            f = r-a  # free inside reserved
+            print('freeeee:', f)
             
             #print('bleu-score:', calc_bleu(en_input, lm_labels, model2, de_tokenizer, 16))
 
@@ -162,6 +168,12 @@ class TranslationModel:
                 p.data.add_(alpha=R, other=v)
                 #print('after:', p.data)
                 # break
+
+            t = torch.cuda.get_device_properties(0).total_memory
+            r = torch.cuda.memory_reserved(0) 
+            a = torch.cuda.memory_allocated(0)
+            f = r-a  # free inside reserved
+            print('freeeee:', f)
             
             #calculate loss
             outputs=self.model1(input_ids=en_input, decoder_input_ids=en_input, output_hidden_states=True, return_dict=True)
@@ -176,11 +188,23 @@ class TranslationModel:
             grads_p=torch.autograd.grad(loss2, self.model1.parameters(), allow_unused=True, retain_graph=True)
             print('gradsp:', (grads_p)[0])
 
+            t = torch.cuda.get_device_properties(0).total_memory
+            r = torch.cuda.memory_reserved(0) 
+            a = torch.cuda.memory_allocated(0)
+            f = r-a  # free inside reserved
+            print('freeeee:', f)
+
             del loss2
             del predictions
             del out 
             del outputs
             del new_labels
+
+            t = torch.cuda.get_device_properties(0).total_memory
+            r = torch.cuda.memory_reserved(0) 
+            a = torch.cuda.memory_allocated(0)
+            f = r-a  # free inside reserved
+            print('freeeee:', f)
 
             for p, v in zip(self.model2.parameters(), vector):
                 # print('before:', p)
@@ -188,7 +212,13 @@ class TranslationModel:
                 #p.data.sub_(5.0)
                 p.data.sub_(alpha=2 * R, other=v)
                 # print('after:', p)
-                # break
+                
+            t = torch.cuda.get_device_properties(0).total_memory
+            r = torch.cuda.memory_reserved(0) 
+            a = torch.cuda.memory_allocated(0)
+            f = r-a  # free inside reserved
+            print('freeeee:', f)
+
             #calculate loss
             outputs=self.model1(input_ids=en_input, decoder_input_ids=en_input, output_hidden_states=True, return_dict=True)
             predictions = F.log_softmax(outputs.logits, dim=2)
@@ -202,15 +232,27 @@ class TranslationModel:
             grads_n = torch.autograd.grad(loss2, self.model1.parameters(), allow_unused=True, retain_graph=True)
             print('gradsn:', (grads_n)[0])
 
+            t = torch.cuda.get_device_properties(0).total_memory
+            r = torch.cuda.memory_reserved(0) 
+            a = torch.cuda.memory_allocated(0)
+            f = r-a  # free inside reserved
+            print('freeeee:', f)
+
             for p, v in zip(self.model2.parameters(), vector):
                 p.data.to(self.device)
                 p.data.add_(R, v)
+
                 
             del loss2
             del predictions
             del out 
             del outputs
             del new_labels
+            t = torch.cuda.get_device_properties(0).total_memory
+            r = torch.cuda.memory_reserved(0) 
+            a = torch.cuda.memory_allocated(0)
+            f = r-a  # free inside reserved
+            print('freeeee:', f)
 
             vector=[]
             for x,y in zip(grads_p, grads_n):
@@ -224,7 +266,12 @@ class TranslationModel:
             del grads_n
             del grads_p
 
-
+            t = torch.cuda.get_device_properties(0).total_memory
+            r = torch.cuda.memory_reserved(0) 
+            a = torch.cuda.memory_allocated(0)
+            f = r-a  # free inside reserved
+            print('freeeee:', f)
+            
             # vector=final
             c=0
             for p, v in zip(self.model1.parameters(), vector):
