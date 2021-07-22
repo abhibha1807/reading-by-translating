@@ -109,7 +109,7 @@ def run():
     # ])
     for epoch in range(config["num_epochs"]):
         start=0
-        inst=10
+        inst=5
         end=start+inst
         a_ind=0
         for i in range(1):
