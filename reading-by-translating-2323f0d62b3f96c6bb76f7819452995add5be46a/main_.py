@@ -112,7 +112,7 @@ def run():
         inst=5
         end=start+inst
         a_ind=0
-        for i in range(5):
+        for i in range(2):
             print(start, end)
             train_dataset = TranslationDataset(train_en_file, train_de_file, en_tokenizer, de_tokenizer, enc_maxlength, dec_maxlength, start, end, inst)
             valid_dataset = TranslationDataset(valid_en_file, valid_de_file, en_tokenizer, de_tokenizer, enc_maxlength, dec_maxlength, start, end, inst)

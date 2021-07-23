@@ -270,7 +270,9 @@ class TranslationModel:
             optimizer3.step()
             print('finallyyyy:', A) 
             scheduler3.step()
-            a_ind+=self.batch_size
+            print('before a_ind:', a_ind)
+            a_ind=a_ind+self.batch_size
+            print('after a_ind:', a_ind)
             print('step 3 instances gone:', (i+1)*self.batch_size)
             if ((i+1)*self.batch_size)% self.config['report_freq'] == 0:
                 self.logger.info('loss after %d instances: %d', (i+1)*self.batch_size, epoch_loss)
