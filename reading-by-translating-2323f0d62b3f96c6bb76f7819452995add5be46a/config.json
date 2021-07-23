@@ -47,7 +47,6 @@
     "save": "EXP",
     "grad_clip": 5.0,
     "unlabeled_percent":0.1,
-    
 
     "model2" : {
         "lr": 1e-2,
