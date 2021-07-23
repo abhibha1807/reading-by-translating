@@ -39,8 +39,8 @@
     },
     
     "learning_rateA": 1e-2,
-    "batch_size" : 1,
-    "num_epochs" : 1,
+    "batch_size" : 2,
+    "num_epochs" : 2,
     "learning_rate_min": 0.001,
     "report_freq": 1,
     "model_path": "./saved_models",
