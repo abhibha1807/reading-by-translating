@@ -78,8 +78,8 @@ def run():
     optimizer2 = torch.optim.Adam(mdl.model2.parameters(), lr=model2params['lr'],  weight_decay=model2params['weight_decay'])
     criterion = nn.NLLLoss(ignore_index=de_tokenizer.pad_token_id)
 
-    #initiliaze matrix A
-    A=torch.rand(100000, requires_grad=True, device = device)
+    #initialize matrix A
+    A=torch.rand(20, requires_grad=True, device = device)
     optimizer3 = torch.optim.SGD([A], lr=config["learning_rateA"])
     
     torch.multiprocessing.freeze_support()
@@ -112,10 +112,11 @@ def run():
     print(config["num_epochs"])
     for epoch in range(config["num_epochs"]):
         start=0
-        inst=5
+        inst=config['instances']
         end=start+inst
         a_ind=0
-        for i in range(2):
+        for i in range(int(20/inst)):
+            print('instances gone:', inst*(i+1))
             print(start, end)
             train_dataset = TranslationDataset(train_en_file, train_de_file, en_tokenizer, de_tokenizer, enc_maxlength, dec_maxlength, start, end, inst)
             valid_dataset = TranslationDataset(valid_en_file, valid_de_file, en_tokenizer, de_tokenizer, enc_maxlength, dec_maxlength, start, end, inst)
@@ -151,7 +152,6 @@ def run():
             #main training loop
             
             print('\n')
-            print("Starting epoch", epoch+1)
             t = torch.cuda.get_device_properties(0).total_memory
             r = torch.cuda.memory_reserved(0) 
             al = torch.cuda.memory_allocated(0)
@@ -174,7 +174,7 @@ def run():
             print('freeeee:', f)
             epoch_loss3, a_ind = mdl.val_model2( valid_dataloader, optimizer3, A, A_batch , de_tokenizer, criterion, scheduler3, a_ind)
             writer.add_scalar('Loss/val', epoch_loss3, epoch)
-            #mdl.save_model(config['model_path'])
+    #mdl.save_model(config['model_path'])
 
     writer.close()
 

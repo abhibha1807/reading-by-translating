@@ -25,7 +25,7 @@ class TranslationDataset(data.Dataset):
             num_inp_lines = 0
             for line in ef:
                 if c>=start:
-                  print(line)
+                #   print(line)
                   enc = self.inp_tokenizer.encode(line.strip(), add_special_tokens=True, max_length=self.inp_maxlength)
                   self.encoded_inp.append(torch.tensor(enc))
                   num_inp_lines += 1
