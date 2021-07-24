@@ -120,7 +120,7 @@ class TranslationModel:
                             decoder_attention_mask=de_masks, labels=de_output.clone())
             predictions = F.log_softmax(out[1], dim=2)
             loss3 = compute_loss2(predictions, de_output, self.device, criterion)
-            # print('loss3:', loss3)
+            print('loss3:', loss3)
             epoch_loss+=loss3.item()
 
             loss3.backward(inputs=list(self.model2.parameters()), retain_graph=True)
@@ -270,9 +270,9 @@ class TranslationModel:
             optimizer3.step()
             print('finallyyyy:', A) 
             scheduler3.step()
-            print('before a_ind:', a_ind)
+            # print('before a_ind:', a_ind)
             a_ind=a_ind+self.batch_size
-            print('after a_ind:', a_ind)
+            # print('after a_ind:', a_ind)
             A.grad=torch.zeros(len(A), device=self.device)
             print('step 3 instances gone:', (i+1)*self.batch_size)
             if ((i+1)*self.batch_size)% self.config['report_freq'] == 0:

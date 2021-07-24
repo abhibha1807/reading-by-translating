@@ -62,7 +62,7 @@ def run():
     batch_size = config["batch_size"]
     model1_path = model1params["model_path"]
     model2_path = model2params["model_path"]
-    inst=4
+    inst=8
     batch_size=2
     
     # Get the dataset files
@@ -77,8 +77,8 @@ def run():
     en_tokenizer, de_tokenizer=loadTokenizer(train_en_file, encparams, train_de_file, decparams)
 
     #initialize models.
-    model1_path='./saved_models/model1'
-    model2_path='./saved_models/model2'
+    # model1_path='./saved_models/model1'
+    # model2_path='./saved_models/model2'
     mdl=TranslationModel(device, batch_size, logging, model1_path, model2_path, config)
 
     optimizer1 = torch.optim.Adam(mdl.model1.parameters(), lr=model1params['lr'], weight_decay=model1params['weight_decay'])
@@ -86,7 +86,7 @@ def run():
     criterion = nn.NLLLoss(ignore_index=de_tokenizer.pad_token_id)
 
     #initialize matrix A
-    A=torch.rand(20, requires_grad=True, device = device)
+    A=torch.rand(50, requires_grad=True, device = device)
     optimizer3 = torch.optim.SGD([A], lr=config["learning_rateA"])
     
     torch.multiprocessing.freeze_support()
@@ -121,7 +121,7 @@ def run():
         start=0
         end=start+inst
         a_ind=0
-        for i in range(int(20/inst)):
+        for i in range(int(50/inst)):
             print('instances gone:', inst*(i+1))
             print(start, end)
             train_dataset = TranslationDataset(train_en_file, train_de_file, en_tokenizer, de_tokenizer, enc_maxlength, dec_maxlength, start, end, inst)
