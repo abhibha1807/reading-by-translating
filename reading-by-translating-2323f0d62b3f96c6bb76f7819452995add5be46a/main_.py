@@ -60,6 +60,7 @@ def run():
     batch_size = config["batch_size"]
     model1_path = model1params["model_path"]
     model2_path = model2params["model_path"]
+    inst=config["instances"]
     
     # Get the dataset files
     train_en_file = dataset["train_en_file"]
@@ -112,7 +113,7 @@ def run():
     print(config["num_epochs"])
     for epoch in range(config["num_epochs"]):
         start=0
-        inst=config['instances']
+        
         end=start+inst
         a_ind=0
         for i in range(int(20/inst)):
