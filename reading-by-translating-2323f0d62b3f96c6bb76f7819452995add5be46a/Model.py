@@ -286,6 +286,7 @@ class TranslationModel:
 
     def save_model(self, save_directory):
         print('saving models')
+        save_directory='./saved_models'
         self.model2.save_pretrained(save_directory= save_directory+'/model2')
         self.model1.save_pretrained(save_directory= save_directory+'/model1')
     
