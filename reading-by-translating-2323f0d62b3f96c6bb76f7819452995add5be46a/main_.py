@@ -11,6 +11,8 @@ import torch.optim as optim
 import torch.nn.functional as F
 from dataClass import TranslationDataset 
 from torch.utils.data import DataLoader
+from transformers import BertModel, BertForMaskedLM, BertConfig, EncoderDecoderModel
+
 from torch.utils.tensorboard import SummaryWriter
 from Model import TranslationModel
 from utils import createBatchesA, loadTokenizer
@@ -61,7 +63,7 @@ def run():
     model1_path = model1params["model_path"]
     model2_path = model2params["model_path"]
     inst=10
-    batch_size=5
+    batch_size=2
     
     # Get the dataset files
     train_en_file = dataset["train_en_file"]
@@ -69,12 +71,14 @@ def run():
     valid_en_file = dataset["valid_en_file"]
     valid_de_file = dataset["valid_de_file"]
     unlabeled_size=config["unlabeled_percent"]
+    unlabeled_size=0.2
     
     #load BertWordPieceTokenizer
     en_tokenizer, de_tokenizer=loadTokenizer(train_en_file, encparams, train_de_file, decparams)
 
     #initialize models.
-    mdl=TranslationModel(device, batch_size, logging, config)
+    
+    mdl=TranslationModel(device, batch_size, logging, model1_path, model2_path, config)
 
     optimizer1 = torch.optim.Adam(mdl.model1.parameters(), lr=model1params['lr'], weight_decay=model1params['weight_decay'])
     optimizer2 = torch.optim.Adam(mdl.model2.parameters(), lr=model2params['lr'],  weight_decay=model2params['weight_decay'])
@@ -114,7 +118,6 @@ def run():
     print(config["num_epochs"])
     for epoch in range(config["num_epochs"]):
         start=0
-        
         end=start+inst
         a_ind=0
         for i in range(int(20/inst)):
@@ -176,7 +179,11 @@ def run():
             print('freeeee:', f)
             epoch_loss3, a_ind = mdl.val_model2( valid_dataloader, optimizer3, A, A_batch , de_tokenizer, criterion, scheduler3, a_ind)
             writer.add_scalar('Loss/val', epoch_loss3, epoch)
-    #mdl.save_model(config['model_path'])
+    mdl.save_model(config['model_path'])
+
+    model1_path=config["model1"]["saved_model_path"]
+    model2_path=config["model2"]["saved_model_path"]
+    mdl=TranslationModel(device, batch_size, logging, model1_path, model2_path, config)
 
     writer.close()
 

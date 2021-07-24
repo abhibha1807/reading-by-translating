@@ -29,6 +29,7 @@
     "model1" : {
         "lr": 1e-2,
         "model_path" : "./models/model1",
+        "saved_model_path" : "./saved_models/model1",
         "learning_rate_min": 0.001,
         "weight_decay": 3e-4,
         "grad_clip": 5.0
@@ -51,6 +52,7 @@
     "model2" : {
         "lr": 1e-2,
         "model_path" : "./models/model1",
+        "saved_model_path" : "./saved_models/model2",
         "learning_rate_min": 0.001,
         "weight_decay": 3e-4,
         "grad_clip": 5.0

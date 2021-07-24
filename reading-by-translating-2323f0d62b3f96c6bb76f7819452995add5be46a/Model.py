@@ -21,9 +21,9 @@ training according to the  pipeline described in the RBT paper. Training occurs 
 3) Estimate A by reducing the validation loss of second MT model on validation set of MT dataset
 '''
 class TranslationModel:
-    def __init__(self, device, batch_size, logging, config):
-        self.model1=EncoderDecoderModel.from_pretrained(config["model1"]['model_path'])
-        self.model2=EncoderDecoderModel.from_pretrained(config["model1"]['model_path'])
+    def __init__(self, device, batch_size, logging, model1_path, model2_path, config):
+        self.model1=EncoderDecoderModel.from_pretrained(model1_path)
+        self.model2=EncoderDecoderModel.from_pretrained(model2_path)
         self.device=device
         self.batch_size=batch_size
         print(device)
