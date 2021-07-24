@@ -60,7 +60,7 @@ def run():
     batch_size = config["batch_size"]
     model1_path = model1params["model_path"]
     model2_path = model2params["model_path"]
-    inst=config["instances"]
+    inst=10
     
     # Get the dataset files
     train_en_file = dataset["train_en_file"]
