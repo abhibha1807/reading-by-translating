@@ -62,7 +62,7 @@ def run():
     batch_size = config["batch_size"]
     model1_path = model1params["model_path"]
     model2_path = model2params["model_path"]
-    inst=10
+    inst=4
     batch_size=2
     
     # Get the dataset files
