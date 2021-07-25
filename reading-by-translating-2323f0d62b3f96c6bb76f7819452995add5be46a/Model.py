@@ -182,7 +182,7 @@ class TranslationModel:
             del out 
             del outputs
             del new_labels
-
+            torch.cuda.empty_cache()
             for p, v in zip(self.model2.parameters(), vector):
                 p.data.to(self.device)
                 p.data.sub_(alpha=2 * R, other=v)
@@ -204,7 +204,7 @@ class TranslationModel:
             del out 
             del outputs
             del new_labels
-
+            torch.cuda.empty_cache()
             for p, v in zip(self.model2.parameters(), vector):
                 # p.data.to(self.device)
                 p.data.add_(R, v)
@@ -220,7 +220,7 @@ class TranslationModel:
             
             del grads_n
             del grads_p
-
+            torch.cuda.empty_cache()
             # calculate delL/delA = delWo/delA x delW/delWo x delL/delW 
             for p, v in zip(self.model1.parameters(), vector):
                 p.to(self.device)
@@ -242,7 +242,7 @@ class TranslationModel:
             del out
             del predictions
             del loss1
-            
+            torch.cuda.empty_cache()
             #calculate loss
             out = self.model1(input_ids=en_input, attention_mask=en_masks, decoder_input_ids=de_output, 
                                 decoder_attention_mask=de_masks, labels=lm_labels.clone())
@@ -255,7 +255,7 @@ class TranslationModel:
             del out
             del predictions
             del loss1
-
+            torch.cuda.empty_cache()
             for p, v in zip(self.model1.parameters(), vector):
                 p.to(self.device)
                 p.data.add_(R, v)
@@ -264,7 +264,7 @@ class TranslationModel:
             print(A.grad)
             del grads_p
             del grads_n
-          
+            torch.cuda.empty_cache()
             # torch.nn.utils.clip_grad_norm_(A, 1e-2) 
             print('before A:', A)
             optimizer3.step()
