@@ -86,7 +86,7 @@ def run():
     criterion = nn.NLLLoss(ignore_index=de_tokenizer.pad_token_id)
 
     #initialize matrix A
-    A=torch.rand(20, requires_grad=True, device = device)
+    A=torch.rand(50000, requires_grad=True, device = device)
     optimizer3 = torch.optim.SGD([A], lr=config["learning_rateA"])
     
     torch.multiprocessing.freeze_support()
@@ -121,7 +121,7 @@ def run():
         start=0
         end=start+inst
         a_ind=0
-        for i in range(int(20/inst)):
+        for i in range(int(50000/inst)):
             print('instances gone:', inst*(i+1))
             print(start, end)
             train_dataset = TranslationDataset(train_en_file, train_de_file, en_tokenizer, de_tokenizer, enc_maxlength, dec_maxlength, start, end, inst)
