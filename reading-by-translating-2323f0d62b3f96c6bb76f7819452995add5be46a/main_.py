@@ -117,7 +117,8 @@ def run():
     # ])
     print(batch_size)
     print(config["num_epochs"])
-    for epoch in range(config["num_epochs"]):
+    epochs=4
+    for epoch in range(epochs):
         start=0
         end=start+inst
         a_ind=0
