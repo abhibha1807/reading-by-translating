@@ -16,7 +16,7 @@ spec:
       - name: research
         image: gitlab-registry.nautilus.optiputer.net/vamsirk/research-containers
         imagePullPolicy: Always
-        workingDir: /abhibha-volume/reading-by-translating
+        workingDir: /abhibha-volume/reading-by-translating/
         command: ["bash","train.sh"]
         resources:
           requests:
