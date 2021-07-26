@@ -87,7 +87,7 @@ def run():
     criterion = nn.NLLLoss(ignore_index=de_tokenizer.pad_token_id)
 
     #initialize matrix A
-    A=torch.rand(50000, requires_grad=True, device = device)
+    A=torch.rand(50000, requires_grad=True, device = 'cpu')
     optimizer3 = torch.optim.SGD([A], lr=config["learning_rateA"])
     
     torch.multiprocessing.freeze_support()
@@ -179,6 +179,7 @@ def run():
                 al = torch.cuda.memory_allocated(0)
                 f = r-al  # free inside reserved
                 print('freeeee:', f)
+
                 epoch_loss2 = mdl.train_model2(unlabeled_dataloader, optimizer2, de_tokenizer, criterion, scheduler2)# using the same training dataset for now.
                 writer.add_scalar('Loss/model2', epoch_loss2, epoch)
                 t = torch.cuda.get_device_properties(0).total_memory
@@ -188,8 +189,8 @@ def run():
                 print('freeeee:', f)
                 epoch_loss3, a_ind = mdl.val_model2( valid_dataloader, optimizer3, A, A_batch , de_tokenizer, criterion, scheduler3, a_ind)
                 writer.add_scalar('Loss/val', epoch_loss3, epoch)
-            if (inst*(i+1))%100 == 0:
-                print('saving model after'+str((inst*(i+1)))+'instances')
+            if (inst_tr*(i+1))%100 == 0:
+                print('saving model after'+str((inst_tr*(i+1)))+'instances')
                 mdl.save_model(config['model_path'])
 
                 # model1_path=config["model1"]["saved_model_path"]
