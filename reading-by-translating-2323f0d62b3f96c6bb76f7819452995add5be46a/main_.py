@@ -62,7 +62,8 @@ def run():
     batch_size = config["batch_size"]
     model1_path = model1params["model_path"]
     model2_path = model2params["model_path"]
-    inst=4
+    inst_tr=4
+    inst_val=2
     batch_size=1
     
     # Get the dataset files
@@ -118,18 +119,20 @@ def run():
     print(batch_size)
     print(config["num_epochs"])
     epochs=3
+    
 
     for epoch in range(epochs):
-        start=0
-        end=start+inst
+        start_tr=0
+        start_val=0
         a_ind=0
-        for i in range(int(50000/inst)):
-            print('instances gone:', inst*(i+1))
-            print(start, end)
-            train_dataset = TranslationDataset(train_en_file, train_de_file, en_tokenizer, de_tokenizer, enc_maxlength, dec_maxlength, start, end, inst)
-            valid_dataset = TranslationDataset(valid_en_file, valid_de_file, en_tokenizer, de_tokenizer, enc_maxlength, dec_maxlength, start, end, inst)
-            start=start+inst
-            end=end+inst
+        for i in range(int(50000/inst_tr)):
+            print('train instances gone:', inst_tr*(i+1))
+            print('val instances gone:', inst_val*(i+1))
+            print(start_tr, start_tr + inst_tr)
+            train_dataset = TranslationDataset(train_en_file, train_de_file, en_tokenizer, de_tokenizer, enc_maxlength, dec_maxlength, start_tr, inst_tr)
+            valid_dataset = TranslationDataset(valid_en_file, valid_de_file, en_tokenizer, de_tokenizer, enc_maxlength, dec_maxlength, start_val, inst_val)
+            start_tr=start_tr+inst_tr
+            start_val=start_val+inst_val
 
             print('before train:', len(train_dataset))
             print('before valid:', len(valid_dataset))

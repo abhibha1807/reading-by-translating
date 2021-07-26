@@ -8,7 +8,7 @@ import os
 
 class TranslationDataset(data.Dataset):
 
-    def __init__(self, inp_file, targ_file, inp_tokenizer, targ_tokenizer, inp_maxlength, targ_maxlength, start, end, inst):
+    def __init__(self, inp_file, targ_file, inp_tokenizer, targ_tokenizer, inp_maxlength, targ_maxlength, start, inst):
 
         self.inp_tokenizer = inp_tokenizer
         self.targ_tokenizer = targ_tokenizer
