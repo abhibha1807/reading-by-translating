@@ -17,14 +17,15 @@ spec:
         image: gitlab-registry.nautilus.optiputer.net/vamsirk/research-containers
         imagePullPolicy: Always
         workingDir: /abhibha-volume/reading-by-translating
-        command: ["ls"]
+        command: ["bash", "train.sh"]
         resources:
           requests:
             memory: "8Gi"
             cpu: "2"
             nvidia.com/gpu: 2
           limits:
-            memory: "8Gi"
+            memory
+            : "8Gi"
             cpu: "2"
             nvidia.com/gpu: 2
         volumeMounts:
