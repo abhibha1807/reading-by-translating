@@ -17,7 +17,7 @@ spec:
         image: gitlab-registry.nautilus.optiputer.net/vamsirk/research-containers
         imagePullPolicy: Always
         workingDir: /abhibha-volume/reading-by-translating
-        command: ["pwd"]
+        command: ["ls"]
         resources:
           requests:
             memory: "8Gi"
