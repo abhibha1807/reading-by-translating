@@ -29,6 +29,7 @@
     "model1" : {
         "lr": 1e-2,
         "model_path" : "./models/model1",
+        "saved_model_path" : "./saved_models/model1",
         "learning_rate_min": 0.001,
         "weight_decay": 3e-4,
         "grad_clip": 5.0
@@ -37,21 +38,21 @@
     "writer" : {
         "comment" : "SIZE_5000_BATCH_10"
     },
-    
+    "instances": 10,
     "learning_rateA": 1e-2,
-    "batch_size" :2,
+    "batch_size" : 5,
     "num_epochs" : 2,
     "learning_rate_min": 0.001,
-    "report_freq": 2,
+    "report_freq": 1,
     "model_path": "./saved_models",
     "save": "EXP",
     "grad_clip": 5.0,
-    "unlabeled_percent":0.1,
-    
+    "unlabeled_percent":0.2,
 
     "model2" : {
         "lr": 1e-2,
         "model_path" : "./models/model1",
+        "saved_model_path" : "./saved_models/model2",
         "learning_rate_min": 0.001,
         "weight_decay": 3e-4,
         "grad_clip": 5.0

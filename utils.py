@@ -23,12 +23,12 @@ def calc_bleu(en_input, lm_labels, model, tokenizer):
   for i in range(len(candidate)):
     score=0
     can = candidate[i].split(' ')
-    #print(can)
+    # print(can)
     ref = reference[i].split(' ')
-    #print(ref)
+    # print(ref)
     while (len(can)<len(ref)):
       can.append('[PAD]')
-    #print(len(can), len(ref))
+    print(len(can), len(ref))
     try:
       score+=(bleu_score(can, ref))
     except:
@@ -50,9 +50,11 @@ def _concat(xs, device):
   p=[]
   for x in xs:
     p.append(x.view(-1).to(device))
-  print(len(p))
+    # p.append(x.view(-1))
   return (torch.cat(p).to(device))
-
+  # y=torch.cat(p)
+  # print(y)
+  # return y
 
 def loadTokenizer(train_en_file, encparams, train_de_file, decparams):
   en_tok_path = encparams["tokenizer_path"]
