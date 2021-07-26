@@ -7,7 +7,7 @@ compute_loss2-> calculates batch loss for step 2 and 3
 '''
 #computes loss for step 1
 def compute_loss1(predictions, targets, a, device, criterion):
-    a=a.to(cuda)
+    a=a.to('cuda')
     predictions = predictions[:, :-1, :].contiguous()
     targets = targets[:, 1:]
     batch_loss=torch.empty(targets.shape[0], device=device)
