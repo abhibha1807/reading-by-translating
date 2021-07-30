@@ -151,11 +151,11 @@ class TranslationModel:
             for param in self.model2.parameters():
                 # param.to(self.device)
                 if param.grad!=None:
-                    vector.append(param.grad.data.to(self.device))
-                    #vector.append(param.grad.data)
+                    #vector.append(param.grad.data.to(self.device))
+                    vector.append(param.grad.data)
                 else:
-                    vector.append(torch.ones(1).to(self.device))
-                    #vector.append(torch.ones(1))
+                    #vector.append(torch.ones(1).to(self.device))
+                    vector.append(torch.ones(1))
             
             #R = r / _concat(vector, self.device).norm().to(self.device)
             R = r / _concat(vector, self.device).norm()
