@@ -161,7 +161,7 @@ class TranslationModel:
 
             print(R)
             for p, v in zip(self.model2.parameters(), vector):
-                #p.data.to(self.device)
+                p.data.to(self.device)
                 p.data.add_(alpha=R, other=v)
                 #p.data.to(self.device)
             t = torch.cuda.get_device_properties(0).total_memory
