@@ -158,7 +158,7 @@ class TranslationModel:
                     vector.append(torch.ones(1))
             
             #R = r / _concat(vector, self.device).norm().to(self.device)
-            R = r / _concat(vector, self.device).norm()
+            R = r / _concat(vector, 'cpu').norm()
             print(R)
             for p, v in zip(self.model2.parameters(), vector):
                 #p.data.to(self.device)
