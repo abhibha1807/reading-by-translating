@@ -8,10 +8,10 @@ from utils import _concat, calc_bleu, loadTokenizer
 Run once to load BERT encoder-decoder models from hugging face library and 
 save them in the 'models' directory
 '''
-model1 = EncoderDecoderModel.from_encoder_decoder_pretrained('bert-base-uncased', 'bert-base-uncased') # initialize Bert2Bert from pre-trained checkpoints
-model2 = EncoderDecoderModel.from_encoder_decoder_pretrained('bert-base-uncased', 'bert-base-uncased') # initialize Bert2Bert from pre-trained checkpoints
-model1.save_pretrained(save_directory='./models/model1')
-model2.save_pretrained(save_directory='./models/model2')
+# model1 = EncoderDecoderModel.from_encoder_decoder_pretrained('bert-base-uncased', 'bert-base-uncased') # initialize Bert2Bert from pre-trained checkpoints
+# model2 = EncoderDecoderModel.from_encoder_decoder_pretrained('bert-base-uncased', 'bert-base-uncased') # initialize Bert2Bert from pre-trained checkpoints
+# model1.save_pretrained(save_directory='./models/model1')
+# model2.save_pretrained(save_directory='./models/model2')
 
 '''
 MT model class to load pretrained models from the 'models' directory and performs 
@@ -127,6 +127,8 @@ class TranslationModel:
 
             loss3.backward(inputs=list(self.model2.parameters()), retain_graph=True)
 
+            del loss3 
+
             t = torch.cuda.get_device_properties(0).total_memory
             r = torch.cuda.memory_reserved(0) 
             al = torch.cuda.memory_allocated(0)
@@ -206,11 +208,16 @@ class TranslationModel:
             del out 
             del outputs
             del new_labels
-            torch.cuda.empty_cache()
             for p, v in zip(self.model2.parameters(), vector):
                 # p.data.to(self.device)
                 p.data.add_(R, v)
-
+            del vector
+            torch.cuda.empty_cache()
+            t = torch.cuda.get_device_properties(0).total_memory
+            r = torch.cuda.memory_reserved(0) 
+            al = torch.cuda.memory_allocated(0)
+            f = r-al  # free inside reserved
+            print('freeeee:', f)
             vector=[]
             for x,y in zip(grads_p, grads_n):
                 if x!=None and y!=None:
