@@ -222,11 +222,11 @@ class TranslationModel:
             vector=[]
             for x,y in zip(grads_p, grads_n):
                 if x!=None and y!=None:
-                    vector.append(((x - y).div_(2 * R)).to(self.device))
-                    #vector.append(((x - y).div_(2 * R)))
+                    # vector.append(((x - y).div_(2 * R)).to(self.device))
+                    vector.append(((x - y).div_(2 * R)))
                 else:
-                    vector.append(torch.ones(1, device=self.device))
-                    #vector.append(torch.ones(1))
+                    # vector.append(torch.ones(1, device=self.device))
+                    vector.append(torch.ones(1))
             
             del grads_n
             del grads_p
