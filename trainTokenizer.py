@@ -35,7 +35,7 @@ def main():
     '''
     Load training data and train BertWordPieceTokenizer
     '''
-    
+    print('training tokenizers')
     # configfile = args.config
     configfile='config.json'
     with open(configfile, "r") as f:
