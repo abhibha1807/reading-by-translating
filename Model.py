@@ -11,26 +11,26 @@ from transformers import BertConfig, EncoderDecoderConfig, EncoderDecoderModel
 Run once to load BERT encoder-decoder models from hugging face library and 
 save them in the 'models' directory
 '''
-with open('config.json', "r") as f:
-    config = json.load(f)
-en=config["encoder_params"]
-de=config["decoder_params"]
-config_encoder = BertConfig(vocab_size=en["vocab_size"], hidden_size=en["hidden_size"], num_hidden_layers=en["num_hidden_layers"],
-                                    num_attention_heads=en["num_attn_heads"])
-config_decoder = BertConfig(vocab_size=de["vocab_size"], hidden_size=de["hidden_size"], num_hidden_layers=de["num_hidden_layers"],
-                                    num_attention_heads=de["num_attn_heads"])
-config = EncoderDecoderConfig.from_encoder_decoder_configs(config_encoder, config_decoder)
+# with open('config.json', "r") as f:
+#     config = json.load(f)
+# en=config["encoder_params"]
+# de=config["decoder_params"]
+# config_encoder = BertConfig(vocab_size=en["vocab_size"], hidden_size=en["hidden_size"], num_hidden_layers=en["num_hidden_layers"],
+#                                     num_attention_heads=en["num_attn_heads"])
+# config_decoder = BertConfig(vocab_size=de["vocab_size"], hidden_size=de["hidden_size"], num_hidden_layers=de["num_hidden_layers"],
+#                                     num_attention_heads=de["num_attn_heads"])
+# config = EncoderDecoderConfig.from_encoder_decoder_configs(config_encoder, config_decoder)
 
-model1 = EncoderDecoderModel(config=config)
-model2 = EncoderDecoderModel(config=config)
+# model1 = EncoderDecoderModel(config=config)
+# model2 = EncoderDecoderModel(config=config)
 
-config_decoder.is_decoder = True
-config_decoder.add_cross_attention = True
+# config_decoder.is_decoder = True
+# config_decoder.add_cross_attention = True
 
 # model1 = EncoderDecoderModel.from_encoder_decoder_pretrained('bert-base-uncased', 'bert-base-uncased') # initialize Bert2Bert from pre-trained checkpoints
 # model2 = EncoderDecoderModel.from_encoder_decoder_pretrained('bert-base-uncased', 'bert-base-uncased') # initialize Bert2Bert from pre-trained checkpoints
-model1.save_pretrained(save_directory='./models/model1')
-model2.save_pretrained(save_directory='./models/model2')
+# model1.save_pretrained(save_directory='./models/model1')
+# model2.save_pretrained(save_directory='./models/model2')
 
 '''
 MT model class to load pretrained models from the 'models' directory and performs 
@@ -252,7 +252,7 @@ class TranslationModel:
             torch.cuda.empty_cache()
             # calculate delL/delA = delWo/delA x delW/delWo x delL/delW 
             for p, v in zip(self.model1.parameters(), vector):
-                #p.to(self.device)
+                p.to(self.device)
                 p.data.add_(alpha=R, other=v)
                 
             #calculate loss
