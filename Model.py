@@ -179,7 +179,7 @@ class TranslationModel:
             predictions = F.log_softmax(out[1], dim=2)
             loss2=compute_loss2(predictions, new_labels, self.device, criterion)
             
-            grads_p=torch.autograd.grad(loss2, self.model1.parameters(), allow_unused=True, retain_graph=True)
+            grads_p=torch.autograd.grad(loss2, self.model1.parameters(), allow_unused=True)
 
             del loss2
             del predictions
@@ -201,7 +201,7 @@ class TranslationModel:
             predictions = F.log_softmax(out[1], dim=2)
             loss2=compute_loss2(predictions, new_labels, self.device, criterion)
         
-            grads_n = torch.autograd.grad(loss2, self.model1.parameters(), allow_unused=True, retain_graph=True)
+            grads_n = torch.autograd.grad(loss2, self.model1.parameters(), allow_unused=True)
 
             del loss2
             del predictions
