@@ -20,13 +20,17 @@ config_encoder = BertConfig(vocab_size=en["vocab_size"], hidden_size=en["hidden_
 config_decoder = BertConfig(vocab_size=de["vocab_size"], hidden_size=de["hidden_size"], num_hidden_layers=de["num_hidden_layers"],
                                     num_attention_heads=de["num_attn_heads"])
 config = EncoderDecoderConfig.from_encoder_decoder_configs(config_encoder, config_decoder)
+
 model1 = EncoderDecoderModel(config=config)
 model2 = EncoderDecoderModel(config=config)
 
+config_decoder.is_decoder = True
+config_decoder.add_cross_attention = True
+
 # model1 = EncoderDecoderModel.from_encoder_decoder_pretrained('bert-base-uncased', 'bert-base-uncased') # initialize Bert2Bert from pre-trained checkpoints
 # model2 = EncoderDecoderModel.from_encoder_decoder_pretrained('bert-base-uncased', 'bert-base-uncased') # initialize Bert2Bert from pre-trained checkpoints
-# model1.save_pretrained(save_directory='./models/model1')
-# model2.save_pretrained(save_directory='./models/model2')
+model1.save_pretrained(save_directory='./models/model1')
+model2.save_pretrained(save_directory='./models/model2')
 
 '''
 MT model class to load pretrained models from the 'models' directory and performs 
