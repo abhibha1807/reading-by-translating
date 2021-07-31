@@ -8,9 +8,9 @@
 
     "encoder_params" : {
         "tokenizer_path" : "./tokenizers/en_tok",
-        "vocab_size" : 25000,
+        "vocab_size" : 10000,
         "min_freq" : 3,
-        "max_length" : 512,
+        "max_length" : 100,
         "num_attn_heads" : 8,
         "num_hidden_layers" : 8,
         "hidden_size" : 512
@@ -18,9 +18,9 @@
 
     "decoder_params" : {
         "tokenizer_path" : "./tokenizers/de_tok",
-        "vocab_size" : 25000,
+        "vocab_size" : 10000,
         "min_freq" : 3,
-        "max_length" : 256,
+        "max_length" : 100,
         "num_attn_heads" : 8,
         "num_hidden_layers" : 8,
         "hidden_size" : 512
