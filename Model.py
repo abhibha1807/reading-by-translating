@@ -207,7 +207,7 @@ class TranslationModel:
             del new_labels
             torch.cuda.empty_cache()
             for p, v in zip(self.model2.parameters(), vector):
-                #p.data.to(self.device)
+                p.data.to(self.device)
                 p.data.sub_(alpha=2 * R, other=v)
                
             
@@ -228,7 +228,7 @@ class TranslationModel:
             del outputs
             del new_labels
             for p, v in zip(self.model2.parameters(), vector):
-                # p.data.to(self.device)
+                p.data.to(self.device)
                 p.data.add_(R, v)
             
             del vector
@@ -265,7 +265,7 @@ class TranslationModel:
             grads_p=torch.autograd.grad(loss1, a, allow_unused=True, retain_graph=True)
 
             for p, v in zip(self.model1.parameters(), vector):
-                #p.to(self.device)
+                p.to(self.device)
                 p.data.sub_(2 * R, v)
 
             del out
@@ -286,7 +286,7 @@ class TranslationModel:
             del loss1
             torch.cuda.empty_cache()
             for p, v in zip(self.model1.parameters(), vector):
-                #p.to(self.device)
+                p.to(self.device)
                 p.data.add_(R, v)
 
             A.grad[a_ind:a_ind+self.batch_size]=[(x - y).div_(2 * R) for x, y in zip(grads_p, grads_n)][0]
