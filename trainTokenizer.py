@@ -4,9 +4,9 @@ import json
 from tokenizers import BertWordPieceTokenizer
 from tokenizers.processors import BertProcessing
 import argparse
-parser = argparse.ArgumentParser("rbt")
-parser.add_argument('--config', type=str, default='config.json', help='config file')
-args = parser.parse_args()
+# parser = argparse.ArgumentParser("rbt")
+# parser.add_argument('--config', type=str, default='config.json', help='config file')
+# args = parser.parse_args()
 
 def train_tokenizer(filename, params):
     """
@@ -31,12 +31,13 @@ def train_tokenizer(filename, params):
         os.makedirs(save_location)
     tokenizer.save_model(save_location)
 
-
-if __name__ == '__main__':
+def main():
     '''
     Load training data and train BertWordPieceTokenizer
     '''
-    configfile = args.config
+    
+    # configfile = args.config
+    configfile='config.json'
     with open(configfile, "r") as f:
         config = json.load(f)
 
@@ -50,3 +51,5 @@ if __name__ == '__main__':
     train_tokenizer(train_en_file, encparams)
     train_tokenizer(train_de_file, decparams)
 
+if __name__ == '__main__':
+    main()
