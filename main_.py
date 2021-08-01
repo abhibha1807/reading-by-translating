@@ -87,7 +87,7 @@ def run():
     criterion = nn.NLLLoss(ignore_index=de_tokenizer.pad_token_id)
 
     #initialize matrix A
-    A=torch.rand(50000, requires_grad=True, device = 'cpu')
+    A=torch.rand(50000, requires_grad=True, device = 'cuda')
     optimizer3 = torch.optim.SGD([A], lr=config["learning_rateA"])
     
     torch.multiprocessing.freeze_support()
