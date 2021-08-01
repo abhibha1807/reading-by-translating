@@ -62,9 +62,9 @@ def run():
     batch_size = config["batch_size"]
     model1_path = model1params["model_path"]
     model2_path = model2params["model_path"]
-    inst_tr=2
-    inst_val=1
-    batch_size=1
+    inst_tr=4
+    inst_val=2
+    batch_size=2
     
     # Get the dataset files
     train_en_file = dataset["train_en_file"]

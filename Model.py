@@ -81,7 +81,7 @@ class TranslationModel:
             #print('step 1 instances gone:', (i+1)*self.batch_size)
 
             if ((i+1)*self.batch_size)% self.config['report_freq'] == 0:
-                self.logger.info('loss after %d instances: %d', (i+1)*self.batch_size, epoch_loss)
+                self.logger.info('loss after %d instances: %d', ((i+1)*self.batch_size), epoch_loss)
                 self.logger.info('bleu score after %d instances: %d', (i+1)*self.batch_size, calc_bleu(en_input, lm_labels, self.model1, tokenizer))
         
         self.logger.info('Mean epoch loss for step 1: %d', (epoch_loss / num_train_batches))
@@ -112,7 +112,7 @@ class TranslationModel:
             #print('step 2 instances gone:', (i+1)*self.batch_size)
             
             if ((i+1)*self.batch_size)% self.config['report_freq'] == 0:
-                self.logger.info('loss after %d instances: %d', (i+1)*self.batch_size, epoch_loss)
+                self.logger.info('loss after %d instances: %d', ((i+1)*self.batch_size), epoch_loss)
                 self.logger.info('bleu score after %d instances: %d', (i+1)*self.batch_size, calc_bleu(en_input, new_labels, self.model2, tokenizer))
 
         self.logger.info('Mean epoch loss for step 2: %d', (epoch_loss / num_train_batches))
@@ -294,7 +294,7 @@ class TranslationModel:
             del grads_p
             del grads_n
             torch.cuda.empty_cache()
-            # torch.nn.utils.clip_grad_norm_(A, 1e-2) 
+            torch.nn.utils.clip_grad_norm_(A, 1e-2) 
             print('before A:', A)
             optimizer3.step()
             print('finallyyyy:', A) 
