@@ -128,7 +128,7 @@ class TranslationModel:
         # a_ind=0
         optimizer3.zero_grad()
         # A.grad=torch.zeros(len(A), device=self.device)
-        A.grad=torch.zeros(len(A), device='cpu')
+        A.grad=torch.zeros(len(A), device='cuda')
 
         for i, ((en_input, en_masks, de_output, de_masks), a) in enumerate(zip(valid_dataloader, A_batch)):
             en_input = en_input.to(self.device)
