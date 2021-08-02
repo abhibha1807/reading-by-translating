@@ -23,7 +23,7 @@ def calc_bleu(en_input, lm_labels, model, tokenizer):
   for i in range(len(candidate)):
     score=0
     can = candidate[i].split(' ')
-    # print(can)
+    print(can)
     ref = reference[i].split(' ')
     # print(ref)
     while (len(can)<len(ref)):
