@@ -125,7 +125,7 @@ class TranslationModel:
     def val_model2(self, valid_dataloader, optimizer3, A, A_batch, tokenizer, criterion, scheduler3, a_ind):
         epoch_loss=0
         self.model2.eval()
-        # a_ind=0
+        a_ind=0
         optimizer3.zero_grad()
         # A.grad=torch.zeros(len(A), device=self.device)
         A.grad=torch.zeros(len(A), device='cuda')

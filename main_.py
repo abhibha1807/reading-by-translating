@@ -64,7 +64,7 @@ def run():
     model2_path = model2params["model_path"]
     inst_tr=8
     inst_val=4
-    batch_size=2
+    batch_size=8
     
     
     # Get the dataset files
@@ -88,7 +88,7 @@ def run():
     criterion = nn.NLLLoss(ignore_index=de_tokenizer.pad_token_id)
 
     #initialize matrix A
-    A=torch.rand(50000, requires_grad=True, device = 'cuda')
+    A=torch.rand(20, requires_grad=True, device = 'cuda')
     optimizer3 = torch.optim.SGD([A], lr=config["learning_rateA"])
     
     torch.multiprocessing.freeze_support()
@@ -103,8 +103,8 @@ def run():
 
 
     #training and validation datasets
-    train_dataset = TranslationDataset(train_en_file, train_de_file, en_tokenizer, de_tokenizer, enc_maxlength, dec_maxlength, 0, 100000)
-    valid_dataset = TranslationDataset(valid_en_file, valid_de_file, en_tokenizer, de_tokenizer, enc_maxlength, dec_maxlength, 0, 10000)
+    train_dataset = TranslationDataset(train_en_file, train_de_file, en_tokenizer, de_tokenizer, enc_maxlength, dec_maxlength, 0, 100)
+    valid_dataset = TranslationDataset(valid_en_file, valid_de_file, en_tokenizer, de_tokenizer, enc_maxlength, dec_maxlength, 0, 100)
 
     print('before train:', len(train_dataset))
     print('before valid:', len(valid_dataset))
