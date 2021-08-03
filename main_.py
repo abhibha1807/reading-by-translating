@@ -64,7 +64,7 @@ def run():
     model2_path = model2params["model_path"]
     inst_tr=8
     inst_val=4
-    batch_size=4
+    batch_size=8
     
     
     # Get the dataset files
