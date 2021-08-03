@@ -40,7 +40,7 @@
     },
     "instances": 10,
     "learning_rateA": 1e-2,
-    "batch_size" : 8,
+    "batch_size" : 4,
     "num_epochs" : 2,
     "learning_rate_min": 0.001,
     "report_freq": 8,

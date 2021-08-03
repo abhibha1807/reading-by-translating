@@ -158,7 +158,8 @@ def run():
         al = torch.cuda.memory_allocated(0)
         f = r-al  # free inside reserved
         print('freeeee:', f)
-        epoch_loss3, a_ind = mdl.val_model2( valid_dataloader, optimizer3, A, A_batch , de_tokenizer, criterion, scheduler3, a_ind)
+        # epoch_loss3, a_ind = mdl.val_model2( valid_dataloader, optimizer3, A, A_batch , de_tokenizer, criterion, scheduler3, a_ind)
+        epoch_loss3 = mdl.val_model2( valid_dataloader, optimizer3, A, A_batch , de_tokenizer, criterion, scheduler3)
         writer.add_scalar('Loss/val', epoch_loss3, epoch)
         if (batch_size*(epoch+1))%100 == 0:
             print('saving model after'+str((batch_size*(epoch+1)))+'instances')
