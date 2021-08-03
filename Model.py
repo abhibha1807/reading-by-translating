@@ -311,7 +311,7 @@ class TranslationModel:
         self.logger.info('Mean epoch loss for step 3: %d', (epoch_loss / len(valid_dataloader))) 
             
         print("Mean epoch loss for step 3:", (epoch_loss / len(valid_dataloader)))
-        return (epoch_loss / len(valid_dataloader), a_ind)
+        return (epoch_loss / len(valid_dataloader))
 
     def save_model(self, save_directory):
         print('saving models')
