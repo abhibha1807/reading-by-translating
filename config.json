@@ -43,7 +43,7 @@
     "batch_size" : 4,
     "num_epochs" : 2,
     "learning_rate_min": 0.001,
-    "report_freq": 8,
+    "report_freq": 4,
     "model_path": "./saved_models",
     "save": "EXP",
     "grad_clip": 5.0,

@@ -308,7 +308,7 @@ class TranslationModel:
                 self.logger.info('loss after %d instances: %d', (i+1)*self.batch_size, epoch_loss)
                 self.logger.info('bleu score after %d instances: %d', (i+1)*self.batch_size, calc_bleu(en_input, lm_labels, self.model2, tokenizer))
 
-        self.logger.info('Mean epoch loss for step 2: %d', (epoch_loss / len(valid_dataloader))) 
+        self.logger.info('Mean epoch loss for step 3: %d', (epoch_loss / len(valid_dataloader))) 
             
         #print("Mean epoch loss for step 3:", (epoch_loss / len(valid_dataloader)))
         return (epoch_loss / len(valid_dataloader), a_ind)
