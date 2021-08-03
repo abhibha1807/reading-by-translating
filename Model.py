@@ -121,8 +121,8 @@ class TranslationModel:
         return ((epoch_loss / num_train_batches))
 
     
-        
-    def val_model2(self, valid_dataloader, optimizer3, A, A_batch, tokenizer, criterion, scheduler3, a_ind):
+    #a_ind
+    def val_model2(self, valid_dataloader, optimizer3, A, A_batch, tokenizer, criterion, scheduler3):
         epoch_loss=0
         self.model2.eval()
         a_ind=0
