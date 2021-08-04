@@ -47,7 +47,7 @@ class TranslationDataset(data.Dataset):
                 #   if num_targ_lines==inst:
                 #     break
                 # c=c+1    
-                
+        print('no of lines read:', num_inp_lines, num_targ_lines)       
         assert (num_inp_lines==num_targ_lines), "Mismatch in EN and DE lines"
         print("Read", num_inp_lines, "lines from EN and DE files.")
 
