@@ -64,7 +64,7 @@ def run():
     model2_path = model2params["model_path"]
     inst_tr=8
     inst_val=4
-    batch_size=4
+    # batch_size=4
     
     
     # Get the dataset files
@@ -119,8 +119,9 @@ def run():
                 unlabeled_amount
     ])
     print(batch_size)
+    epochs=config["num_epochs"]
     print(config["num_epochs"])
-    epochs=3
+    # epochs=3
 
     train_dataloader = torch.utils.data.DataLoader(dataset=train_set, batch_size=batch_size, shuffle=False, \
                                                         drop_last=True, num_workers=2, collate_fn=train_dataset.collate_function)
