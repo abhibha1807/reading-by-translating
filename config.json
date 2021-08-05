@@ -1,7 +1,7 @@
 {
     "dataset" : {
-        "train_en_file" : "./data/en_valid.sample",
-        "train_de_file" : "./data/de_valid.sample",
+        "train_en_file" : "./data/en_train.sample",
+        "train_de_file" : "./data/de_train.sample",
         "valid_en_file" : "./data/en_valid.sample",
         "valid_de_file" : "./data/de_valid.sample"
     },

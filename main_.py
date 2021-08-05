@@ -136,35 +136,35 @@ def run():
     print('unlabeled:', len(unlabeled_set))
     print('valid:', len(valid_dataset))
 
-    # for epoch in range(epochs):
-    #     print('\n')
-    #     t = torch.cuda.get_device_properties(0).total_memory
-    #     r = torch.cuda.memory_reserved(0) 
-    #     al = torch.cuda.memory_allocated(0)
-    #     f = r-al  # free inside reserved
-    #     print('freeeee:', f)
+    for epoch in range(epochs):
+        print('\n')
+        t = torch.cuda.get_device_properties(0).total_memory
+        r = torch.cuda.memory_reserved(0) 
+        al = torch.cuda.memory_allocated(0)
+        f = r-al  # free inside reserved
+        print('freeeee:', f)
     
-    #     epoch_loss1 = mdl.train_model1(A_batch, train_dataloader, optimizer1, de_tokenizer, criterion, scheduler1)
-    #     writer.add_scalar('Loss/model1', epoch_loss1, epoch)
-    #     t = torch.cuda.get_device_properties(0).total_memory
-    #     r = torch.cuda.memory_reserved(0) 
-    #     al = torch.cuda.memory_allocated(0)
-    #     f = r-al  # free inside reserved
-    #     print('freeeee:', f)
+        epoch_loss1 = mdl.train_model1(A_batch, train_dataloader, optimizer1, de_tokenizer, criterion, scheduler1)
+        writer.add_scalar('Loss/model1', epoch_loss1, epoch)
+        t = torch.cuda.get_device_properties(0).total_memory
+        r = torch.cuda.memory_reserved(0) 
+        al = torch.cuda.memory_allocated(0)
+        f = r-al  # free inside reserved
+        print('freeeee:', f)
 
-    #     epoch_loss2 = mdl.train_model2(unlabeled_dataloader, optimizer2, de_tokenizer, criterion, scheduler2)# using the same training dataset for now.
-    #     writer.add_scalar('Loss/model2', epoch_loss2, epoch)
-    #     t = torch.cuda.get_device_properties(0).total_memory
-    #     r = torch.cuda.memory_reserved(0) 
-    #     al = torch.cuda.memory_allocated(0)
-    #     f = r-al  # free inside reserved
-    #     print('freeeee:', f)
-    #     # epoch_loss3, a_ind = mdl.val_model2( valid_dataloader, optimizer3, A, A_batch , de_tokenizer, criterion, scheduler3, a_ind)
-    #     epoch_loss3 = mdl.val_model2( valid_dataloader, optimizer3, A, A_batch , de_tokenizer, criterion, scheduler3)
-    #     writer.add_scalar('Loss/val', epoch_loss3, epoch)
-    #     if (batch_size*(epoch+1))%100 == 0:
-    #         print('saving model after'+str((batch_size*(epoch+1)))+'instances')
-    #         mdl.save_model(config['model_path'])
+        epoch_loss2 = mdl.train_model2(unlabeled_dataloader, optimizer2, de_tokenizer, criterion, scheduler2)# using the same training dataset for now.
+        writer.add_scalar('Loss/model2', epoch_loss2, epoch)
+        t = torch.cuda.get_device_properties(0).total_memory
+        r = torch.cuda.memory_reserved(0) 
+        al = torch.cuda.memory_allocated(0)
+        f = r-al  # free inside reserved
+        print('freeeee:', f)
+        # epoch_loss3, a_ind = mdl.val_model2( valid_dataloader, optimizer3, A, A_batch , de_tokenizer, criterion, scheduler3, a_ind)
+        epoch_loss3 = mdl.val_model2( valid_dataloader, optimizer3, A, A_batch , de_tokenizer, criterion, scheduler3)
+        writer.add_scalar('Loss/val', epoch_loss3, epoch)
+        if (batch_size*(epoch+1))%100 == 0:
+            print('saving model after'+str((batch_size*(epoch+1)))+'instances')
+            mdl.save_model(config['model_path'])
 
             # model1_path=config["model1"]["saved_model_path"]
             # model2_path=config["model2"]["saved_model_path"]
