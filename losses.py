@@ -14,7 +14,7 @@ def compute_loss1(predictions, targets, a, device, criterion):
     for i in range(targets.shape[0]):
       batch_loss[i]=criterion(predictions[i], targets[i])
     y=torch.zeros(1, device=device)
-    y=(batch_loss*a).sum() #multiply by ai
+    y=(batch_loss*a).mean() #multiply by ai
     return y
 
 #computes loss for step 2 and 3
@@ -27,5 +27,5 @@ def compute_loss2(predictions, targets, device, criterion):
     for i in range(targets.shape[0]):
       batch_loss[i]=criterion(predictions[i], targets[i])
     y=torch.zeros(1, device=device)
-    y=(batch_loss).sum()
+    y=(batch_loss).mean()
     return y

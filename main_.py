@@ -73,6 +73,7 @@ def run():
     valid_en_file = dataset["valid_en_file"]
     valid_de_file = dataset["valid_de_file"]
     unlabeled_size=config["unlabeled_percent"]
+    print(train_en_file, train_de_file, valid_en_file, valid_de_file)
     unlabeled_size=0.5
 
     #load BertWordPieceTokenizer
