@@ -81,7 +81,7 @@ class TranslationModel:
             #print('step 1 instances gone:', (i+1)*self.batch_size)
 
             if ((i+1)*self.batch_size)% self.config['report_freq'] == 0:
-                self.logger.info('loss after %d instances: %d', ((i+1)*self.batch_size), loss1.ietm())
+                self.logger.info('loss after %d instances: %d', ((i+1)*self.batch_size), loss1.item())
                 self.logger.info('bleu score after %d instances: %d', (i+1)*self.batch_size, calc_bleu(en_input, lm_labels, self.model1, tokenizer))
         
         self.logger.info('Mean epoch loss for step 1: %d', epoch_loss)
