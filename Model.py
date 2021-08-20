@@ -95,6 +95,7 @@ class TranslationModel:
         num_train_batches = len(unlabeled_dataloader)
         #num_train_batches = 2
         for i, (en_input, en_masks, de_output, de_masks) in enumerate(unlabeled_dataloader):
+            optimizer2.zero_grad()
             en_input = en_input.to(self.device)
             outputs=self.model1(input_ids=en_input, decoder_input_ids=en_input, output_hidden_states=True, return_dict=True)
             predictions = F.log_softmax(outputs.logits, dim=2)
@@ -132,6 +133,7 @@ class TranslationModel:
         A.grad=torch.zeros(len(A), device='cuda')
 
         for i, ((en_input, en_masks, de_output, de_masks), a) in enumerate(zip(valid_dataloader, A_batch)):
+            optimizer3.zero_grad()
             en_input = en_input.to(self.device)
             de_output = de_output.to(self.device)
             en_masks = en_masks.to(self.device)
