@@ -97,9 +97,9 @@ def run():
 
     writer = SummaryWriter()
 
-    scheduler1 = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer1, float(config['num_epochs']), eta_min=model1params["learning_rate_min"])
-    scheduler2 = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer2, float(config['num_epochs']), eta_min=model2params["learning_rate_min"])
-    scheduler3 = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer3, float(config['num_epochs']), eta_min=config["learning_rate_min"])
+    # scheduler1 = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer1, float(config['num_epochs']), eta_min=model1params["learning_rate_min"])
+    # scheduler2 = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer2, float(config['num_epochs']), eta_min=model2params["learning_rate_min"])
+    # scheduler3 = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer3, float(config['num_epochs']), eta_min=config["learning_rate_min"])
 
 
 
@@ -139,25 +139,25 @@ def run():
 
     for epoch in range(epochs):
         print('\n')
-        lr1 = scheduler1.get_lr()[0]
-        lr2 = scheduler2.get_lr()[0]
-        lr3 = scheduler3.get_lr()[0]
-        print(lr1, lr2, lr3)
+        # lr1 = scheduler1.get_lr()[0]
+        # lr2 = scheduler2.get_lr()[0]
+        # lr3 = scheduler3.get_lr()[0]
+        # print(lr1, lr2, lr3)
         # t = torch.cuda.get_device_properties(0).total_memory
         # r = torch.cuda.memory_reserved(0) 
         # al = torch.cuda.memory_allocated(0)
         # f = r-al  # free inside reserved
         # print('freeeee:', f)
-    
-        epoch_loss1 = mdl.train_model1(A_batch, train_dataloader, optimizer1, de_tokenizer, criterion, scheduler1)
+        #scheduler1
+        epoch_loss1 = mdl.train_model1(A_batch, train_dataloader, optimizer1, de_tokenizer, criterion, )
         writer.add_scalar('Loss/model1', epoch_loss1, epoch)
         # t = torch.cuda.get_device_properties(0).total_memory
         # r = torch.cuda.memory_reserved(0) 
         # al = torch.cuda.memory_allocated(0)
         # f = r-al  # free inside reserved
         # print('freeeee:', f)
-
-        epoch_loss2 = mdl.train_model2(unlabeled_dataloader, optimizer2, de_tokenizer, criterion, scheduler2)# using the same training dataset for now.
+        # scheduler2
+        epoch_loss2 = mdl.train_model2(unlabeled_dataloader, optimizer2, de_tokenizer, criterion, )# using the same training dataset for now.
         writer.add_scalar('Loss/model2', epoch_loss2, epoch)
         # t = torch.cuda.get_device_properties(0).total_memory
         # r = torch.cuda.memory_reserved(0) 
@@ -165,7 +165,8 @@ def run():
         # f = r-al  # free inside reserved
         # print('freeeee:', f)
         # epoch_loss3, a_ind = mdl.val_model2( valid_dataloader, optimizer3, A, A_batch , de_tokenizer, criterion, scheduler3, a_ind)
-        epoch_loss3 = mdl.val_model2( valid_dataloader, optimizer3, A, A_batch , de_tokenizer, criterion, scheduler3)
+        #scheduler3
+        epoch_loss3 = mdl.val_model2( valid_dataloader, optimizer3, A, A_batch , de_tokenizer, criterion, )
         writer.add_scalar('Loss/val', epoch_loss3, epoch)
         if (batch_size*(epoch+1))%100 == 0:
             print('saving model after'+str((batch_size*(epoch+1)))+'instances')

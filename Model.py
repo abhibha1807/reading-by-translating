@@ -52,8 +52,8 @@ class TranslationModel:
         self.logger=logging
         self.config=config
         
-
-    def train_model1(self, A_batch, train_dataloader, optimizer1, tokenizer, criterion, scheduler1):
+    #scheduler1
+    def train_model1(self, A_batch, train_dataloader, optimizer1, tokenizer, criterion, ):
         self.model1.train()
         epoch_loss = 0
         optimizer1.zero_grad()
@@ -77,7 +77,7 @@ class TranslationModel:
             loss1.backward(inputs=list(self.model1.parameters()), retain_graph=True) 
             torch.nn.utils.clip_grad_norm_(self.model1.parameters(), self.config["model1"]['grad_clip'])
             optimizer1.step() # wt updation  
-            scheduler1.step() 
+            # scheduler1.step() 
             #print('step 1 instances gone:', (i+1)*self.batch_size)
 
             if ((i+1)*self.batch_size)% self.config['report_freq'] == 0:
@@ -87,8 +87,8 @@ class TranslationModel:
         self.logger.info('Mean epoch loss for step 1: %d', (epoch_loss))
         #print("Mean epoch loss for step 1:", (epoch_loss / num_train_batches))
         return ((epoch_loss / num_train_batches))
-
-    def train_model2(self, unlabeled_dataloader, optimizer2, tokenizer, criterion, scheduler2):
+    #scheduler2
+    def train_model2(self, unlabeled_dataloader, optimizer2, tokenizer, criterion, ):
         epoch_loss=0
         optimizer2.zero_grad()
         self.model2.train()
@@ -108,7 +108,7 @@ class TranslationModel:
             loss2.backward(inputs=list(self.model2.parameters()), retain_graph=True)
             torch.nn.utils.clip_grad_norm_(self.model2.parameters(), self.config["model2"]['grad_clip'])
             optimizer2.step()
-            scheduler2.step()
+            # scheduler2.step()
             #print('step 2 instances gone:', (i+1)*self.batch_size)
             
             if ((i+1)*self.batch_size)% self.config['report_freq'] == 0:
@@ -122,7 +122,8 @@ class TranslationModel:
 
     
     #a_ind
-    def val_model2(self, valid_dataloader, optimizer3, A, A_batch, tokenizer, criterion, scheduler3):
+    #scheduler3
+    def val_model2(self, valid_dataloader, optimizer3, A, A_batch, tokenizer, criterion, ):
         epoch_loss=0
         self.model2.eval()
         a_ind=0
@@ -298,7 +299,7 @@ class TranslationModel:
             print('before A:', A)
             optimizer3.step()
             print('finallyyyy:', A) 
-            scheduler3.step()
+            # scheduler3.step()
             # print('before a_ind:', a_ind)
             a_ind=a_ind+self.batch_size
             # print('after a_ind:', a_ind)
