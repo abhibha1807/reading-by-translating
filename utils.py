@@ -5,6 +5,7 @@ from torchtext.data.metrics import bleu_score
 from transformers import BertTokenizerFast
 import os
 from nltk.translate.bleu_score import sentence_bleu
+from nltk.translate.bleu_score import SmoothingFunction
 
 '''
 Implements suppplementary functions
@@ -23,10 +24,10 @@ def calc_bleu(en_input, lm_labels, model, tokenizer):
   # print(reference)
   for i in range(len(candidate)):
     score=0
-    can = [i for i in candidate[i].split(' ')]
+    can =  candidate[i].split(' ')
     print(can)
-    ref = reference[i].split(' ')
-    # print(ref)
+    ref = [i for i in reference[i].split(' ')]
+    print(ref)
     # while (len(can)<len(ref)):
     #   can.append('[PAD]')
     # print(len(can), len(ref))
@@ -35,7 +36,7 @@ def calc_bleu(en_input, lm_labels, model, tokenizer):
     # else:
     #   print('invalid lengths' )
 
-    score = sentence_bleu(ref, can)
+    score = sentence_bleu(ref, can, smoothing_function=cc.method0)
     print(score)
     
   return(score/en_input.shape[0])
