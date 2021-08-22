@@ -297,7 +297,7 @@ class TranslationModel:
             del grads_p
             del grads_n
             torch.cuda.empty_cache()
-            torch.nn.utils.clip_grad_norm_(A, 1e-2) 
+            #torch.nn.utils.clip_grad_norm_(A, 1e-2) 
             print('before A:', A)
             optimizer3.step()
             print('finallyyyy:', A) 
