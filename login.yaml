@@ -10,11 +10,11 @@ spec:
     args: ["-c", "sleep infinity"]
     resources:
       requests:
-        memory: "16Gi"
+        memory: "8Gi"
         cpu: 2
       limits:
         nvidia.com/gpu: 2
-        memory: "16Gi"
+        memory: "8Gi"
         cpu: 2
     volumeMounts:
     - name: abhibha-volume     #use your own volune path
