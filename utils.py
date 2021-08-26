@@ -37,7 +37,7 @@ def calc_bleu(en_input, lm_labels, model, tokenizer):
     # else:
     #   print('invalid lengths' )
 
-    score = sentence_bleu(ref, can, smoothing_function=cc.method0)
+    score = sentence_bleu(ref, can, smoothing_function=cc.method0, weights = (1./5., 1./5.))
     print(score)
     
   return(score/en_input.shape[0])
