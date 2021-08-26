@@ -149,7 +149,7 @@ class TranslationModel:
 
             loss3.backward(inputs=list(self.model2.parameters()), retain_graph=True)
 
-            del loss3 
+            # del loss3 
 
             t = torch.cuda.get_device_properties(0).total_memory
             r = torch.cuda.memory_reserved(0) 
