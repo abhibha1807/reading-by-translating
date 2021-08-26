@@ -41,7 +41,7 @@ def calc_bleu(en_input, lm_labels, model, tokenizer):
     score = score + sentence_bleu(ref, can, smoothing_function=cc.method7, weights = (0.5, 0.5))
     print('score:', score)
     
-  return(score/en_input.shape[0])
+  return(score)
 
 # creates a dataloader for weight matrix A 
 class createBatchesA(Dataset):
