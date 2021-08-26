@@ -56,11 +56,9 @@ class TranslationModel:
     def train_model1(self, A_batch, train_dataloader, optimizer1, tokenizer, criterion, ):
         self.model1.train()
         epoch_loss = 0
-        optimizer1.zero_grad()
         num_train_batches = len(train_dataloader)
 
         for i, ((en_input, en_masks, de_output, de_masks), a) in enumerate(zip(train_dataloader, A_batch)):
-            
             optimizer1.zero_grad()
             en_input = en_input.to(self.device) 
             de_output = de_output.to(self.device)
@@ -90,7 +88,6 @@ class TranslationModel:
     #scheduler2
     def train_model2(self, unlabeled_dataloader, optimizer2, tokenizer, criterion, ):
         epoch_loss=0
-        optimizer2.zero_grad()
         self.model2.train()
         num_train_batches = len(unlabeled_dataloader)
         #num_train_batches = 2
