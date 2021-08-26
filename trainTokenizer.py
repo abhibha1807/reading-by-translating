@@ -20,7 +20,8 @@ def train_tokenizer(filename, params):
 
     tokenizer = BertWordPieceTokenizer()
     tokenizer.do_lower_case = False
-    special_tokens = ["[S]","[PAD]","[/S]","[UNK]","[MASK]", "[SEP]","[CLS]"]
+    # special_tokens = ["[S]","[PAD]","[/S]","[UNK]","[MASK]", "[SEP]","[CLS]"]
+    special_tokens = ["[PAD]", "[SEP]","[CLS]"]
     tokenizer.train(files=[filename], vocab_size=vocabsize, min_frequency=min_freq, special_tokens = special_tokens)
 
     tokenizer._tokenizer.post_processor = BertProcessing(("[SEP]", tokenizer.token_to_id("[SEP]")), ("[CLS]", tokenizer.token_to_id("[CLS]")),)
