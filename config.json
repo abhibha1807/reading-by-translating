@@ -10,7 +10,7 @@
         "tokenizer_path" : "./tokenizers/en_tok",
         "vocab_size" : 25000,
         "min_freq" : 3,
-        "max_length" : 100,
+        "max_length" : 512,
         "num_attn_heads" : 8,
         "num_hidden_layers" : 8,
         "hidden_size" : 512
@@ -20,7 +20,7 @@
         "tokenizer_path" : "./tokenizers/de_tok",
         "vocab_size" : 25000,
         "min_freq" : 3,
-        "max_length" : 100,
+        "max_length" : 256,
         "num_attn_heads" : 8,
         "num_hidden_layers" : 8,
         "hidden_size" : 512
