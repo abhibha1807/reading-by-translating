@@ -26,9 +26,10 @@ def calc_bleu(en_input, lm_labels, model, tokenizer):
   for i in range(len(candidate)):
     score=0
     can =  candidate[i].split(' ')
-    print(can)
+    print('can:', can)
     ref = [i for i in reference[i].split(' ')]
-    print(ref)
+    print('ref:', ref)
+    print('\n')
     # while (len(can)<len(ref)):
     #   can.append('[PAD]')
     # print(len(can), len(ref))
@@ -37,8 +38,8 @@ def calc_bleu(en_input, lm_labels, model, tokenizer):
     # else:
     #   print('invalid lengths' )
 
-    score = sentence_bleu(ref, can, smoothing_function=cc.method7, weights = (0.5, 0.5))
-    print(score)
+    score = score + sentence_bleu(ref, can, smoothing_function=cc.method7, weights = (0.5, 0.5))
+    print('score:', score)
     
   return(score/en_input.shape[0])
 
