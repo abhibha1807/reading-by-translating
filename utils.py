@@ -6,6 +6,7 @@ from transformers import BertTokenizerFast
 import os
 from nltk.translate.bleu_score import sentence_bleu
 from nltk.translate.bleu_score import SmoothingFunction
+cc = SmoothingFunction()
 
 '''
 Implements suppplementary functions
