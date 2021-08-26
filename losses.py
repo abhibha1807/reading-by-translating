@@ -10,10 +10,10 @@ def compute_loss1(predictions, targets, a, device, criterion):
     a=a.to('cuda')
     predictions = predictions[:, :-1, :].contiguous()
     targets = targets[:, 1:]
-    rearranged_output = predictions.view(predictions.shape[0]*predictions.shape[1], -1)
-    rearranged_target = targets.contiguous().view(-1)
-    predictions=rearranged_output
-    targets=rearranged_target
+    # rearranged_output = predictions.view(predictions.shape[0]*predictions.shape[1], -1)
+    # rearranged_target = targets.contiguous().view(-1)
+    # predictions=rearranged_output
+    # targets=rearranged_target
     batch_loss=torch.empty(targets.shape[0], device=device)
     for i in range(targets.shape[0]):
       batch_loss[i]=criterion(predictions[i], targets[i])
