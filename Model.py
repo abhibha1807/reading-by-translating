@@ -144,20 +144,19 @@ class TranslationModel:
             print('loss3:', loss3)
             epoch_loss+=loss3.item()
 
-            for p in list(self.model2.parameters()):
-                print(p)
-                break
+            # for p in list(self.model2.parameters()):
+            #     print(p)
+            #     break
             loss3.backward(inputs=list(self.model2.parameters()), retain_graph=True)
-            for p in list(self.model2.parameters()):
-                print(p)
-                break
-            # del loss3 
-
-            t = torch.cuda.get_device_properties(0).total_memory
-            r = torch.cuda.memory_reserved(0) 
-            al = torch.cuda.memory_allocated(0)
-            f = r-al  # free inside reserved
-            print('freeeee:', f)
+            # for p in list(self.model2.parameters()):
+            #     print(p)
+            #     break
+        
+            # t = torch.cuda.get_device_properties(0).total_memory
+            # r = torch.cuda.memory_reserved(0) 
+            # al = torch.cuda.memory_allocated(0)
+            # f = r-al  # free inside reserved
+            # print('freeeee:', f)
             
             '''
             Implementation of chain rule: eq 8,9 and 10
@@ -180,13 +179,15 @@ class TranslationModel:
                 else:
                     vector.append(torch.ones(1).to(self.device))
                     #vector.append(torch.ones(1))
-            
+            print('vector:', vector[0])
             R = r / _concat(vector, self.device).norm()
 
-            print(R)
+            print('R:', R)
             for p, v in zip(self.model2.parameters(), vector):
+                print('before p.data:', p.data)
                 p.data.to(self.device)
                 p.data.add_(alpha=R, other=v)
+                print('after p.data:', p.data)
                 #p.data.to(self.device)
             t = torch.cuda.get_device_properties(0).total_memory
             r = torch.cuda.memory_reserved(0) 
@@ -312,6 +313,7 @@ class TranslationModel:
             if ((i+1)*self.batch_size)% self.config['report_freq'] == 0:
                 self.logger.info('loss after %d instances: %d', (i+1)*self.batch_size, loss3.item())
                 self.logger.info('bleu score after %d instances: %d', (i+1)*self.batch_size, calc_bleu(en_input, lm_labels, self.model2, tokenizer))
+            break
 
         self.logger.info('Mean epoch loss for step 3: %d', (epoch_loss )) 
             
