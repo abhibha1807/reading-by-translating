@@ -144,8 +144,13 @@ class TranslationModel:
             print('loss3:', loss3)
             epoch_loss+=loss3.item()
 
+            for p in list(self.model2.parameters()):
+                print(p)
+                break
             loss3.backward(inputs=list(self.model2.parameters()), retain_graph=True)
-
+            for p in list(self.model2.parameters()):
+                print(p)
+                break
             # del loss3 
 
             t = torch.cuda.get_device_properties(0).total_memory

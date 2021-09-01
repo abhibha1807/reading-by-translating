@@ -62,9 +62,6 @@ def run():
     batch_size = config["batch_size"]
     model1_path = model1params["model_path"]
     model2_path = model2params["model_path"]
-    inst_tr=8
-    inst_val=4
-    # batch_size=4
     
     
     # Get the dataset files
@@ -89,7 +86,7 @@ def run():
     criterion = nn.NLLLoss(ignore_index=de_tokenizer.pad_token_id)
 
     #initialize matrix A
-    A=torch.rand(50000, requires_grad=True, device = 'cuda')
+    A=torch.rand(10, requires_grad=True, device = 'cuda')
     optimizer3 = torch.optim.SGD([A], lr=config["learning_rateA"])
     
     torch.multiprocessing.freeze_support()
@@ -147,11 +144,11 @@ def run():
         # f = r-al  # free inside reserved
         # print('freeeee:', f)
         #scheduler1
-        epoch_loss1 = mdl.train_model1(A_batch, train_dataloader, optimizer1, de_tokenizer, criterion, )
-        writer.add_scalar('Loss/model1', epoch_loss1, epoch)
+        # epoch_loss1 = mdl.train_model1(A_batch, train_dataloader, optimizer1, de_tokenizer, criterion, )
+        # writer.add_scalar('Loss/model1', epoch_loss1, epoch)
       
-        epoch_loss2 = mdl.train_model2(unlabeled_dataloader, optimizer2, de_tokenizer, criterion, )# using the same training dataset for now.
-        writer.add_scalar('Loss/model2', epoch_loss2, epoch)
+        # epoch_loss2 = mdl.train_model2(unlabeled_dataloader, optimizer2, de_tokenizer, criterion, )# using the same training dataset for now.
+        # writer.add_scalar('Loss/model2', epoch_loss2, epoch)
        
         # # epoch_loss3, a_ind = mdl.val_model2( valid_dataloader, optimizer3, A, A_batch , de_tokenizer, criterion, scheduler3, a_ind)
         # #scheduler3
