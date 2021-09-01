@@ -188,6 +188,7 @@ class TranslationModel:
                 p.data.to(self.device)
                 p.data.add_(alpha=R, other=v)
                 print('after p.data:', p.data)
+                break
                 #p.data.to(self.device)
             t = torch.cuda.get_device_properties(0).total_memory
             r = torch.cuda.memory_reserved(0) 
