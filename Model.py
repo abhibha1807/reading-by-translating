@@ -73,7 +73,7 @@ class TranslationModel:
             print('loss1:', loss1)
             epoch_loss+=loss1.item()
             loss1.backward(inputs=list(self.model1.parameters()), retain_graph=True) 
-            torch.nn.utils.clip_grad_norm_(self.model1.parameters(), self.config["model1"]['grad_clip'])
+            #torch.nn.utils.clip_grad_norm_(self.model1.parameters(), self.config["model1"]['grad_clip'])
             optimizer1.step() # wt updation  
             # scheduler1.step() 
             #print('step 1 instances gone:', (i+1)*self.batch_size)
@@ -104,7 +104,7 @@ class TranslationModel:
 
             epoch_loss += loss2.item()
             loss2.backward(inputs=list(self.model2.parameters()), retain_graph=True)
-            torch.nn.utils.clip_grad_norm_(self.model2.parameters(), self.config["model2"]['grad_clip'])
+            #torch.nn.utils.clip_grad_norm_(self.model2.parameters(), self.config["model2"]['grad_clip'])
             optimizer2.step()
             # scheduler2.step()
             #print('step 2 instances gone:', (i+1)*self.batch_size)
@@ -314,7 +314,7 @@ class TranslationModel:
             del grads_n
             torch.cuda.empty_cache()
             
-            torch.nn.utils.clip_grad_norm_(A, 1e-2) 
+            #torch.nn.utils.clip_grad_norm_(A, 1e-2) 
             print('after A.grad:', A.grad)
             print('before A:', A)
             optimizer3.step()
@@ -328,7 +328,7 @@ class TranslationModel:
             if ((i+1)*self.batch_size)% self.config['report_freq'] == 0:
                 self.logger.info('loss after %d instances: %d', (i+1)*self.batch_size, loss3.item())
                 self.logger.info('bleu score after %d instances: %d', (i+1)*self.batch_size, calc_bleu(en_input, lm_labels, self.model2, tokenizer))
-            break
+            # break
 
         self.logger.info('Mean epoch loss for step 3: %d', (epoch_loss )) 
             

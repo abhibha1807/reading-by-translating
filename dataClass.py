@@ -27,8 +27,8 @@ class TranslationDataset(data.Dataset):
                 enc = self.inp_tokenizer.encode(line.strip(), add_special_tokens=True, max_length=self.inp_maxlength)
                 self.encoded_inp.append(torch.tensor(enc))
                 num_inp_lines += 1
-                if num_inp_lines==10:
-                    break
+                # if num_inp_lines==10:
+                #     break
                
 
         # read the DE lines
@@ -39,8 +39,8 @@ class TranslationDataset(data.Dataset):
                 enc = self.targ_tokenizer.encode(line.strip(), add_special_tokens=True, max_length=self.targ_maxlength)
                 self.encoded_targ.append(torch.tensor(enc))
                 num_targ_lines += 1
-                if num_targ_lines==10:
-                    break
+                # if num_targ_lines==10:
+                #     break
                
         print('no of lines read:', num_inp_lines, num_targ_lines)       
         assert (num_inp_lines==num_targ_lines), "Mismatch in EN and DE lines"
