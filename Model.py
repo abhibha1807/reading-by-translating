@@ -186,7 +186,7 @@ class TranslationModel:
             for p, v in zip(self.model2.parameters(), vector):
                 print('before p.data:', p.data)
                 p.data.to(self.device)
-                torch.add_(input=p, other=v, alpha=R)
+                torch.Tensor.add_(input=p, other=v, alpha=R)
                 #p.data.add_(alpha=R, other=v)
                 print('after p.data:', p.data)
                 break
@@ -216,7 +216,8 @@ class TranslationModel:
             torch.cuda.empty_cache()
             for p, v in zip(self.model2.parameters(), vector):
                 p.data.to(self.device)
-                p.data.sub_(alpha=2 * R, other=v)
+                torch.Tensor.sub_(input=p, other=v, alpha=2*R)
+                #p.data.sub_(alpha=2 * R, other=v)
                
             
             #calculate loss
@@ -237,7 +238,8 @@ class TranslationModel:
             del new_labels
             for p, v in zip(self.model2.parameters(), vector):
                 p.data.to(self.device)
-                p.data.add_(R, v)
+                torch.Tensor.add_(input=p, other=v, alpha=R)
+                #p.data.add_(R, v)
             
             del vector
             torch.cuda.empty_cache()
@@ -261,7 +263,8 @@ class TranslationModel:
             # calculate delL/delA = delWo/delA x delW/delWo x delL/delW 
             for p, v in zip(self.model1.parameters(), vector):
                 p.to(self.device)
-                p.data.add_(alpha=R, other=v)
+                torch.Tensor.add_(input=p, other=v, alpha=R)
+                #p.data.add_(alpha=R, other=v)
                 
             #calculate loss
             out = self.model1(input_ids=en_input, attention_mask=en_masks, decoder_input_ids=de_output, 
@@ -274,7 +277,8 @@ class TranslationModel:
 
             for p, v in zip(self.model1.parameters(), vector):
                 p.to(self.device)
-                p.data.sub_(2 * R, v)
+                torch.Tensor.sub_(input=p, other=v, alpha=2*R)
+                #p.data.sub_(2 * R, v)
 
             del out
             del predictions
@@ -295,7 +299,8 @@ class TranslationModel:
             torch.cuda.empty_cache()
             for p, v in zip(self.model1.parameters(), vector):
                 p.to(self.device)
-                p.data.add_(R, v)
+                torch.Tensor.add_(input=p, other=v, alpha=R)
+                #p.data.add_(R, v)
 
             A.grad[a_ind:a_ind+self.batch_size]=[(x - y).div_(2 * R) for x, y in zip(grads_p, grads_n)][0]
             print(A.grad)
