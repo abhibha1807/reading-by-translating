@@ -66,7 +66,7 @@ def _concat(xs, device):
 
 def loadTokenizer(train_en_file, encparams, train_de_file, decparams):
   en_tok_path = encparams["tokenizer_path"]
-  en_tokenizer = BertTokenizerFast(os.path.join(en_tok_path, "vocab.txt"))
+  en_tokenizer = BertTokenizerFast(os.path.join(en_tok_path, "vocab.txt"),  truncation=True)
   de_tok_path = decparams["tokenizer_path"]
-  de_tokenizer = BertTokenizerFast(os.path.join(de_tok_path, "vocab.txt"))
+  de_tokenizer = BertTokenizerFast(os.path.join(de_tok_path, "vocab.txt"),  truncation=True)
   return (en_tokenizer, de_tokenizer)
