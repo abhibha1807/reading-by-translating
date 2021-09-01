@@ -186,7 +186,8 @@ class TranslationModel:
             for p, v in zip(self.model2.parameters(), vector):
                 print('before p.data:', p.data)
                 p.data.to(self.device)
-                p.data.add_(alpha=R, other=v)
+                torch.add_(input=p, other=v, alpha=R)
+                #p.data.add_(alpha=R, other=v)
                 print('after p.data:', p.data)
                 break
                 #p.data.to(self.device)
