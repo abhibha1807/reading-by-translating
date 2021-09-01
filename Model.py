@@ -45,7 +45,6 @@ class TranslationModel:
         self.model2=EncoderDecoderModel.from_pretrained(model2_path)
         self.device=device
         self.batch_size=batch_size
-        print(device)
         print('model in device:', self.device)
         self.model1 = self.model1.cuda()
         self.model2 = self.model2.cuda()
