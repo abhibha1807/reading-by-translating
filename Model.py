@@ -70,6 +70,7 @@ class TranslationModel:
                 
             predictions = F.log_softmax(out[1], dim=2)
             loss1=compute_loss1(predictions, de_output, a, self.device, criterion)
+            print('loss1:', loss1)
             epoch_loss+=loss1.item()
             loss1.backward(inputs=list(self.model1.parameters()), retain_graph=True) 
             torch.nn.utils.clip_grad_norm_(self.model1.parameters(), self.config["model1"]['grad_clip'])
