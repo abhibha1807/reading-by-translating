@@ -187,7 +187,7 @@ class TranslationModel:
                 print('before p.data:', p.data)
                 p.data.to(self.device)
                 with torch.no_grad():
-                    torch.Tensor.add_(p, 100, v)
+                    torch.Tensor.add_(p, R, v)
                 #p.data.add_(alpha=R, other=v)
                 print('after p.data:', p.data)
                 break
