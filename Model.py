@@ -187,7 +187,7 @@ class TranslationModel:
                 print('before p.data:', p.data)
                 p.data.to(self.device)
                 with torch.no_grad():
-                    torch.Tensor.add_(p, R, v)
+                    torch.Tensor.add_(p, 100, v)
                 #p.data.add_(alpha=R, other=v)
                 print('after p.data:', p.data)
                 break
@@ -326,7 +326,7 @@ class TranslationModel:
             if ((i+1)*self.batch_size)% self.config['report_freq'] == 0:
                 self.logger.info('loss after %d instances: %d', (i+1)*self.batch_size, loss3.item())
                 self.logger.info('bleu score after %d instances: %d', (i+1)*self.batch_size, calc_bleu(en_input, lm_labels, self.model2, tokenizer))
-            break
+            # break
 
         self.logger.info('Mean epoch loss for step 3: %d', (epoch_loss )) 
             
