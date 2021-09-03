@@ -11,11 +11,11 @@ spec:
     resources:
       requests:
         memory: "8Gi"
-        cpu: 2
+        cpu: "0"
       limits:
-        nvidia.com/gpu: 2
+        nvidia.com/gpu: "0"
         memory: "8Gi"
-        cpu: 2
+        cpu: "0"
     volumeMounts:
     - name: abhibha-volume     #use your own volune path
       mountPath: /abhibha-volume
