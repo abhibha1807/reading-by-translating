@@ -94,9 +94,9 @@ def run():
 
     writer = SummaryWriter()
 
-    # scheduler1 = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer1, float(config['num_epochs']), eta_min=model1params["learning_rate_min"])
-    # scheduler2 = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer2, float(config['num_epochs']), eta_min=model2params["learning_rate_min"])
-    # scheduler3 = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer3, float(config['num_epochs']), eta_min=config["learning_rate_min"])
+    scheduler1 = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer1, float(config['num_epochs']), eta_min=model1params["learning_rate_min"])
+    scheduler2 = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer2, float(config['num_epochs']), eta_min=model2params["learning_rate_min"])
+    scheduler3 = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer3, float(config['num_epochs']), eta_min=config["learning_rate_min"])
 
     #training and validation datasets
     train_dataset = TranslationDataset(train_en_file, train_de_file, en_tokenizer, de_tokenizer, enc_maxlength, dec_maxlength)
@@ -134,26 +134,26 @@ def run():
 
     for epoch in range(epochs):
         print('\n')
-        # lr1 = scheduler1.get_lr()[0]
-        # lr2 = scheduler2.get_lr()[0]
-        # lr3 = scheduler3.get_lr()[0]
-        # print(lr1, lr2, lr3)
+        lr1 = scheduler1.get_lr()[0]
+        lr2 = scheduler2.get_lr()[0]
+        lr3 = scheduler3.get_lr()[0]
+        print(lr1, lr2, lr3)
         # t = torch.cuda.get_device_properties(0).total_memory
         # r = torch.cuda.memory_reserved(0) 
         # al = torch.cuda.memory_allocated(0)
         # f = r-al  # free inside reserved
         # print('freeeee:', f)
         #scheduler1
-        epoch_loss1 = mdl.train_model1(A_batch, train_dataloader, optimizer1, de_tokenizer, criterion, )
+        epoch_loss1 = mdl.train_model1(A_batch, train_dataloader, optimizer1, de_tokenizer, criterion, scheduler1)
         writer.add_scalar('Loss/model1', epoch_loss1, epoch)
       
-        epoch_loss2 = mdl.train_model2(unlabeled_dataloader, optimizer2, de_tokenizer, criterion, )# using the same training dataset for now.
+        epoch_loss2 = mdl.train_model2(unlabeled_dataloader, optimizer2, de_tokenizer, criterion, scheduler2)# using the same training dataset for now.
         writer.add_scalar('Loss/model2', epoch_loss2, epoch)
        
         # # epoch_loss3, a_ind = mdl.val_model2( valid_dataloader, optimizer3, A, A_batch , de_tokenizer, criterion, scheduler3, a_ind)
         # #scheduler3
 
-        epoch_loss3 = mdl.val_model2(valid_dataloader, optimizer3, A, A_batch , de_tokenizer, criterion, )
+        epoch_loss3 = mdl.val_model2(valid_dataloader, optimizer3, A, A_batch , de_tokenizer, criterion, scheduler3)
         writer.add_scalar('Loss/val', epoch_loss3, epoch)
 
         # if (batch_size*(epoch+1))%100 == 0:
