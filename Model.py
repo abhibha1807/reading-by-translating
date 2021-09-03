@@ -52,7 +52,7 @@ class TranslationModel:
         self.config=config
         
     #scheduler1
-    def train_model1(self, A_batch, train_dataloader, optimizer1, tokenizer, criterion, ):
+    def train_model1(self, A_batch, train_dataloader, optimizer1, tokenizer, criterion, scheduler1):
         self.model1.train()
         epoch_loss = 0
         num_train_batches = len(train_dataloader)
@@ -75,22 +75,24 @@ class TranslationModel:
             loss1.backward(inputs=list(self.model1.parameters()), retain_graph=True) 
             #torch.nn.utils.clip_grad_norm_(self.model1.parameters(), self.config["model1"]['grad_clip'])
             optimizer1.step() # wt updation  
-            # scheduler1.step() 
+            scheduler1.step() 
             #print('step 1 instances gone:', (i+1)*self.batch_size)
 
             if ((i+1)*self.batch_size)% self.config['report_freq'] == 0:
-                self.logger.info('loss after %d instances: %d', ((i+1)*self.batch_size), loss1.item())
-                self.logger.info('bleu score after %d instances: %d', (i+1)*self.batch_size, calc_bleu(en_input, lm_labels, self.model1, tokenizer))
+                self.logger.info('loss after %d instances: %d', ((i+1)*self.batch_size), loss1)
+                sent,score = calc_bleu(en_input, lm_labels, self.model1, tokenizer)
+                self.logger.info('bleu score after %d instances: %d', (i+1)*self.batch_size, score)
+                self.logger.info('sample translation: %d', sent)
         
         self.logger.info('Mean epoch loss for step 1: %d', epoch_loss)
         #print("Mean epoch loss for step 1:", (epoch_loss / num_train_batches))
         return ((epoch_loss / num_train_batches))
+    
     #scheduler2
-    def train_model2(self, unlabeled_dataloader, optimizer2, tokenizer, criterion, ):
+    def train_model2(self, unlabeled_dataloader, optimizer2, tokenizer, criterion, scheduler2):
         epoch_loss=0
         self.model2.train()
         num_train_batches = len(unlabeled_dataloader)
-        #num_train_batches = 2
         for i, (en_input, en_masks, de_output, de_masks) in enumerate(unlabeled_dataloader):
             optimizer2.zero_grad()
             en_input = en_input.to(self.device)
@@ -106,12 +108,14 @@ class TranslationModel:
             loss2.backward(inputs=list(self.model2.parameters()), retain_graph=True)
             #torch.nn.utils.clip_grad_norm_(self.model2.parameters(), self.config["model2"]['grad_clip'])
             optimizer2.step()
-            # scheduler2.step()
+            scheduler2.step()
             #print('step 2 instances gone:', (i+1)*self.batch_size)
             
             if ((i+1)*self.batch_size)% self.config['report_freq'] == 0:
-                self.logger.info('loss after %d instances: %d', ((i+1)*self.batch_size), loss2.item())
-                self.logger.info('bleu score after %d instances: %d', (i+1)*self.batch_size, calc_bleu(en_input, new_labels, self.model2, tokenizer))
+                self.logger.info('loss after %d instances: %d', ((i+1)*self.batch_size), loss2)
+                sent,score = calc_bleu(en_input, new_labels, self.model2, tokenizer)
+                self.logger.info('bleu score after %d instances: %d', (i+1)*self.batch_size, score)
+                self.logger.info('sample translation: %d', sent)
 
         self.logger.info('Mean epoch loss for step 2: %d', (epoch_loss ))
         
@@ -326,11 +330,14 @@ class TranslationModel:
             A.grad=torch.zeros(len(A), device=self.device)
             print('step 3 instances gone:', (i+1)*self.batch_size)
             if ((i+1)*self.batch_size)% self.config['report_freq'] == 0:
-                self.logger.info('loss after %d instances: %d', (i+1)*self.batch_size, loss3.item())
-                self.logger.info('bleu score after %d instances: %d', (i+1)*self.batch_size, calc_bleu(en_input, lm_labels, self.model2, tokenizer))
+                self.logger.info('loss after %d instances: %d', (i+1)*self.batch_size, loss3)
+                sent,score = calc_bleu(en_input, lm_labels, self.model2, tokenizer)
+                self.logger.info('bleu score after %d instances: %d', (i+1)*self.batch_size, score)
+                self.logger.info('sample translation: %d', sent)
+                
             # break
 
-        self.logger.info('Mean epoch loss for step 3: %d', (epoch_loss )) 
+        self.logger.info('Mean epoch loss for step 3: %d', (epoch_loss)) 
             
         print("Mean epoch loss for step 3:", (epoch_loss / len(valid_dataloader)))
         return (epoch_loss / len(valid_dataloader))
