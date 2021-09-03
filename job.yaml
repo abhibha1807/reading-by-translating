@@ -3,7 +3,7 @@ kind: Job # Deployment will automatically restart when killed. Use Pod if not ne
 metadata:
   labels:
     k8s-app: research
-  name: abhibha-rbt-test
+  name: abhibha-rbt-scheduler
   namespace: ecepxie
 spec:
   template:
