@@ -23,8 +23,8 @@ def calc_bleu(en_input, lm_labels, model, tokenizer):
 
   # print(candidate)
   # print(reference)
+  score=0
   for i in range(len(candidate)):
-    score=0
     can =  candidate[i].split(' ')
     print('can:', can)
     ref = [i for i in reference[i].split(' ')]
@@ -41,7 +41,7 @@ def calc_bleu(en_input, lm_labels, model, tokenizer):
     score = score + sentence_bleu(ref, can, smoothing_function=cc.method7, weights = (0.5, 0.5))
     print('score:', score)
     
-  return(score)
+  return(can + '\n' + ref, score)
 
 # creates a dataloader for weight matrix A 
 class createBatchesA(Dataset):
