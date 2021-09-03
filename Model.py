@@ -82,7 +82,7 @@ class TranslationModel:
                 self.logger.info('loss after %d instances: %d', ((i+1)*self.batch_size), loss1)
                 sent,score = calc_bleu(en_input, lm_labels, self.model1, tokenizer)
                 self.logger.info('bleu score after %d instances: %d', (i+1)*self.batch_size, score)
-                self.logger.info('sample translation: %d', sent)
+                self.logger.info('sample translation: %s', sent)
         
         self.logger.info('Mean epoch loss for step 1: %d', epoch_loss)
         #print("Mean epoch loss for step 1:", (epoch_loss / num_train_batches))
@@ -115,7 +115,7 @@ class TranslationModel:
                 self.logger.info('loss after %d instances: %d', ((i+1)*self.batch_size), loss2)
                 sent,score = calc_bleu(en_input, new_labels, self.model2, tokenizer)
                 self.logger.info('bleu score after %d instances: %d', (i+1)*self.batch_size, score)
-                self.logger.info('sample translation: %d', sent)
+                self.logger.info('sample translation: %s', sent)
 
         self.logger.info('Mean epoch loss for step 2: %d', (epoch_loss ))
         
@@ -333,7 +333,7 @@ class TranslationModel:
                 self.logger.info('loss after %d instances: %d', (i+1)*self.batch_size, loss3)
                 sent,score = calc_bleu(en_input, lm_labels, self.model2, tokenizer)
                 self.logger.info('bleu score after %d instances: %d', (i+1)*self.batch_size, score)
-                self.logger.info('sample translation: %d', sent)
+                self.logger.info('sample translation: %s', sent)
                 
             # break
 
