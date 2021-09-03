@@ -323,7 +323,7 @@ class TranslationModel:
             print('before A:', A)
             optimizer3.step()
             print('finallyyyy:', A) 
-            # scheduler3.step()
+            scheduler3.step()
             # print('before a_ind:', a_ind)
             a_ind=a_ind+self.batch_size
             # print('after a_ind:', a_ind)

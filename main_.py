@@ -94,9 +94,9 @@ def run():
 
     writer = SummaryWriter()
 
-    scheduler1 = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer1, float(config['num_epochs']), eta_min=model1params["learning_rate_min"])
-    scheduler2 = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer2, float(config['num_epochs']), eta_min=model2params["learning_rate_min"])
-    scheduler3 = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer3, float(config['num_epochs']), eta_min=config["learning_rate_min"])
+    scheduler1 = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer1, float(config['num_epochs']))
+    scheduler2 = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer2, float(config['num_epochs']))
+    scheduler3 = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer3, float(config['num_epochs']))
 
     #training and validation datasets
     train_dataset = TranslationDataset(train_en_file, train_de_file, en_tokenizer, de_tokenizer, enc_maxlength, dec_maxlength)
@@ -134,9 +134,9 @@ def run():
 
     for epoch in range(epochs):
         print('\n')
-        lr1 = scheduler1.get_lr()[0]
-        lr2 = scheduler2.get_lr()[0]
-        lr3 = scheduler3.get_lr()[0]
+        lr1 = scheduler1.get_last_lr()[0]
+        lr2 = scheduler2.get_last_lr()[0]
+        lr3 = scheduler3.get_last_lr()[0]
         print(lr1, lr2, lr3)
         # t = torch.cuda.get_device_properties(0).total_memory
         # r = torch.cuda.memory_reserved(0) 

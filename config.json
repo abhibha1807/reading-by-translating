@@ -27,7 +27,7 @@
     },
 
     "model1" : {
-        "lr": 0.0001,
+        "lr": 0.001,
         "model_path" : "./models/model1",
         "saved_model_path" : "./saved_models/model1",
         "learning_rate_min": 0.0001,
@@ -39,8 +39,8 @@
         "comment" : "SIZE_5000_BATCH_10"
     },
     "instances": 10,
-    "learning_rateA": 0.0001,
-    "batch_size" : 4,
+    "learning_rateA": 0.001,
+    "batch_size" : 8,
     "num_epochs" : 10,
     "learning_rate_min": 0.0001,
     "report_freq": 100,
@@ -50,7 +50,7 @@
     "unlabeled_percent":0.5,
 
     "model2" : {
-        "lr": 0.0001,
+        "lr": 0.001,
         "model_path" : "./models/model1",
         "saved_model_path" : "./saved_models/model2",
         "learning_rate_min": 0.0001,
