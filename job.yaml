@@ -3,7 +3,7 @@ kind: Job # Deployment will automatically restart when killed. Use Pod if not ne
 metadata:
   labels:
     k8s-app: research
-  name: abhibha-rbt-scheduler
+  name: abhibha-rbt-test
   namespace: ecepxie
 spec:
   template:
@@ -42,4 +42,4 @@ spec:
               - key: gpu-type
                 operator: In # Use NotIn for other types
                 values:
-                - Tesla K40
+                - 1080Ti
