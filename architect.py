@@ -121,6 +121,7 @@ class Architect(object):
     print('loss:', loss)
     grads_p = torch.autograd.grad(loss, self.A.parameters())
     print('grads p:', grads_p)
+    grads_p.to('cuda')
 
     for p, v in zip(self.model1.parameters(), vector):
       if v is None:
@@ -130,6 +131,7 @@ class Architect(object):
     loss = loss1(train_inputs, self.model1, idxs, self.A,  self.batch_size, self.vocab)
     grads_n = torch.autograd.grad(loss, self.A.parameters())
     print('grads n:', grads_n)
+    grads_n.to('cuda')
 
     for p, v in zip(self.model1.parameters(), vector):
       if v is None:
