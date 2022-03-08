@@ -37,9 +37,10 @@ parser.add_argument('--grad_clip', type=float, default=5, help='gradient clippin
 parser.add_argument('--A_lr', type=float, default=3e-4, help='learning rate for A')
 parser.add_argument('--A_wd', type=float, default=1e-3, help=' weight decay for A')
 
+
 parser.add_argument('--max_length', type=int, default=10, help='max length of sentences')
 parser.add_argument('--vocabsize', type=int, default=5000, help='total vocab size')
-parser.add_argument('--save_location', type=str, default='', help='save location')
+parser.add_argument('--save_location', type=str, default='./reading-by-translating/', help='save location')
 parser.add_argument('--min_freq', type=int, default=2, help='min freq of words to be included in vocab')
 parser.add_argument('--train_portion', type=float, default=0.9, help='fraction of dataset for training')
 parser.add_argument('--un_portion', type=float, default=0.5, help='fraction of training dataset for creating unlabled dataset')
