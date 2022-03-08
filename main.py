@@ -192,6 +192,7 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
       logging.info('otherwise')
       model1_optim.zero_grad()
       loss_model1 = loss1(train_inputs, model1, idxs, A,batch_size, vocab)
+      print('training loss model1:', loss_model1)
       
       # store the batch loss
       batch_loss_model1 += loss_model1.item()
@@ -206,9 +207,11 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
       model2_optim.zero_grad()
       #un inputs
       loss_model2 = loss2(train_inputs, model1, model2, batch_size, vocab)
+      print('training loss model2:', loss_model2)
       
       # # store the batch loss
       batch_loss_model2 += loss_model2.item()
+      
 
       loss_model2.backward()
       
@@ -266,7 +269,7 @@ def infer(val_dataloader, model2):
         index_tensor = input_train
         onehot_input.scatter_(1, index_tensor, 1.)
         input_train = onehot_input
-        print('input valid size:', input_train.size())
+        #print('input valid size:', input_train.size())
         target_train = val_inputs[i][1]
        
         enc_hidden, enc_outputs = model2.enc_forward(input_train)

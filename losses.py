@@ -49,7 +49,7 @@ def loss2(un_inputs, model1, model2, batch_size, vocab):
           if decoder_input.item() == EOS_token:
               break
 
-      print(decoder_outputs) #pseudo target
+      #print(decoder_outputs) #pseudo target
       decoder_outputs = torch.stack(decoder_outputs)#differentiable,no break in computation graph
 
       #print(decoder_outputs.size())
@@ -60,7 +60,7 @@ def loss2(un_inputs, model1, model2, batch_size, vocab):
       #print(index_tensor.size())
       dec_soft_idxs = (torch.stack(dec_soft_idxs))
       onehot_input = onehot_input.scatter_(1, index_tensor, 1.).float().detach() + (dec_soft_idxs).sum() - (dec_soft_idxs).sum().detach()
-      print(onehot_input.size(), onehot_input[0])
+      #print(onehot_input.size(), onehot_input[0])
 
       enc_hidden, enc_outputs = model1.enc_forward(onehot_input)
       
@@ -90,12 +90,12 @@ def loss2(un_inputs, model1, model2, batch_size, vocab):
       input_to_model2 = torch.stack(decoder_outputs)
       # print('input_to_model2 :', input_to_model2, input_to_model2.size())
       onehot_input = torch.zeros(input_to_model2.size(0), vocab, device = device)
-      print(onehot_input.size())
+      #print(onehot_input.size())
       index_tensor = input_to_model2
       #print(index_tensor.size())
       dec_soft_idxs = (torch.stack(dec_soft_idxs))
       onehot_input = onehot_input.scatter_(1, index_tensor, 1.).float().detach() + (dec_soft_idxs).sum() - (dec_soft_idxs).sum().detach()
-      print(onehot_input.size(), onehot_input[0])
+      #print(onehot_input.size(), onehot_input[0])
 
       pseudo_input = onehot_input 
       # print('pseudo input:', pseudo_input, pseudo_input.size())
