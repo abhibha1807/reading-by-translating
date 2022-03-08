@@ -243,9 +243,9 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
       
 def infer(valid_dataloader, model2):
 
-    objs = utils.AvgrageMeter()
-    top1 = utils.AvgrageMeter()
-    top5 = utils.AvgrageMeter()
+    # objs = utils.AvgrageMeter()
+    # top1 = utils.AvgrageMeter()
+    # top5 = utils.AvgrageMeter()
     
     softmax = torch.nn.Softmax(-1)
 
