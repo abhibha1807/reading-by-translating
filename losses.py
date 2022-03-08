@@ -31,7 +31,7 @@ def loss2(un_inputs, model1, model2, batch_size, vocab):
       input_un = un_inputs[i][0]
       decoder_input = torch.tensor([[SOS_token]], device=device)#where to put SOS_token
       decoder_hidden = model1.dec.initHidden()
-      print('forward pass through decoder')
+      #print('forward pass through decoder')
       
       dec_soft_idxs = []
       decoder_outputs = []
