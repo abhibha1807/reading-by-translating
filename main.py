@@ -23,7 +23,7 @@ import glob
 # TASK: French (source) -> English (target)
 # args 
 parser = argparse.ArgumentParser("main")
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 parser.add_argument('--begin_epoch', type=float, default=0, help='PC Method begin')

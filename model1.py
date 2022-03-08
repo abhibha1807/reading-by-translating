@@ -1,6 +1,6 @@
 from Enc_Dec import *
 from dataset import *
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 class Model1(nn.Module):
   def __init__(self, input_size, output_size, criterion, enc_hidden_size=256, dec_hidden_size=256):

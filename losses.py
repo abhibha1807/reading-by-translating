@@ -1,6 +1,6 @@
 import torch
 from dataset import *
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 def loss1(inputs, model, idxs, A, batch_size, vocab):
     A_idx = A(idxs)
