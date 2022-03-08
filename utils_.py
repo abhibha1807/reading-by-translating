@@ -1,6 +1,7 @@
 from torchtext.data.metrics import bleu_score
 from model2 import *
 import os
+import shutil
 
 def pad_sentences(sentence):
   s = sentence.split(' ')
