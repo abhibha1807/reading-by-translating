@@ -171,7 +171,8 @@ architect = Architect(model1, model1_mom, model1_wd, A, A_lr, A_wd, device, mode
 
 
 def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A, model1, model2, model1_optim, model2_optim, model1_lr, model2_lr):
-
+  batch_loss_model1 = 0
+  batch_loss_model2 = 0
   for step, batch in enumerate(train_dataloader):
     model1.train()
     #summary_bart = Variable(batch[2], requires_grad=False).cuda()
