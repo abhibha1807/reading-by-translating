@@ -1,6 +1,7 @@
+from __future__ import unicode_literals, print_function, division
+
 import re
 import torch
-from __future__ import unicode_literals, print_function, division
 from io import open
 import unicodedata
 import torch
