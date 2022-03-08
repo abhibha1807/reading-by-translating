@@ -296,20 +296,20 @@ logging.info("Starting the Epochs:")
 
 for epoch in range(start_epoch, args.epochs):
 
-    model1_lr_sch = scheduler_model1.get_lr()[0]
+    model1_lr = scheduler_model1.get_lr()[0]
 
-    model2_lr_sch = scheduler_model2.get_lr()[0]
+    model2_lr = scheduler_model2.get_lr()[0]
 
 
-    logging.info(str(('epoch %d lr model1 %e lr model2 %e', epoch, model1_lr_sch, model2_lr_sch)))
+    logging.info(str(('epoch %d lr model1 %e lr model2 %e', epoch, model1_lr, model1_lr)))
 
     # training
     epoch_loss_model1, epoch_loss_model2 = train(epoch, train_dataloader, un_dataloader, valid_dataloader, 
-        architect, A, model1, model2,  model1_optim, model2_optim, model1_lr_sch, model2_lr_sch)
+        architect, A, model1, model2,  model1_optim, model2_optim, model1_lr, model2_lr)
     
-    model1_lr_sch.step()
+    scheduler_model1.step()
     
-    model2_lr_sch.step()
+    scheduler_model2.step()
     
 
    
