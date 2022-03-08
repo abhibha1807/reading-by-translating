@@ -3,7 +3,7 @@ from torch.autograd import Variable
 import torch
 from losses import *
 import numpy as np
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 def _concat(xs):
@@ -115,7 +115,7 @@ class Architect(object):
     for p, v in zip(self.model1.parameters(), vector):
       if v is None:
           #.cuda()
-          v=torch.autograd.Variable(torch.zeros(p.size()).type(torch.float32),requires_grad=True).data
+          v=torch.autograd.Variable(torch.zeros(p.size()).type(torch.float32),requires_grad=True).cuda().data
       p.data.add_(R, v)
     loss = loss1(train_inputs, self.model1, idxs, self.A,  self.batch_size, self.vocab)
     print('loss:', loss)
@@ -125,7 +125,7 @@ class Architect(object):
     for p, v in zip(self.model1.parameters(), vector):
       if v is None:
           #.cuda()
-          v=torch.autograd.Variable(torch.zeros(p.size()).type(torch.float32),requires_grad=True).data
+          v=torch.autograd.Variable(torch.zeros(p.size()).type(torch.float32),requires_grad=True).cuda().data
       p.data.sub_(2*R, v)
     loss = loss1(train_inputs, self.model1, idxs, self.A,  self.batch_size, self.vocab)
     grads_n = torch.autograd.grad(loss, self.A.parameters())
@@ -134,7 +134,7 @@ class Architect(object):
     for p, v in zip(self.model1.parameters(), vector):
       if v is None:
           #.cuda()
-          v=torch.autograd.Variable(torch.zeros(p.size()).type(torch.float32),requires_grad=True).data
+          v=torch.autograd.Variable(torch.zeros(p.size()).type(torch.float32),requires_grad=True).cuda().data
       p.data.add_(R, v)
 
     return [(x-y).div_(2*R) for x, y in zip(grads_p, grads_n)]
@@ -184,7 +184,7 @@ class Architect(object):
       self.A_optim.zero_grad()
       # 1st step
       unrolled_model1 = self._compute_unrolled_enc_dec_model(train_inputs, model1_lr, idxs, model1_optim)
-      device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+      device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
       unrolled_model1.to(device)
       unrolled_model1.train()
       
