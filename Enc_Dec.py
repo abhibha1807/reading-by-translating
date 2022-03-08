@@ -13,6 +13,7 @@ class Enc_Embedding(nn.Module):
 
     def forward(self, onehot_input):
       emb_vector = torch.matmul(onehot_input, self.embedding_matrix) 
+      emb_vector.to("cuda")
       return emb_vector
 
 #encoder class
@@ -31,7 +32,7 @@ class EncoderRNN(nn.Module):
         return output, hidden
 
     def initHidden(self):
-        return torch.zeros(1, 1, self.hidden_size, device=device)
+        return torch.zeros(1, 1, self.hidden_size, device='cuda')
 
       
 
@@ -55,7 +56,7 @@ class DecoderRNN(nn.Module):
         return output, hidden
 
     def initHidden(self):
-        return torch.zeros(1, 1, self.hidden_size, device=device)
+        return torch.zeros(1, 1, self.hidden_size, device='cuda')
 
 
   
