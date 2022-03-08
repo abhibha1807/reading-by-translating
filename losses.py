@@ -8,7 +8,7 @@ def loss1(inputs, model, idxs, A, batch_size, vocab):
     batch_loss = 0
     for i in range(batch_size):
       input_train = inputs[i][0]
-      onehot_input = torch.zeros(input_train.size(0), vocab)
+      onehot_input = torch.zeros(input_train.size(0), vocab, device = device)
       index_tensor = input_train
       onehot_input.scatter_(1, index_tensor, 1.)
       input_train = onehot_input
