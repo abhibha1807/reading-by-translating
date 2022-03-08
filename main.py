@@ -251,7 +251,7 @@ def infer(valid_dataloader, model2):
 
     for step, batch_val in enumerate(valid_dataloader):
         
-      model2.eval()
+      #model2.eval()
       
       #####################################################################################
 
