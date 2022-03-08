@@ -1,5 +1,6 @@
 import torch
 from dataset import *
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 def loss1(inputs, model, idxs, A, batch_size, vocab):
     A_idx = A(idxs)
@@ -28,7 +29,7 @@ def loss2(un_inputs, model1, model2, batch_size, vocab):
     #generate pseudo target by passing through decoder
     for i in range(batch_size):  
       input_un = un_inputs[i][0]
-      decoder_input = torch.tensor([[SOS_token]], device='cpu')#where to put SOS_token
+      decoder_input = torch.tensor([[SOS_token]], device=device)#where to put SOS_token
       decoder_hidden = model1.dec.initHidden()
       print('forward pass through decoder')
       
@@ -68,7 +69,7 @@ def loss2(un_inputs, model1, model2, batch_size, vocab):
 
       # print('pseudo target:', pseudo_target, pseudo_target.size())
       # greedy decoding -> similar to model.generate() (hugging face)
-      decoder_input = torch.tensor([[SOS_token]], device='cpu')#where to put SOS_token
+      decoder_input = torch.tensor([[SOS_token]], device=device)#where to put SOS_token
       decoder_hidden = enc_hidden
 
       dec_soft_idxs = []
