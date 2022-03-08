@@ -34,8 +34,9 @@ def train_tokenizer(dataset, max_length, min_freq, vocabsize, save_location):
 
 def get_tokenizer(pairs, max_length, min_freq, vocabsize, save_location):
     print('training tokenizers')    
-    tokenizer = train_tokenizer([i[0] for i in pairs],  max_length, min_freq, vocabsize)
-    tokenizer = train_tokenizer([i[1] for i in pairs],  max_length, min_freq, vocabsize)
+    tokenizer = train_tokenizer([i[0] for i in pairs],  max_length, min_freq, vocabsize, save_location)
+    tokenizer = train_tokenizer([i[1] for i in pairs],  max_length, min_freq, vocabsize, save_location)
+    
     return tokenizer
 
 
