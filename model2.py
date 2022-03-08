@@ -11,7 +11,7 @@ class Model2(nn.Module):
     self.criterion = criterion
 
   def enc_forward(self, input):
-    print('forward pass through encoder')
+    #print('forward pass through encoder')
     #print(input, input.size())
     encoder_hidden = self.enc.initHidden()
     input_length = input.size(0)
@@ -28,7 +28,7 @@ class Model2(nn.Module):
 
   
   def dec_forward(self, target, encoder_hidden):
-    print('forward pass through decoder')
+    #print('forward pass through decoder')
     # print('target size:', target.size())
     target_length = target.size(0)
     #print(target)
