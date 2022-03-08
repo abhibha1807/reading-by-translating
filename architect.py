@@ -195,7 +195,7 @@ class Architect(object):
       #val batch inputs
       for i in range(self.batch_size):
         input_train = val_inputs[i][0]
-        onehot_input = torch.zeros(input_train.size(0), self.vocab)
+        onehot_input = torch.zeros(input_train.size(0), self.vocab, device=device)
         index_tensor = input_train
         onehot_input.scatter_(1, index_tensor, 1.)
         input_train = onehot_input
