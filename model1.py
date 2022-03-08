@@ -55,7 +55,7 @@ class Model1(nn.Module):
 
   def generate(self, input, tokenizer, vocab):
     print('generating')
-    onehot_input = torch.zeros(input.size(0), vocab)
+    onehot_input = torch.zeros(input.size(0), vocab,  device='cuda')
     index_tensor = torch.squeeze(input, dim=-1)
     print(onehot_input.size(),index_tensor.size() )
     onehot_input.scatter_(1, index_tensor, 1.)
