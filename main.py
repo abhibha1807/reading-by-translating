@@ -166,7 +166,7 @@ un_dataloader = DataLoader(un_data, sampler=RandomSampler(un_data),
 A = attention_params(len(train_data))
 
 print('A:', list(A.parameters()))
-
+A = A.cuda()
 architect = Architect(model1, model1_mom, model1_wd, A, A_lr, A_wd, device, model2, model2_wd, model2_mom, batch_size,vocab)
 
 
