@@ -1,4 +1,3 @@
-from spacy import Vocab
 import utils
 from torch.utils.data import TensorDataset, DataLoader, RandomSampler, SequentialSampler, SubsetRandomSampler
 from torch.autograd import Variable
