@@ -28,6 +28,8 @@ class EncoderRNN(nn.Module):
         embedded = self.embedding(input).view(1, 1, -1)
         output = embedded
         output, hidden = self.gru(output, hidden)
+        output.to("cuda")
+        hidden.to('cuda')
         return output, hidden
 
     def initHidden(self):
