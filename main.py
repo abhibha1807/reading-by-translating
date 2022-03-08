@@ -171,8 +171,8 @@ architect = Architect(model1, model1_mom, model1_wd, A, A_lr, A_wd, device, mode
 
 
 def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A, model1, model2, model1_optim, model2_optim, model1_lr, model2_lr):
-  batch_loss_model1 = 0
-  batch_loss_model2 = 0
+  epoch_loss_model1 = 0
+  epoch_loss_model2 = 0
   for step, batch in enumerate(train_dataloader):
     model1.train()
     #summary_bart = Variable(batch[2], requires_grad=False).cuda()
@@ -195,7 +195,7 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
       print('training loss model1:', loss_model1)
       
       # store the batch loss
-      batch_loss_model1 += loss_model1.item()
+      epoch_loss_model1 += loss_model1.item()
 
       loss_model1.backward()
       
@@ -210,7 +210,7 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
       print('training loss model2:', loss_model2)
       
       # # store the batch loss
-      batch_loss_model2 += loss_model2.item()
+      epoch_loss_model2 += loss_model2.item()
       
 
       loss_model2.backward()
@@ -231,17 +231,17 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
 
       if step % args.report_freq == 0:
     
-        logging.info(f"{'Epoch':^7} | {'Train Loss':^12}")
+        logging.info(f"{'Epoch':^7} | {'Train Loss model 1':^12}  | {'Train Loss model 2':^12}")
         
         logging.info("-"*70)
         
         logging.info(f"{epoch + 1:^7} | {loss_model1:^7} | {loss_model2:^12.6f}")
 
 
-    return batch_loss_model1, batch_loss_model2
+    return epoch_loss_model1, epoch_loss_model2
 
       
-def infer(val_dataloader, model2):
+def infer(valid_dataloader, model2):
 
     objs = utils.AvgrageMeter()
     top1 = utils.AvgrageMeter()
@@ -249,7 +249,7 @@ def infer(val_dataloader, model2):
     
     softmax = torch.nn.Softmax(-1)
 
-    for step, batch_val in enumerate(val_dataloader):
+    for step, batch_val in enumerate(valid_dataloader):
         
       model2.eval()
       
@@ -261,7 +261,7 @@ def infer(val_dataloader, model2):
       # Number of datapoints
       n = val_inputs.size(0)
       valid_batch_loss = 0
-
+      epoch_val_loss = 0
       #val batch inputs
       for i in range(args.batch_size):
         input_train = val_inputs[i][0]
@@ -275,17 +275,14 @@ def infer(val_dataloader, model2):
         enc_hidden, enc_outputs = model2.enc_forward(input_train)
         valid_loss = model2.dec_forward(target_train, enc_hidden) 
         print('valid loss:', valid_loss)
-        valid_batch_loss += valid_loss
+        epoch_val_loss += valid_loss
       logging.info('validation batch loss:',valid_batch_loss )
         
         ######################################################################################
 
         # the training loss
-
-        
-      
-
-    return top1.avg, objs.avg
+    return epoch_val_loss
+    
 
       
      
@@ -309,7 +306,7 @@ for epoch in range(start_epoch, args.epochs):
     # training
     epoch_loss_model1, epoch_loss_model2 = train(epoch, train_dataloader, un_dataloader, valid_dataloader, 
         architect, A, model1, model2,  model1_optim, model2_optim, model1_lr, model2_lr)
-    
+    epoch_val_loss = infer(valid_dataloader, model2)
     scheduler_model1.step()
     
     scheduler_model2.step()
@@ -318,6 +315,7 @@ for epoch in range(start_epoch, args.epochs):
    
     
     logging.info(str(('train_loss_model1 %e train_loss_model2 %e', epoch_loss_model1, epoch_loss_model2)))
+    logging.info(str(('val_loss_model2 %e', epoch_loss_model2)))
 
     ################################################################################################
 
