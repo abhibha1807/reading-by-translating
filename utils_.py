@@ -2,6 +2,7 @@ from torchtext.data.metrics import bleu_score
 from model2 import *
 import os
 import shutil
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 def pad_sentences(sentence):
   s = sentence.split(' ')

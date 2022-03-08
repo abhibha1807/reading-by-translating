@@ -1,5 +1,6 @@
 from Enc_Dec import *
 from dataset import *
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
 class Model2(nn.Module):
@@ -14,7 +15,7 @@ class Model2(nn.Module):
     print(input, input.size())
     encoder_hidden = self.enc.initHidden()
     input_length = input.size(0)
-    encoder_outputs = torch.zeros(input_length, self.enc.hidden_size, device='cpu')# how to pass max_length
+    encoder_outputs = torch.zeros(input_length, self.enc.hidden_size, device=device)# how to pass max_length
     
     for ei in range(input_length):
       # print('input_ei:', input[ei])
@@ -31,7 +32,7 @@ class Model2(nn.Module):
     # print('target size:', target.size())
     target_length = target.size(0)
     print(target)
-    decoder_input = torch.tensor([[SOS_token]], device='cpu') #where to put SOS_token
+    decoder_input = torch.tensor([[SOS_token]], device=device) #where to put SOS_token
     decoder_hidden = encoder_hidden
     loss = 0
     for di in range(target_length):
@@ -47,7 +48,7 @@ class Model2(nn.Module):
 
 
   def new(self, vocab):
-    new = Model2(vocab, vocab, self.criterion).to('cpu')
+    new = Model2(vocab, vocab, self.criterion).to(device)
     print(new)
     new.load_state_dict(self.state_dict())
     #print('after loading:', dec_new)
@@ -63,7 +64,7 @@ class Model2(nn.Module):
     input_train = onehot_input
     print('input valid size:', input_train.size())
     enc_hidden, enc_outputs = self.enc_forward(input_train)
-    decoder_input = torch.tensor([[SOS_token]], device='cpu') #where to put SOS_token
+    decoder_input = torch.tensor([[SOS_token]], device=device) #where to put SOS_token
     decoder_hidden = enc_hidden
     loss = 0
     outputs = []
