@@ -162,7 +162,7 @@ un_dataloader = DataLoader(un_data, sampler=RandomSampler(un_data),
 #define A
 A = attention_params(len(train_data))
 
-logging.info('A:', list(A.parameters()))
+print('A:', list(A.parameters()))
 
 architect = Architect(model1, model1_mom, model1_wd, A, A_lr, A_wd, device, model2, model2_wd, model2_mom, batch_size,vocab)
 
@@ -171,13 +171,13 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
 
   for step, batch in enumerate(train_dataloader):
     model1.train()
-    
-    train_inputs = batch[0] #train inputs.
-    idxs = batch[1] #A
+    #summary_bart = Variable(batch[2], requires_grad=False).cuda()
+    train_inputs = Variable(batch[0]).cuda() #train inputs.
+    idxs = Variable(batch[1]).cuda() #A
     un_batch = next(iter(un_dataloader)) 
-    un_inputs = un_batch[0]
+    un_inputs = Variable(un_batch[0]).cuda()
     val_batch = next(iter(valid_dataloader)) 
-    val_inputs = val_batch[0]
+    val_inputs = Variable(val_batch[0]).cuda()
 
 
     if args.begin_epoch <= epoch <= args.stop_epoch:
