@@ -23,6 +23,8 @@ def train_tokenizer(dataset, max_length, min_freq, vocabsize, save_location):
 
     tokenizer._tokenizer.post_processor = BertProcessing(("[SEP]", tokenizer.token_to_id("[SEP]")), ("[CLS]", tokenizer.token_to_id("[CLS]")),)
     tokenizer.enable_truncation(max_length=max_length)
+    tokenizer.enable_padding(length=max_length, pad_token='[PAD]')
+
 
     print("Saving tokenizer ...")
     if not os.path.exists(save_location):

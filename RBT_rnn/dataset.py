@@ -168,7 +168,7 @@ def get_un_dataset(pairs, tokenizer):
   print(un_data)
   return un_data
 
-def get_test_dataset(pairs, tokenizer):
+def get_valid_dataset(pairs, tokenizer):
   tensor_pairs = []
   for pair in pairs:
     source = torch.unsqueeze(torch.tensor(tokenizer.encode(pair[0]).ids), dim=-1)
@@ -177,9 +177,9 @@ def get_test_dataset(pairs, tokenizer):
     print(source, target)
     tensor_pairs.append(torch.stack([source, target]))
   print(tensor_pairs)
-  test_data = TensorDataset(torch.stack((tensor_pairs)))
-  print(test_data)
-  return test_data
+  valid_data = TensorDataset(torch.stack((tensor_pairs)))
+  print(valid_data)
+  return valid_data
   
 
 

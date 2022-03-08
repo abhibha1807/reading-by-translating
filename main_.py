@@ -17,8 +17,7 @@ from torch.utils.tensorboard import SummaryWriter
 from Model import TranslationModel
 from utils import createBatchesA, loadTokenizer
 import os
-os.environ["TOKENIZERS_PARALLELISM"] = "false"
-torch.autograd.set_detect_anomaly(True)
+`1torch.autograd.set_detect_anomaly(True)
 import logging 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print("Using device:", device)
