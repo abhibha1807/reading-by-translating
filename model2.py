@@ -81,3 +81,5 @@ class Model2(nn.Module):
     decoded_sentence = tokenizer.decode(outputs)
     print(decoded_sentence)
     return decoded_sentence
+
+  

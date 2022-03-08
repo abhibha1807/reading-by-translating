@@ -232,7 +232,51 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
     return batch_loss_model1, batch_loss_model2
 
       
+def infer(val_dataloader, model2):
 
+    objs = utils.AvgrageMeter()
+    top1 = utils.AvgrageMeter()
+    top5 = utils.AvgrageMeter()
+    
+    softmax = torch.nn.Softmax(-1)
+
+    for step, batch_val in enumerate(val_dataloader):
+        
+      model2.eval()
+      
+      #####################################################################################
+
+      # Input and its attentions
+      val_inputs = batch_val[0]
+      
+      # Number of datapoints
+      n = val_inputs.size(0)
+      valid_batch_loss = 0
+
+      #val batch inputs
+      for i in range(args.batch_size):
+        input_train = val_inputs[i][0]
+        onehot_input = torch.zeros(input_train.size(0), args.vocab)
+        index_tensor = input_train
+        onehot_input.scatter_(1, index_tensor, 1.)
+        input_train = onehot_input
+        print('input valid size:', input_train.size())
+        target_train = val_inputs[i][1]
+       
+        enc_hidden, enc_outputs = model2.enc_forward(input_train)
+        valid_loss = model2.dec_forward(target_train, enc_hidden) 
+        print('valid loss:', valid_loss)
+        valid_batch_loss += valid_loss
+      logging.info('validation batch loss:',valid_batch_loss )
+        
+        ######################################################################################
+
+        # the training loss
+
+        
+      
+
+    return top1.avg, objs.avg
 
       
      
