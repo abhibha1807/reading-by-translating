@@ -9,7 +9,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 class Enc_Embedding(nn.Module):
     def __init__(self, vocab, hidden_size=256):
       super(Enc_Embedding, self).__init__()
-      self.embedding_matrix = torch.rand(vocab, hidden_size)
+      self.embedding_matrix = torch.rand(vocab, hidden_size, device = device)
 
     def forward(self, onehot_input):
       emb_vector = torch.matmul(onehot_input, self.embedding_matrix) 
