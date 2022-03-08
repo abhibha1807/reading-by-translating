@@ -256,7 +256,7 @@ def infer(valid_dataloader, model2):
       #####################################################################################
 
       # Input and its attentions
-      val_inputs = batch_val[0]
+      val_inputs = Variable(batch_val[0]).cuda()
       
       # Number of datapoints
       n = val_inputs.size(0)
