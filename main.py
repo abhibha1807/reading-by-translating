@@ -265,7 +265,7 @@ def infer(valid_dataloader, model2):
       #val batch inputs
       for i in range(args.batch_size):
         input_train = val_inputs[i][0]
-        onehot_input = torch.zeros(input_train.size(0), args.vocab)
+        onehot_input = torch.zeros(input_train.size(0),vocab, device = 'cuda')
         index_tensor = input_train
         onehot_input.scatter_(1, index_tensor, 1.)
         input_train = onehot_input
