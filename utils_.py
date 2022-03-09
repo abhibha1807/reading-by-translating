@@ -14,7 +14,7 @@ def pad_sentences(sentence):
 
 def get_bleu_score(model,test_inputs, tokenizer, vocab):
     predicted = model.generate(test_inputs[0], tokenizer, vocab)
-    actual = tokenizer.decode(list((test_inputs[0][1])))
+    actual = tokenizer.decode(list((test_inputs[1])))
     predicted = pad_sentences(predicted)
     actual = pad_sentences(actual)
     print('predicted sentence:', predicted)
