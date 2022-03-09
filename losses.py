@@ -1,6 +1,8 @@
 import torch
 from dataset import *
+import gc
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
 
 def loss1(inputs, model, idxs, A, batch_size, vocab):
     A_idx = A(idxs)
@@ -53,16 +55,17 @@ def loss2(un_inputs, model1, model2, batch_size, vocab):
       decoder_outputs = torch.stack(decoder_outputs)#differentiable,no break in computation graph
 
       #print(decoder_outputs.size())
+
       # gumbel softmax (prepare target for generating pseudo input using encoder)
-      onehot_input = torch.zeros(decoder_outputs.size(0), vocab, device = device)
+      onehot_input_encoder1 = torch.zeros(decoder_outputs.size(0), vocab, device = device)
       #print(onehot_input.size())
       index_tensor = decoder_outputs
       #print(index_tensor.size())
       dec_soft_idxs = (torch.stack(dec_soft_idxs))
-      onehot_input = onehot_input.scatter_(1, index_tensor, 1.).float().detach() + (dec_soft_idxs).sum() - (dec_soft_idxs).sum().detach()
+      onehot_input_encoder1 = onehot_input_encoder1.scatter_(1, index_tensor, 1.).float().detach() + (dec_soft_idxs).sum() - (dec_soft_idxs).sum().detach()
       #print(onehot_input.size(), onehot_input[0])
 
-      enc_hidden, enc_outputs = model1.enc_forward(onehot_input)
+      enc_hidden, enc_outputs = model1.enc_forward(onehot_input_encoder1)
       
       pseudo_target = decoder_outputs
       # pseudo_input = enc_outputs
@@ -89,15 +92,15 @@ def loss2(un_inputs, model1, model2, batch_size, vocab):
       # gumbel softmax 
       input_to_model2 = torch.stack(decoder_outputs)
       # print('input_to_model2 :', input_to_model2, input_to_model2.size())
-      onehot_input = torch.zeros(input_to_model2.size(0), vocab, device = device)
+      onehot_input_model2 = torch.zeros(input_to_model2.size(0), vocab, device = device)
       #print(onehot_input.size())
       index_tensor = input_to_model2
       #print(index_tensor.size())
       dec_soft_idxs = (torch.stack(dec_soft_idxs))
-      onehot_input = onehot_input.scatter_(1, index_tensor, 1.).float().detach() + (dec_soft_idxs).sum() - (dec_soft_idxs).sum().detach()
+      onehot_input_model2 = onehot_input_model2.scatter_(1, index_tensor, 1.).float().detach() + (dec_soft_idxs).sum() - (dec_soft_idxs).sum().detach()
       #print(onehot_input.size(), onehot_input[0])
 
-      pseudo_input = onehot_input 
+      pseudo_input = onehot_input_model2 
       # print('pseudo input:', pseudo_input, pseudo_input.size())
 
       #model2 forward pass
@@ -105,6 +108,10 @@ def loss2(un_inputs, model1, model2, batch_size, vocab):
       loss = model2.dec_forward(pseudo_target, enc_hidden) # todo: find loss for each instnce and multiply A with the loss vec.
       # print('loss size:', loss)
       batch_loss += loss 
+
+    del onehot_input_encoder1 , onehot_input_model2
+        
+    gc.collect()   
     
     return batch_loss
 
