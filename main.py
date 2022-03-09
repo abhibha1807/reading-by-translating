@@ -28,11 +28,11 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print('using device', device)
 
 parser.add_argument('--begin_epoch', type=float, default=0, help='PC Method begin')
-parser.add_argument('--stop_epoch', type=float, default=5, help='Stop training on the framework')
+parser.add_argument('--stop_epoch', type=float, default=20, help='Stop training on the framework')
 parser.add_argument('--report_freq', type=float, default=50, help='report frequency')
 
 parser.add_argument('--gpu', type=int, default=0, help='gpu device id')
-parser.add_argument('--epochs', type=int, default=25, help='num of training epochs')
+parser.add_argument('--epochs', type=int, default=50, help='num of training epochs')
 parser.add_argument('--seed', type=int, default=seed_, help='random seed')
 
 parser.add_argument('--grad_clip', type=float, default=5, help='gradient clipping')
