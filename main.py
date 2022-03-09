@@ -194,7 +194,7 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
       logging.info('otherwise')
       model1_optim.zero_grad()
       loss_model1 = loss1(train_inputs, model1, idxs, A,batch_size, vocab)
-      print('training loss model1:', loss_model1)
+      #print('training loss model1:', loss_model1)
       
       # store the batch loss
       epoch_loss_model1 += loss_model1.item()
@@ -209,7 +209,7 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
       model2_optim.zero_grad()
       #un inputs
       loss_model2 = loss2(train_inputs, model1, model2, batch_size, vocab)
-      print('training loss model2:', loss_model2)
+      #print('training loss model2:', loss_model2)
       
       # # store the batch loss
       epoch_loss_model2 += loss_model2.item()
@@ -227,9 +227,9 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
       logging.info('model1_score'+ str(model1_score))
       logging.info('model2_score'+ str(model2_score))
 
-      writer.add_scalar('Loss/model1', loss_model1, epoch)
-      writer.add_scalar('Loss/model2', loss_model2, epoch)
-      logging.info('Epoch:'+str(epoch)+'loss_model1:'+str(loss_model1)+'loss_model2:'+str(loss_model2))
+      # writer.add_scalar('Loss/model1', loss_model1, epoch)
+      # writer.add_scalar('Loss/model2', loss_model2, epoch)
+  logging.info('Epoch:'+str(epoch)+'loss_model1:'+str(epoch_loss_model1)+'loss_model2:'+str(epoch_loss_model2))
       
 
       # if step % args.report_freq == 0:
@@ -241,51 +241,52 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
       # logging.info(f"{epoch + 1:^7} | {loss_model1:^7} | {loss_model2:^12.6f}")
 
 
-    return epoch_loss_model1, epoch_loss_model2
+  return epoch_loss_model1, epoch_loss_model2
 
       
 def infer(valid_dataloader, model2):
 
-    # objs = utils.AvgrageMeter()
-    # top1 = utils.AvgrageMeter()
-    # top5 = utils.AvgrageMeter()
+  # objs = utils.AvgrageMeter()
+  # top1 = utils.AvgrageMeter()
+  # top5 = utils.AvgrageMeter()
+  
+  softmax = torch.nn.Softmax(-1)
+
+  for step, batch_val in enumerate(valid_dataloader):
+      
+    #model2.eval()
     
-    softmax = torch.nn.Softmax(-1)
-
-    for step, batch_val in enumerate(valid_dataloader):
-        
-      #model2.eval()
-      
-      # Input and its attentions
-      val_inputs = Variable(batch_val[0], requires_grad=False).cuda()
-      
-      # Number of datapoints
-      n = val_inputs.size(0)
-      valid_batch_loss = 0
-      epoch_val_loss = 0
-      #val batch inputs
-      for i in range(args.batch_size):
-        input_train = val_inputs[i][0]
-        onehot_input = torch.zeros(input_train.size(0),vocab, device = 'cuda')
-        index_tensor = input_train
-        onehot_input.scatter_(1, index_tensor, 1.)
-        input_train = onehot_input
-        #print('input valid size:', input_train.size())
-        target_train = val_inputs[i][1]
-       
-        enc_hidden, enc_outputs = model2.enc_forward(input_train)
-        valid_loss = model2.dec_forward(target_train, enc_hidden) 
-        print('valid loss:', valid_loss)
-        epoch_val_loss += valid_loss
-        logging.info('validation batch loss:' + str(valid_batch_loss ))
-        
-        ######################################################################################
-
-        # the training loss
-    return epoch_val_loss
+    # Input and its attentions
+    val_inputs = Variable(batch_val[0], requires_grad=False).cuda()
     
-
+    # Number of datapoints
+    n = val_inputs.size(0)
+    valid_batch_loss = 0
+    epoch_val_loss = 0
+    #val batch inputs
+    for i in range(args.batch_size):
+      input_train = val_inputs[i][0]
+      onehot_input = torch.zeros(input_train.size(0),vocab, device = 'cuda')
+      index_tensor = input_train
+      onehot_input.scatter_(1, index_tensor, 1.)
+      input_train = onehot_input
+      #print('input valid size:', input_train.size())
+      target_train = val_inputs[i][1]
       
+      enc_hidden, enc_outputs = model2.enc_forward(input_train)
+      valid_loss = model2.dec_forward(target_train, enc_hidden) 
+      #print('valid loss:', valid_loss)
+      epoch_val_loss += valid_loss
+      #logging.info('validation batch loss:' + str(valid_batch_loss ))
+      
+      ######################################################################################
+
+      # the training loss
+  logging.info('validation epoch loss:' + str(epoch_val_loss ))
+  return epoch_val_loss
+  
+
+    
      
       #break
 
@@ -313,8 +314,8 @@ for epoch in range(start_epoch, args.epochs):
     scheduler_model2.step()
     
     
-    logging.info(str(('train_loss_model1 %e train_loss_model2 %e', epoch_loss_model1, epoch_loss_model2)))
-    logging.info(str(('val_loss_model2 %e', epoch_loss_model2)))
+    # logging.info(str(('train_loss_model1 %e train_loss_model2 %e', epoch_loss_model1, epoch_loss_model2)))
+    # logging.info(str(('val_loss_model2 %e', epoch_loss_model2)))
 
     ################################################################################################
 
