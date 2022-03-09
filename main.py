@@ -277,7 +277,7 @@ def infer(valid_dataloader, model2):
         valid_loss = model2.dec_forward(target_train, enc_hidden) 
         print('valid loss:', valid_loss)
         epoch_val_loss += valid_loss
-        logging.info('validation batch loss:',valid_batch_loss )
+        logging.info('validation batch loss:' + str(valid_batch_loss ))
         
         ######################################################################################
 
