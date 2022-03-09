@@ -112,7 +112,7 @@ def loss2(un_inputs, model1, model2, batch_size, vocab):
     del onehot_input_encoder1 , onehot_input_model2
         
     gc.collect()   
-    
+    print('batch_loss:', batch_loss)
     return batch_loss
 
   

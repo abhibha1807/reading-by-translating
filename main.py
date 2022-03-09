@@ -229,15 +229,16 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
 
       writer.add_scalar('Loss/model1', loss_model1, epoch)
       writer.add_scalar('Loss/model2', loss_model2, epoch)
+      logging.info('Epoch:'+str(epoch)+'loss_model1:'+str(loss_model1)+'loss_model2:'+str(loss_model2))
       
 
-      if step % args.report_freq == 0:
+      # if step % args.report_freq == 0:
     
-        logging.info(f"{'Epoch':^7} | {'Train Loss model 1':^12}  | {'Train Loss model 2':^12}")
-        
-        logging.info("-"*70)
-        
-        logging.info(f"{epoch + 1:^7} | {loss_model1:^7} | {loss_model2:^12.6f}")
+      # logging.info(f"{'Epoch':^7} | {'Train Loss model 1':^12}  | {'Train Loss model 2':^12}")
+      
+      # logging.info("-"*70)
+      
+      # logging.info(f"{epoch + 1:^7} | {loss_model1:^7} | {loss_model2:^12.6f}")
 
 
     return epoch_loss_model1, epoch_loss_model2
@@ -276,7 +277,7 @@ def infer(valid_dataloader, model2):
         valid_loss = model2.dec_forward(target_train, enc_hidden) 
         print('valid loss:', valid_loss)
         epoch_val_loss += valid_loss
-      #logging.info('validation batch loss:',valid_batch_loss )
+        logging.info('validation batch loss:',valid_batch_loss )
         
         ######################################################################################
 
@@ -311,8 +312,6 @@ for epoch in range(start_epoch, args.epochs):
     
     scheduler_model2.step()
     
-
-   
     
     logging.info(str(('train_loss_model1 %e train_loss_model2 %e', epoch_loss_model1, epoch_loss_model2)))
     logging.info(str(('val_loss_model2 %e', epoch_loss_model2)))
@@ -331,6 +330,7 @@ for epoch in range(start_epoch, args.epochs):
     # logging.info the attention weights and inspect it
     if epoch % 5 == 0:
         logging.info(str(("Attention Weights A : ", A.alpha)))
+    break
     
 
    

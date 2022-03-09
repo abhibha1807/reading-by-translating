@@ -19,7 +19,7 @@ def get_bleu_score(model,test_inputs, tokenizer, vocab):
     actual = pad_sentences(actual)
     print(predicted)
     print(actual)
-    bleu_score(predicted, actual)
+    return bleu_score(predicted, actual)
 
 def create_exp_dir(path, scripts_to_save=None):
   if not os.path.exists(path):
