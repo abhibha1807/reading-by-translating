@@ -175,13 +175,14 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
   epoch_loss_model2 = 0
   for step, batch in enumerate(train_dataloader):
     model1.train()
+    model2.train()
     #summary_bart = Variable(batch[2], requires_grad=False).cuda()
-    train_inputs = Variable(batch[0]).cuda() #train inputs.
-    idxs = Variable(batch[1]).cuda() #A
+    train_inputs = Variable(batch[0], requires_grad=False).cuda() #train inputs.
+    idxs = Variable(batch[1],requires_grad=False).cuda() #A
     un_batch = next(iter(un_dataloader)) 
-    un_inputs = Variable(un_batch[0]).cuda()
+    un_inputs = Variable(un_batch[0], requires_grad=False).cuda()
     val_batch = next(iter(valid_dataloader)) 
-    val_inputs = Variable(val_batch[0]).cuda()
+    val_inputs = Variable(val_batch[0], requires_grad=False).cuda()
 
 
     if args.begin_epoch <= epoch <= args.stop_epoch:
@@ -253,10 +254,8 @@ def infer(valid_dataloader, model2):
         
       #model2.eval()
       
-      #####################################################################################
-
       # Input and its attentions
-      val_inputs = Variable(batch_val[0]).cuda()
+      val_inputs = Variable(batch_val[0], requires_grad=False).cuda()
       
       # Number of datapoints
       n = val_inputs.size(0)
