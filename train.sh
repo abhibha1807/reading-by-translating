@@ -4,6 +4,8 @@ pwd
 source activate /abhibha-volume/envs
 conda info
 which python
+conda list
+
 # pip install utils
 # pip install 
 python /abhibha-volume/reading-by-translating/main.py
