@@ -24,8 +24,8 @@ spec:
             cpu: "4"
             nvidia.com/gpu: 2
           limits:
-            memory: "16Gi"
-            cpu: "2"
+            memory: "32Gi"
+            cpu: "4"
             nvidia.com/gpu: 2
         volumeMounts:
         - mountPath: /abhibha-volume
