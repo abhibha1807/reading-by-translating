@@ -20,11 +20,11 @@ spec:
         command: ["bash","train.sh"]
         resources:
           requests:
-            memory: "8Gi"
+            memory: "16Gi"
             cpu: "2"
             nvidia.com/gpu: 2
           limits:
-            memory: "8Gi"
+            memory: "16Gi"
             cpu: "2"
             nvidia.com/gpu: 2
         volumeMounts:
