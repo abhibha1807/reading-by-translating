@@ -171,7 +171,7 @@ A = A.cuda()
 architect = Architect(model1, model1_mom, model1_wd, A, A_lr, A_wd, device, model2, model2_wd, model2_mom, batch_size,vocab)
 
 
-def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A, model1, model2, model1_optim, model2_optim, model1_lr, model2_lr):
+def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A, model1, model2, model1_optim, model2_optim, model1_lr, model2_lr, instances_gone):
   epoch_loss_model1 = 0
   epoch_loss_model2 = 0
   for step, batch in enumerate(train_dataloader):
@@ -222,17 +222,26 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
       model2_optim.step()
       
       #assess predictions
-      model1_score = get_bleu_score(model1,val_inputs[0], tokenizer, vocab)
-      model2_score = get_bleu_score(model2,val_inputs[0], tokenizer, vocab)
-      print('\n lets look at scores \n')
+      model1_score, pred_model1, actual_model1 = get_bleu_score(model1,val_inputs[0], tokenizer, vocab)
+      model2_score, pred_model2, actual_model2 = get_bleu_score(model2,val_inputs[0], tokenizer, vocab)
+    instances_gone+= batch_size
+    if instances_gone % 50 ==0:
+    
+      print('\n lets look at predictions and scores \n')
+      logging.info('actual model1'+ str(actual_model1))
+      logging.info('predicted model1'+ str(pred_model1))
+      logging.info('\n')
+      logging.info('actual model2'+ str(actual_model2))
+      logging.info('predicted model2'+ str(pred_model2))
+      logging.info('\n')
       logging.info('model1_score'+ str(model1_score))
       logging.info('model2_score'+ str(model2_score))
 
-      # writer.add_scalar('Loss/model1', loss_model1, epoch)
-      # writer.add_scalar('Loss/model2', loss_model2, epoch)
-    print('-'*20+'training Epoch stats'+'-'*20)
-    print('Epoch:'+str(epoch)+'batch_loss_model1:'+str(loss_model1)+'batch_loss_model2:'+str(loss_model2))
-        
+        # writer.add_scalar('Loss/model1', loss_model1, epoch)
+        # writer.add_scalar('Loss/model2', loss_model2, epoch)
+      print('-'*40+'training batch stats after'+str(instances_gone)+'instances'+'-'*40)
+      print('Epoch:'+str(epoch)+'batch_loss_model1:'+str(loss_model1)+'batch_loss_model2:'+str(loss_model2))
+          
 
       # if step % args.report_freq == 0:
     
@@ -246,7 +255,7 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
   return epoch_loss_model1, epoch_loss_model2
 
       
-def infer(valid_dataloader, model2):
+def infer(valid_dataloader, model2, instances_gone):
 
   # objs = utils.AvgrageMeter()
   # top1 = utils.AvgrageMeter()
@@ -279,14 +288,17 @@ def infer(valid_dataloader, model2):
       valid_loss = model2.dec_forward(target_train, enc_hidden) 
       #print('valid loss:', valid_loss)
       epoch_val_loss += valid_loss
+      instances_gone_val+=batch_size
       #logging.info('validation batch loss:' + str(valid_batch_loss ))
       
       ######################################################################################
 
       # the training loss
-
-      print('*'*20 + 'batch validation stats'+'*'*20)
-      print('validation epoch loss:' + str(valid_loss))
+      if instances_gone % 20 == 0:
+        print('*'*20 + 'batch validation stats'+'*'*20)
+        print('validation epoch loss:' + str(valid_loss))
+        logging.info('*'*20 + 'validation stats after'+ str(instances_gone) + 'instances' +'*'*20)
+        logging.INFO('validation epoch loss:' + str(valid_loss))
   return epoch_val_loss
   
 
@@ -301,6 +313,8 @@ start_epoch = 0
 logging.info("Starting the Epochs:")
 
 for epoch in range(start_epoch, args.epochs):
+    instances_gone_train = 0
+    instances_gone_val = 0
 
     model1_lr = scheduler_model1.get_lr()[0]
 
@@ -311,12 +325,25 @@ for epoch in range(start_epoch, args.epochs):
 
     # training
     epoch_loss_model1, epoch_loss_model2 = train(epoch, train_dataloader, un_dataloader, valid_dataloader, 
-        architect, A, model1, model2,  model1_optim, model2_optim, model1_lr, model2_lr)
+        architect, A, model1, model2,  model1_optim, model2_optim, model1_lr, model2_lr,instances_gone_train)
+    
     print('+'*20+'TRAIN EPOCH STATS'+'+'*20)
     print(epoch_loss_model1, epoch_loss_model2)
-    epoch_val_loss = infer(valid_dataloader, model2)
+    logging.info('+'*20+'TRAIN EPOCH STATS'+'+'*20)
+    logging.info(epoch_loss_model1, epoch_loss_model2)
+    
+    logging.info('\n')
+
+    epoch_val_loss = infer(valid_dataloader, model2, instances_gone_val)
     print('+'*20+'VAL EPOCH STATS'+'+'*20)
     print(epoch_val_loss)
+    logging.info('+'*20+'VAL EPOCH STATS'+'+'*20)
+    logging.info(epoch_val_loss)
+    
+    writer.add_scalar('TrainLoss/model1', epoch_loss_model1, epoch)
+    writer.add_scalar('TrainLoss/model2', epoch_loss_model2, epoch)
+    writer.add_scalar('ValLoss/model2', epoch_val_loss, epoch)
+    
     scheduler_model1.step()
     
     scheduler_model2.step()
@@ -339,7 +366,7 @@ for epoch in range(start_epoch, args.epochs):
     # logging.info the attention weights and inspect it
     if epoch % 5 == 0:
         logging.info(str(("Attention Weights A : ", A.alpha)))
-    break
+    # break
     
 
    
