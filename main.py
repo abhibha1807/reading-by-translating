@@ -122,8 +122,9 @@ model1 = Model1(vocab, vocab, criterion)
 model2 = Model2( vocab,  vocab, criterion)
 model1 = model1.cuda()
 model2 = model2.cuda()
-model1_optim = SGD(model1.parameters(), lr=model1_lr)
-model2_optim = SGD(model2.parameters(), lr=model2_lr)
+model1_optim = SGD(model1.parameters(), lr=model1_lr, momentum=model1_mom,weight_decay=model1_wd)
+model2_optim = SGD(model2.parameters(), lr=model2_lr, momentum=model1_mom,weight_decay=model1_wd)
+
 
 scheduler_model1  = torch.optim.lr_scheduler.CosineAnnealingLR(model1_optim, float(args.epochs), eta_min=args.model1_lr_min)
 
@@ -174,6 +175,10 @@ architect = Architect(model1, model1_mom, model1_wd, A, A_lr, A_wd, device, mode
 def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A, model1, model2, model1_optim, model2_optim, model1_lr, model2_lr, instances_gone):
   epoch_loss_model1 = 0
   epoch_loss_model2 = 0
+  actual_model1 = ''
+  actual_model2 = ''
+  pred_model1 = ''
+  pred_model2 = ''
   for step, batch in enumerate(train_dataloader):
     model1.train()
     model2.train()
@@ -193,7 +198,7 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
     if epoch <= args.stop_epoch:
       logging.info('otherwise')
       model1_optim.zero_grad()
-      loss_model1 = loss1(train_inputs, model1, idxs, A,batch_size, vocab)
+      loss_model1 = loss1(train_inputs, model1, idxs, A, batch_size, vocab)
       #print('training loss model1:', loss_model1)
       
       # store the batch loss
