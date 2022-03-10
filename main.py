@@ -46,7 +46,7 @@ parser.add_argument('--save_location', type=str, default='./reading-by-translati
 parser.add_argument('--min_freq', type=int, default=2, help='min freq of words to be included in vocab')
 parser.add_argument('--train_portion', type=float, default=0.9, help='fraction of dataset for training')
 parser.add_argument('--un_portion', type=float, default=0.5, help='fraction of training dataset for creating unlabled dataset')
-parser.add_argument('--batch_size', type=int, default=2, help='batch size')
+parser.add_argument('--batch_size', type=int, default=10, help='batch size')
 parser.add_argument('--hidden_size', type=int, default=256, help='hidden size')
 parser.add_argument('--model1_lr', type=float, default=1e-3, help='model1 starting lr')
 parser.add_argument('--model1_lr_min', type=float, default=5e-4, help='model1 min lr')
