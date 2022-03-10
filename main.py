@@ -230,9 +230,9 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
 
       # writer.add_scalar('Loss/model1', loss_model1, epoch)
       # writer.add_scalar('Loss/model2', loss_model2, epoch)
-  print('-'*20+'training Epoch stats'+'-'*20)
-  print('Epoch:'+str(epoch)+'loss_model1:'+str(epoch_loss_model1)+'loss_model2:'+str(epoch_loss_model2))
-      
+    print('-'*20+'training Epoch stats'+'-'*20)
+    print('Epoch:'+str(epoch)+'loss_model1:'+str(epoch_loss_model1)+'loss_model2:'+str(epoch_loss_model2))
+        
 
       # if step % args.report_freq == 0:
     
@@ -285,8 +285,8 @@ def infer(valid_dataloader, model2):
 
       # the training loss
 
-  print('*'*20 + 'epoch validation stats'+'*'*20)
-  print('validation epoch loss:' + str(epoch_val_loss ))
+      print('*'*20 + 'epoch validation stats'+'*'*20)
+      print('validation epoch loss:' + str(epoch_val_loss ))
   return epoch_val_loss
   
 
