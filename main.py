@@ -287,7 +287,7 @@ def infer(valid_dataloader, model2, instances_gone):
       enc_hidden, enc_outputs = model2.enc_forward(input_train)
       valid_loss = model2.dec_forward(target_train, enc_hidden) 
       #print('valid loss:', valid_loss)
-      epoch_val_loss += valid_loss.item()
+      epoch_val_loss += valid_loss
       instances_gone+=batch_size
       #logging.info('validation batch loss:' + str(valid_batch_loss ))
       
@@ -298,7 +298,7 @@ def infer(valid_dataloader, model2, instances_gone):
         print('*'*20 + 'batch validation stats'+'*'*20)
         print('validation epoch loss:' + str(valid_loss))
         logging.info('*'*20 + 'validation stats after'+ str(instances_gone) + 'instances' +'*'*20)
-        logging.INFO('validation epoch loss:' + str(valid_loss.item()))
+        logging.info('validation epoch loss:' + str(valid_loss))
   return epoch_val_loss
   
 
@@ -330,7 +330,7 @@ for epoch in range(start_epoch, args.epochs):
     print('+'*20+'TRAIN EPOCH STATS'+'+'*20)
     print(str(epoch_loss_model1), str(epoch_loss_model2))
     logging.info('+'*20+'TRAIN EPOCH STATS'+'+'*20)
-    logging.info(str(epoch_loss_model1), str(epoch_loss_model2))
+    logging.info(str(epoch_loss_model1)+'  '+str(epoch_loss_model2))
     
     logging.info('\n')
 
