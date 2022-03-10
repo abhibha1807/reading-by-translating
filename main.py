@@ -240,7 +240,7 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
         # writer.add_scalar('Loss/model1', loss_model1, epoch)
         # writer.add_scalar('Loss/model2', loss_model2, epoch)
       print('-'*40+'training batch stats after'+str(instances_gone)+'instances'+'-'*40)
-      print('Epoch:'+str(epoch)+'batch_loss_model1:'+str(loss_model1)+'batch_loss_model2:'+str(loss_model2))
+      print('Epoch:'+str(epoch)+'batch_loss_model1:'+str(loss_model1.item())+'batch_loss_model2:'+str(loss_model2.item()))
           
 
       # if step % args.report_freq == 0:
@@ -287,8 +287,8 @@ def infer(valid_dataloader, model2, instances_gone):
       enc_hidden, enc_outputs = model2.enc_forward(input_train)
       valid_loss = model2.dec_forward(target_train, enc_hidden) 
       #print('valid loss:', valid_loss)
-      epoch_val_loss += valid_loss
-      instances_gone_val+=batch_size
+      epoch_val_loss += valid_loss.item()
+      instances_gone+=batch_size
       #logging.info('validation batch loss:' + str(valid_batch_loss ))
       
       ######################################################################################
@@ -298,7 +298,7 @@ def infer(valid_dataloader, model2, instances_gone):
         print('*'*20 + 'batch validation stats'+'*'*20)
         print('validation epoch loss:' + str(valid_loss))
         logging.info('*'*20 + 'validation stats after'+ str(instances_gone) + 'instances' +'*'*20)
-        logging.INFO('validation epoch loss:' + str(valid_loss))
+        logging.INFO('validation epoch loss:' + str(valid_loss.item()))
   return epoch_val_loss
   
 
@@ -328,17 +328,17 @@ for epoch in range(start_epoch, args.epochs):
         architect, A, model1, model2,  model1_optim, model2_optim, model1_lr, model2_lr,instances_gone_train)
     
     print('+'*20+'TRAIN EPOCH STATS'+'+'*20)
-    print(epoch_loss_model1, epoch_loss_model2)
+    print(str(epoch_loss_model1), str(epoch_loss_model2))
     logging.info('+'*20+'TRAIN EPOCH STATS'+'+'*20)
-    logging.info(epoch_loss_model1, epoch_loss_model2)
+    logging.info(str(epoch_loss_model1), str(epoch_loss_model2))
     
     logging.info('\n')
 
     epoch_val_loss = infer(valid_dataloader, model2, instances_gone_val)
     print('+'*20+'VAL EPOCH STATS'+'+'*20)
-    print(epoch_val_loss)
+    print(str(epoch_val_loss))
     logging.info('+'*20+'VAL EPOCH STATS'+'+'*20)
-    logging.info(epoch_val_loss)
+    logging.info(str(epoch_val_loss))
     
     writer.add_scalar('TrainLoss/model1', epoch_loss_model1, epoch)
     writer.add_scalar('TrainLoss/model2', epoch_loss_model2, epoch)
