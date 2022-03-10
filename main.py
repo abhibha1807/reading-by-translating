@@ -224,11 +224,13 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
       #assess predictions
       model1_score = get_bleu_score(model1,val_inputs[0], tokenizer, vocab)
       model2_score = get_bleu_score(model2,val_inputs[0], tokenizer, vocab)
+      print('\n lets look at scores \n')
       logging.info('model1_score'+ str(model1_score))
       logging.info('model2_score'+ str(model2_score))
 
       # writer.add_scalar('Loss/model1', loss_model1, epoch)
       # writer.add_scalar('Loss/model2', loss_model2, epoch)
+  print('-'*20+'training Epoch stats'+'-'*20)
   logging.info('Epoch:'+str(epoch)+'loss_model1:'+str(epoch_loss_model1)+'loss_model2:'+str(epoch_loss_model2))
       
 
@@ -282,6 +284,8 @@ def infer(valid_dataloader, model2):
       ######################################################################################
 
       # the training loss
+
+  print('*'*20 + 'epoch validation stats'+'*'*20)
   logging.info('validation epoch loss:' + str(epoch_val_loss ))
   return epoch_val_loss
   
@@ -308,6 +312,7 @@ for epoch in range(start_epoch, args.epochs):
     # training
     epoch_loss_model1, epoch_loss_model2 = train(epoch, train_dataloader, un_dataloader, valid_dataloader, 
         architect, A, model1, model2,  model1_optim, model2_optim, model1_lr, model2_lr)
+    
     epoch_val_loss = infer(valid_dataloader, model2)
     scheduler_model1.step()
     
