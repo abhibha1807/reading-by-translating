@@ -231,7 +231,7 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
       # writer.add_scalar('Loss/model1', loss_model1, epoch)
       # writer.add_scalar('Loss/model2', loss_model2, epoch)
     print('-'*20+'training Epoch stats'+'-'*20)
-    print('Epoch:'+str(epoch)+'loss_model1:'+str(epoch_loss_model1)+'loss_model2:'+str(epoch_loss_model2))
+    print('Epoch:'+str(epoch)+'batch_loss_model1:'+str(loss_model1)+'batch_loss_model2:'+str(loss_model2))
         
 
       # if step % args.report_freq == 0:
@@ -285,8 +285,8 @@ def infer(valid_dataloader, model2):
 
       # the training loss
 
-      print('*'*20 + 'epoch validation stats'+'*'*20)
-      print('validation epoch loss:' + str(epoch_val_loss ))
+      print('*'*20 + 'batch validation stats'+'*'*20)
+      print('validation epoch loss:' + str(valid_loss))
   return epoch_val_loss
   
 
@@ -312,8 +312,11 @@ for epoch in range(start_epoch, args.epochs):
     # training
     epoch_loss_model1, epoch_loss_model2 = train(epoch, train_dataloader, un_dataloader, valid_dataloader, 
         architect, A, model1, model2,  model1_optim, model2_optim, model1_lr, model2_lr)
-    
+    print('+'*20+'TRAIN EPOCH STATS'+'+'*20)
+    print(epoch_loss_model1, epoch_loss_model2)
     epoch_val_loss = infer(valid_dataloader, model2)
+    print('+'*20+'VAL EPOCH STATS'+'+'*20)
+    print(epoch_val_loss)
     scheduler_model1.step()
     
     scheduler_model2.step()
