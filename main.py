@@ -254,7 +254,7 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
           # writer.add_scalar('Loss/model1', loss_model1, epoch)
           # writer.add_scalar('Loss/model2', loss_model2, epoch)
         print('-'*40+'training batch stats after'+str(instances_gone)+'instances'+'-'*40)
-        print('Epoch:'+str(epoch)+'batch_loss_model1:'+str(loss_model1.item())+'batch_loss_model2:'+str(loss_model2.item()))
+        print('Epoch:'+str(epoch)+'batch_loss_model1:'+str(loss_model1)+'batch_loss_model2:'+str(loss_model2))
    
    
     
