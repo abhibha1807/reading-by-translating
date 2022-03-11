@@ -28,11 +28,11 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print('using device', device)
 
 parser.add_argument('--begin_epoch', type=float, default=0, help='PC Method begin')
-parser.add_argument('--stop_epoch', type=float, default=20, help='Stop training on the framework')
+parser.add_argument('--stop_epoch', type=float, default=4, help='Stop training on the framework')
 parser.add_argument('--report_freq', type=float, default=50, help='report frequency')
 
 parser.add_argument('--gpu', type=int, default=0, help='gpu device id')
-parser.add_argument('--epochs', type=int, default=50, help='num of training epochs')
+parser.add_argument('--epochs', type=int, default=10, help='num of training epochs')
 parser.add_argument('--seed', type=int, default=seed_, help='random seed')
 
 parser.add_argument('--grad_clip', type=float, default=5, help='gradient clipping')
@@ -233,8 +233,8 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
       model2_score, pred_model2, actual_model2 = get_bleu_score(model2,val_inputs[0], tokenizer, vocab)
     instances_gone+= batch_size
     
-    try:
-      if instances_gone % 50 ==0:
+   
+    if instances_gone % 50 ==0:
       
         print('\n lets look at predictions and scores \n')
         logging.info('actual model1'+ str(actual_model1))
@@ -250,9 +250,9 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
           # writer.add_scalar('Loss/model2', loss_model2, epoch)
         print('-'*40+'training batch stats after'+str(instances_gone)+'instances'+'-'*40)
         print('Epoch:'+str(epoch)+'batch_loss_model1:'+str(loss_model1.item())+'batch_loss_model2:'+str(loss_model2.item()))
-    except:
-      print('can\'t print')
-      pass
+   
+    print('can\'t print')
+    
           
 
       # if step % args.report_freq == 0:
