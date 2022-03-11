@@ -234,8 +234,9 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
       model2_optim.step()
       
       #assess predictions
-      model1_score, pred_model1, actual_model1 = get_bleu_score(model1,val_inputs[0], tokenizer, vocab)
-      model2_score, pred_model2, actual_model2 = get_bleu_score(model2,val_inputs[0], tokenizer, vocab)
+      print('val inputs:', val_inputs)
+      model1_score, pred_model1, actual_model1 = get_bleu_score(model1,val_inputs, tokenizer, vocab)
+      model2_score, pred_model2, actual_model2 = get_bleu_score(model2,val_inputs, tokenizer, vocab)
     instances_gone+= batch_size
     
    
@@ -257,7 +258,7 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
         print('Epoch:'+str(epoch)+'batch_loss_model1:'+str(loss_model1)+'batch_loss_model2:'+str(loss_model2))
    
    
-    
+    break
           
 
       # if step % args.report_freq == 0:
@@ -384,7 +385,7 @@ for epoch in range(start_epoch, args.epochs):
     # logging.info the attention weights and inspect it
     if epoch % 5 == 0:
         logging.info(str(("Attention Weights A : ", A.alpha)))
-    # break
+    break
     
 
    
