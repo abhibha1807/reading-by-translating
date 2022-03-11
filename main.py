@@ -232,22 +232,27 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
       model1_score, pred_model1, actual_model1 = get_bleu_score(model1,val_inputs[0], tokenizer, vocab)
       model2_score, pred_model2, actual_model2 = get_bleu_score(model2,val_inputs[0], tokenizer, vocab)
     instances_gone+= batch_size
-    if instances_gone % 50 ==0:
     
-      print('\n lets look at predictions and scores \n')
-      logging.info('actual model1'+ str(actual_model1))
-      logging.info('predicted model1'+ str(pred_model1))
-      logging.info('\n')
-      logging.info('actual model2'+ str(actual_model2))
-      logging.info('predicted model2'+ str(pred_model2))
-      logging.info('\n')
-      logging.info('model1_score'+ str(model1_score))
-      logging.info('model2_score'+ str(model2_score))
+    try:
+      if instances_gone % 50 ==0:
+      
+        print('\n lets look at predictions and scores \n')
+        logging.info('actual model1'+ str(actual_model1))
+        logging.info('predicted model1'+ str(pred_model1))
+        logging.info('\n')
+        logging.info('actual model2'+ str(actual_model2))
+        logging.info('predicted model2'+ str(pred_model2))
+        logging.info('\n')
+        logging.info('model1_score'+ str(model1_score))
+        logging.info('model2_score'+ str(model2_score))
 
-        # writer.add_scalar('Loss/model1', loss_model1, epoch)
-        # writer.add_scalar('Loss/model2', loss_model2, epoch)
-      print('-'*40+'training batch stats after'+str(instances_gone)+'instances'+'-'*40)
-      print('Epoch:'+str(epoch)+'batch_loss_model1:'+str(loss_model1.item())+'batch_loss_model2:'+str(loss_model2.item()))
+          # writer.add_scalar('Loss/model1', loss_model1, epoch)
+          # writer.add_scalar('Loss/model2', loss_model2, epoch)
+        print('-'*40+'training batch stats after'+str(instances_gone)+'instances'+'-'*40)
+        print('Epoch:'+str(epoch)+'batch_loss_model1:'+str(loss_model1.item())+'batch_loss_model2:'+str(loss_model2.item()))
+    except:
+      print('can\'t print')
+      pass
           
 
       # if step % args.report_freq == 0:
