@@ -28,11 +28,11 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print('using device', device)
 
 parser.add_argument('--begin_epoch', type=float, default=0, help='PC Method begin')
-parser.add_argument('--stop_epoch', type=float, default=4, help='Stop training on the framework')
+parser.add_argument('--stop_epoch', type=float, default=2, help='Stop training on the framework')
 parser.add_argument('--report_freq', type=float, default=10, help='report frequency')
 
 parser.add_argument('--gpu', type=int, default=0, help='gpu device id')
-parser.add_argument('--epochs', type=int, default=10, help='num of training epochs')
+parser.add_argument('--epochs', type=int, default=4, help='num of training epochs')
 parser.add_argument('--seed', type=int, default=seed_, help='random seed')
 
 parser.add_argument('--grad_clip', type=float, default=5, help='gradient clipping')
@@ -82,6 +82,7 @@ model1_mom = args.model1_mom
 model2_mom = args.model2_mom
 A_wd = args.A_wd
 report_freq = args.report_freq
+epochs = args.epochs
 
 
 args.save = 'search-{}-{}'.format(args.save, time.strftime("%Y%m%d-%H%M%S"))
@@ -182,6 +183,8 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
   pred_model2 = ''
   model1_score = 0
   model2_score = 0
+  loss_model1 = 0
+  loss_model2 = 0
   for step, batch in enumerate(train_dataloader):
     model1.train()
     model2.train()
@@ -197,8 +200,9 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
     if args.begin_epoch <= epoch <= args.stop_epoch:
       logging.info('in architect')
       architect.step(train_inputs, un_inputs, val_inputs, model1_lr, A, idxs, criterion, model2_lr, model2_optim, model1_optim)
-    
+  
     if epoch <= args.stop_epoch:
+      
       logging.info('otherwise')
       model1_optim.zero_grad()
       loss_model1 = loss1(train_inputs, model1, idxs, A, batch_size, vocab)
@@ -252,7 +256,7 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
         print('-'*40+'training batch stats after'+str(instances_gone)+'instances'+'-'*40)
         print('Epoch:'+str(epoch)+'batch_loss_model1:'+str(loss_model1.item())+'batch_loss_model2:'+str(loss_model2.item()))
    
-    print('can\'t print')
+   
     
           
 
@@ -339,6 +343,7 @@ for epoch in range(start_epoch, args.epochs):
     # training
     epoch_loss_model1, epoch_loss_model2 = train(epoch, train_dataloader, un_dataloader, valid_dataloader, 
         architect, A, model1, model2,  model1_optim, model2_optim, model1_lr, model2_lr,instances_gone_train)
+    
     
     print('+'*20+'TRAIN EPOCH STATS'+'+'*20)
     print(str(epoch_loss_model1), str(epoch_loss_model2))
