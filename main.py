@@ -27,6 +27,8 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 print('using device', device)
 
+print()
+
 parser.add_argument('--begin_epoch', type=float, default=0, help='PC Method begin')
 parser.add_argument('--stop_epoch', type=float, default=20, help='Stop training on the framework')
 parser.add_argument('--report_freq', type=float, default=50, help='report frequency')
