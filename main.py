@@ -81,6 +81,7 @@ model2_wd = args.model2_wd
 model1_mom = args.model1_mom
 model2_mom = args.model2_mom
 A_wd = args.A_wd
+report_freq = args.report_freq
 
 
 args.save = 'search-{}-{}'.format(args.save, time.strftime("%Y%m%d-%H%M%S"))
@@ -234,7 +235,7 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
     instances_gone+= batch_size
     
    
-    if instances_gone % 50 ==0:
+    if instances_gone % report_freq ==0:
       
         print('\n lets look at predictions and scores \n')
         logging.info('actual model1'+ str(actual_model1))
