@@ -179,6 +179,8 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
   actual_model2 = ''
   pred_model1 = ''
   pred_model2 = ''
+  model1_score = 0
+  model2_score = 0
   for step, batch in enumerate(train_dataloader):
     model1.train()
     model2.train()
