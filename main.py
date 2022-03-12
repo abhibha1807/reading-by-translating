@@ -28,11 +28,12 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print('using device', device)
 
 parser.add_argument('--begin_epoch', type=float, default=0, help='PC Method begin')
-parser.add_argument('--stop_epoch', type=float, default=20, help='Stop training on the framework')
-parser.add_argument('--report_freq', type=float, default=50, help='report frequency')
+parser.add_argument('--stop_epoch', type=float, default=2, help='Stop training on the framework')
+parser.add_argument('--report_freq', type=float, default=2, help='report frequency')
+parser.add_argument('--batch_size', type=int, default=2, help='batch size')
 
 parser.add_argument('--gpu', type=int, default=0, help='gpu device id')
-parser.add_argument('--epochs', type=int, default=50, help='num of training epochs')
+parser.add_argument('--epochs', type=int, default=4, help='num of training epochs')
 parser.add_argument('--seed', type=int, default=seed_, help='random seed')
 
 parser.add_argument('--grad_clip', type=float, default=5, help='gradient clipping')
@@ -46,7 +47,6 @@ parser.add_argument('--save_location', type=str, default='./reading-by-translati
 parser.add_argument('--min_freq', type=int, default=2, help='min freq of words to be included in vocab')
 parser.add_argument('--train_portion', type=float, default=0.9, help='fraction of dataset for training')
 parser.add_argument('--un_portion', type=float, default=0.5, help='fraction of training dataset for creating unlabled dataset')
-parser.add_argument('--batch_size', type=int, default=10, help='batch size')
 parser.add_argument('--hidden_size', type=int, default=256, help='hidden size')
 parser.add_argument('--model1_lr', type=float, default=1e-3, help='model1 starting lr')
 parser.add_argument('--model1_lr_min', type=float, default=5e-4, help='model1 min lr')
@@ -156,13 +156,13 @@ valid_data = get_valid_dataset(valid_portion, tokenizer)
 logging.info(f"{len(train_data):^7} | { len(un_data):^7} | { len(valid_data):^7}")
 
 
-train_dataloader = DataLoader(train_data, sampler=RandomSampler(train_data), 
+train_dataloader = DataLoader(train_data[0:10], sampler=RandomSampler(train_data), 
                         batch_size=batch_size, pin_memory=True, num_workers=0)
 
-valid_dataloader = DataLoader(valid_data, sampler=RandomSampler(valid_data), 
+valid_dataloader = DataLoader(valid_data[0:10], sampler=RandomSampler(valid_data), 
                       batch_size=batch_size, pin_memory=True, num_workers=0)
 
-un_dataloader = DataLoader(un_data, sampler=RandomSampler(un_data), 
+un_dataloader = DataLoader(un_data[0:10], sampler=RandomSampler(un_data), 
                         batch_size=batch_size, pin_memory=True, num_workers=0)
 
 
@@ -227,6 +227,7 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
     
     model2_optim.zero_grad()
     loss_model2 = loss2(un_inputs, model1, model2, batch_size, vocab)
+    print('is loss being calculated or not?:', loss_model2)
     batch_loss_model2 += loss_model2.item()
     loss_model2.backward()
     nn.utils.clip_grad_norm(model2.parameters(), args.grad_clip)
