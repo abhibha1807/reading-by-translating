@@ -29,8 +29,8 @@ print('using device', device)
 
 parser.add_argument('--begin_epoch', type=float, default=0, help='PC Method begin')
 parser.add_argument('--stop_epoch', type=float, default=2, help='Stop training on the framework')
-parser.add_argument('--report_freq', type=float, default=20, help='report frequency')
-parser.add_argument('--batch_size', type=int, default=10, help='batch size')
+parser.add_argument('--report_freq', type=float, default=2, help='report frequency')
+parser.add_argument('--batch_size', type=int, default=2, help='batch size')
 
 parser.add_argument('--gpu', type=int, default=0, help='gpu device id')
 parser.add_argument('--epochs', type=int, default=4, help='num of training epochs')
@@ -149,25 +149,25 @@ print(len(train_portion), len(un_portion), len(valid_portion))
 logging.info('dataset')
 
 
-train_data = get_train_dataset(train_portion, tokenizer)
-un_data = get_un_dataset(un_portion, tokenizer)
-valid_data = get_valid_dataset(valid_portion, tokenizer)
+train_data = get_train_dataset(train_portion[0:10], tokenizer)
+un_data = get_un_dataset(un_portion[0:10], tokenizer)
+valid_data = get_valid_dataset(valid_portion[0:10], tokenizer)
 
 logging.info(f"{len(train_data):^7} | { len(un_data):^7} | { len(valid_data):^7}")
 
 
-train_dataloader = DataLoader(train_data[0:100], sampler=RandomSampler(train_data), 
+train_dataloader = DataLoader(train_data, sampler=RandomSampler(train_data), 
                         batch_size=batch_size, pin_memory=True, num_workers=0)
 
-valid_dataloader = DataLoader(valid_data[0:100], sampler=RandomSampler(valid_data), 
+valid_dataloader = DataLoader(valid_data, sampler=RandomSampler(valid_data), 
                       batch_size=batch_size, pin_memory=True, num_workers=0)
 
-un_dataloader = DataLoader(un_data[0:100], sampler=RandomSampler(un_data), 
+un_dataloader = DataLoader(un_data, sampler=RandomSampler(un_data), 
                         batch_size=batch_size, pin_memory=True, num_workers=0)
 
 
 #define A
-A = attention_params(len(train_data[0:100]))
+A = attention_params(len(train_data))
 
 print('A:', list(A.parameters()))
 A = A.cuda()
