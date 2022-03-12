@@ -167,7 +167,7 @@ un_dataloader = DataLoader(un_data[0:10], sampler=RandomSampler(un_data),
 
 
 #define A
-A = attention_params(len(train_data))
+A = attention_params(len(train_data[0:10]))
 
 print('A:', list(A.parameters()))
 A = A.cuda()
