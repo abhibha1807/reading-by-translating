@@ -263,7 +263,7 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
 
   
 
-  return epoch_loss_model1, epoch_loss_model2
+  return batch_loss_model1, batch_loss_model2
 
       
 def infer(valid_dataloader, model2, instances_gone):
