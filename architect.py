@@ -205,7 +205,7 @@ class Architect(object):
         target_train = val_inputs[i][1]
        
         enc_hidden, enc_outputs = unrolled_model2.enc_forward(input_train)
-        valid_loss = unrolled_model2.dec_forward(target_train, enc_hidden) 
+        valid_loss = unrolled_model2.dec_forward(target_train, enc_hidden,enc_outputs) 
         #print('valid loss:', valid_loss)
         valid_batch_loss += valid_loss
       unrolled_model2.train()
