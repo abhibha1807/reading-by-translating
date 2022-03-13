@@ -27,7 +27,6 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 print('using device', device)
 
-print()
 
 parser.add_argument('--begin_epoch', type=float, default=0, help='PC Method begin')
 parser.add_argument('--stop_epoch', type=float, default=20, help='Stop training on the framework')
@@ -294,7 +293,7 @@ def infer(valid_dataloader, model2, instances_gone):
       target_train = val_inputs[i][1]
       
       enc_hidden, enc_outputs = model2.enc_forward(input_train)
-      valid_loss = model2.dec_forward(target_train, enc_hidden) 
+      valid_loss = model2.dec_forward(target_train, enc_hidden,enc_outputs) 
       #print('valid loss:', valid_loss)
       epoch_val_loss += valid_loss
       instances_gone+=batch_size

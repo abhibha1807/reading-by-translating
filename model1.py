@@ -6,7 +6,8 @@ class Model1(nn.Module):
   def __init__(self, input_size, output_size, criterion, enc_hidden_size=256, dec_hidden_size=256):
     super(Model1, self).__init__()
     self.enc = EncoderRNN(input_size, enc_hidden_size)
-    self.dec = DecoderRNN(dec_hidden_size, output_size)
+    #self.dec = DecoderRNN(dec_hidden_size, output_size)
+    self.dec = AttnDecoderRNN(dec_hidden_size, output_size)
     self.criterion = criterion
 
   def enc_forward(self, input):
@@ -26,7 +27,7 @@ class Model1(nn.Module):
     return encoder_hidden, encoder_outputs
 
   
-  def dec_forward(self, target, encoder_hidden):
+  def dec_forward(self, target, encoder_hidden, encoder_outputs):
     #print('forward pass through decoder')
     # print('target size:', target.size())
     target_length = target.size(0)
@@ -35,8 +36,8 @@ class Model1(nn.Module):
     decoder_hidden = encoder_hidden
     loss = 0
     for di in range(target_length):
-        decoder_output, decoder_hidden = self.dec(
-            decoder_input, decoder_hidden)
+        decoder_output, decoder_hidden, decoder_attention = self.dec(
+            decoder_input, decoder_hidden, encoder_outputs)
         topv, topi = decoder_output.topk(1)
         decoder_input = topi.squeeze().detach()  # detach from history as input
         # print('decoder output:', decoder_output.size(), target[di].size() )
@@ -69,8 +70,8 @@ class Model1(nn.Module):
     loss = 0
     outputs = []
     for di in range(MAX_LENGTH):
-        decoder_output, decoder_hidden = self.dec(
-            decoder_input, decoder_hidden)
+        decoder_output, decoder_hidden, decoder_attention = self.dec(
+            decoder_input, decoder_hidden, enc_outputs)
         topv, topi = decoder_output.topk(1)
         decoder_input = topi.squeeze().detach()  # detach from history as input
         index = torch.argmax(decoder_output)
