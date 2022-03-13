@@ -3,7 +3,7 @@ kind: Job # Deployment will automatically restart when killed. Use Pod if not ne
 metadata:
   labels:
     k8s-app: research
-  name: abhibha-testexp-debug
+  name: abhibha-testexp-e100
   namespace: ecepxie
 spec:
   template:
@@ -21,8 +21,8 @@ spec:
         resources:
           requests:
             memory: "16Gi"
-            cpu: "4"
-            nvidia.com/gpu: 2
+            cpu: "2"
+            nvidia.com/gpu: 1
           limits:
             memory: "32Gi"
             cpu: "4"
