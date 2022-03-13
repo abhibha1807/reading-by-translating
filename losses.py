@@ -8,7 +8,8 @@ def loss1(inputs, model, idxs, A, batch_size, vocab):
     A_idx = A(idxs)
     #print('A_idx:', A_idx)
     batch_loss = 0
-    for i in range(batch_size):
+    print('batch size:', inputs.size(0))
+    for i in range(inputs.size(0)):
         # try:
         input_train = inputs[i][0]
         onehot_input = torch.zeros(input_train.size(0), vocab, device = device)

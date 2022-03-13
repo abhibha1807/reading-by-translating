@@ -226,9 +226,9 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
     
     model2_optim.zero_grad()
     loss_model2 = loss2(un_inputs, model1, model2, batch_size, vocab)
-    print(str(epoch)+'is loss being calculated or not?:', loss_model2)
+    #print(str(epoch)+'is loss being calculated or not?:', loss_model2)
     batch_loss_model2 += loss_model2.item()
-    print(str(epoch)+'calculated batch loss model 2:', batch_loss_model2)
+    #print(str(epoch)+'calculated batch loss model 2:', batch_loss_model2)
     loss_model2.backward()
     nn.utils.clip_grad_norm(model2.parameters(), args.grad_clip)
     model2_optim.step()
