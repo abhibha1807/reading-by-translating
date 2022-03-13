@@ -22,10 +22,10 @@ spec:
           requests:
             memory: "16Gi"
             cpu: "2"
-            nvidia.com/gpu: 1
+            nvidia.com/gpu: 2
           limits:
-            memory: "32Gi"
-            cpu: "4"
+            memory: "16Gi"
+            cpu: "2"
             nvidia.com/gpu: 2
         volumeMounts:
         - mountPath: /abhibha-volume
