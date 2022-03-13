@@ -9,23 +9,23 @@ def loss1(inputs, model, idxs, A, batch_size, vocab):
     #print('A_idx:', A_idx)
     batch_loss = 0
     for i in range(batch_size):
-        try:
-            input_train = inputs[i][0]
-            onehot_input = torch.zeros(input_train.size(0), vocab, device = device)
-            index_tensor = input_train
-            onehot_input.scatter_(1, index_tensor, 1.)
-            input_train = onehot_input
-            #print(input_train.size())
-            target_train = inputs[i][1]
-            idx = A_idx[i]
-            enc_hidden, enc_outputs = model.enc_forward(input_train)
-            loss = model.dec_forward(target_train, enc_hidden, enc_outputs) # todo: find loss for each instnce and multiply A with the loss vec.
-            #print('loss and idx size:', loss.size(), idx.size())
-            loss = loss * idx
-            batch_loss += loss 
-            return batch_loss
-        except:
-            print('skipping this_______________________________________')
+        # try:
+        input_train = inputs[i][0]
+        onehot_input = torch.zeros(input_train.size(0), vocab, device = device)
+        index_tensor = input_train
+        onehot_input.scatter_(1, index_tensor, 1.)
+        input_train = onehot_input
+        #print(input_train.size())
+        target_train = inputs[i][1]
+        idx = A_idx[i]
+        enc_hidden, enc_outputs = model.enc_forward(input_train)
+        loss = model.dec_forward(target_train, enc_hidden, enc_outputs) # todo: find loss for each instnce and multiply A with the loss vec.
+        #print('loss and idx size:', loss.size(), idx.size())
+        loss = loss * idx
+        batch_loss += loss 
+    return batch_loss
+        # except:
+        #     print('skipping this_______________________________________')
         
         
     
@@ -35,7 +35,7 @@ def loss2(un_inputs, model1, model2, batch_size, vocab):
     
     #generate pseudo target by passing through decoder
     for i in range(batch_size):  
-        try:
+        # try:
             input_un = un_inputs[i][0]
             onehot_input = torch.zeros(input_un.size(0), vocab, device = device)
             index_tensor = input_un
@@ -125,9 +125,9 @@ def loss2(un_inputs, model1, model2, batch_size, vocab):
                 
             gc.collect()   
             #print('batch_loss:', batch_loss)
-            return batch_loss
-        except:
-            print('skipping this_______________________________________')
+    return batch_loss
+        # except:
+        #     print('skipping this_______________________________________')
 
         
 
