@@ -30,7 +30,7 @@ print('using device', device)
 print('eecuting Attn Decoder')
 parser.add_argument('--begin_epoch', type=float, default=0, help='PC Method begin')
 parser.add_argument('--stop_epoch', type=float, default=20, help='Stop training on the framework')
-parser.add_argument('--report_freq', type=float, default=50, help='report frequency')
+parser.add_argument('--report_freq', type=float, default=10, help='report frequency')
 
 parser.add_argument('--gpu', type=int, default=0, help='gpu device id')
 parser.add_argument('--epochs', type=int, default=50, help='num of training epochs')
@@ -42,7 +42,7 @@ parser.add_argument('--A_wd', type=float, default=1e-3, help=' weight decay for 
 
 
 parser.add_argument('--max_length', type=int, default=10, help='max length of sentences')
-parser.add_argument('--vocabsize', type=int, default=5000, help='total vocab size')
+parser.add_argument('--vocabsize', type=int, default=4000, help='total vocab size')
 parser.add_argument('--save_location', type=str, default='./reading-by-translating/', help='save location')
 parser.add_argument('--min_freq', type=int, default=2, help='min freq of words to be included in vocab')
 parser.add_argument('--train_portion', type=float, default=0.9, help='fraction of dataset for training')
@@ -148,9 +148,9 @@ print(len(train_portion), len(un_portion), len(valid_portion))
 logging.info('dataset')
 
 
-train_data = get_train_dataset(train_portion, tokenizer)
-un_data = get_un_dataset(un_portion, tokenizer)
-valid_data = get_valid_dataset(valid_portion, tokenizer)
+train_data = get_train_dataset(train_portion[0:50], tokenizer)
+un_data = get_un_dataset(un_portion[0:50], tokenizer)
+valid_data = get_valid_dataset(valid_portion[0:50], tokenizer)
 
 logging.info(f"{len(train_data):^7} | { len(un_data):^7} | { len(valid_data):^7}")
 
@@ -276,7 +276,7 @@ def infer(valid_dataloader, model2, instances_gone):
 
   for step, batch_val in enumerate(valid_dataloader):
       
-    #model2.eval()
+    model2.eval()
     
     # Input and its attentions
     val_inputs = Variable(batch_val[0], requires_grad=False).cuda()
