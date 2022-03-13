@@ -82,7 +82,7 @@ model2_wd = args.model2_wd
 model1_mom = args.model1_mom
 model2_mom = args.model2_mom
 A_wd = args.A_wd
-
+report_freq = args.report_freq
 
 args.save = 'search-{}-{}'.format(args.save, time.strftime("%Y%m%d-%H%M%S"))
 create_exp_dir(args.save, scripts_to_save=glob.glob('*.py'))
@@ -174,14 +174,23 @@ architect = Architect(model1, model1_mom, model1_wd, A, A_lr, A_wd, device, mode
 
 
 def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A, model1, model2, model1_optim, model2_optim, model1_lr, model2_lr, instances_gone):
-  epoch_loss_model1 = 0
-  epoch_loss_model2 = 0
-  actual_model1 = ''
-  actual_model2 = ''
-  pred_model1 = ''
-  pred_model2 = ''
-  model1_score = 0
-  model2_score = 0
+  # epoch_loss_model1 = 0
+  # epoch_loss_model2 = 0
+  # actual_model1 = ''
+  # actual_model2 = ''
+  # pred_model1 = ''
+  # pred_model2 = ''
+  # model1_score = 0
+  # model2_score = 0
+  # loss_model1 = 0
+  # loss_model2 = 0
+  # objs = utils.AvgrageMeter()
+  # top1 = utils.AvgrageMeter()
+  # top5 = utils.AvgrageMeter()
+
+  batch_loss_model1, batch_loss_model2, batch_count = 0, 0, 0
+
+    
   for step, batch in enumerate(train_dataloader):
     model1.train()
     model2.train()
@@ -192,49 +201,56 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
     un_inputs = Variable(un_batch[0], requires_grad=False).cuda()
     val_batch = next(iter(valid_dataloader)) 
     val_inputs = Variable(val_batch[0], requires_grad=False).cuda()
+    n = val_inputs.size(0)
 
 
     if args.begin_epoch <= epoch <= args.stop_epoch:
       logging.info('in architect')
       architect.step(train_inputs, un_inputs, val_inputs, model1_lr, A, idxs, criterion, model2_lr, model2_optim, model1_optim)
-    
+  
     if epoch <= args.stop_epoch:
+      
       logging.info('otherwise')
       model1_optim.zero_grad()
       loss_model1 = loss1(train_inputs, model1, idxs, A, batch_size, vocab)
       #print('training loss model1:', loss_model1)
       
       # store the batch loss
-      epoch_loss_model1 += loss_model1.item()
+      batch_loss_model1 += loss_model1.item()
 
       loss_model1.backward()
       
       nn.utils.clip_grad_norm(model1.parameters(), args.grad_clip)
       
       model1_optim.step()
-      
-      # Update model2 model
-      model2_optim.zero_grad()
-      #un inputs
-      loss_model2 = loss2(train_inputs, model1, model2, batch_size, vocab)
-      #print('training loss model2:', loss_model2)
-      
-      # # store the batch loss
-      epoch_loss_model2 += loss_model2.item()
-      
+    
+    model2_optim.zero_grad()
+    loss_model2 = loss2(un_inputs, model1, model2, batch_size, vocab)
+    print(str(epoch)+'is loss being calculated or not?:', loss_model2)
+    batch_loss_model2 += loss_model2.item()
+    print(str(epoch)+'calculated batch loss model 2:', batch_loss_model2)
+    loss_model2.backward()
+    nn.utils.clip_grad_norm(model2.parameters(), args.grad_clip)
+    model2_optim.step()
 
-      loss_model2.backward()
+    # objs.update(loss_model2.item(), n)
+    instances_gone+= batch_size
+    # if step % args.report_freq == 0:
+
+      # logging.info(f"{'Epoch':^7} | {'Train Loss':^12}")
       
-      nn.utils.clip_grad_norm(model2.parameters(), args.grad_clip)
+      # logging.info("-"*70)
       
-      model2_optim.step()
-      
-      #assess predictions
+      # logging.info(f"{epoch + 1:^7} | {top1.avg:^7} ")
+
+    if instances_gone % report_freq == 0:
+ 
+      print('-'*40+'training batch stats after'+str(instances_gone)+'instances'+'-'*40)
+      print('Epoch:'+str(epoch)+'batch_loss_model2:'+str(loss_model2))
+    
+      print("-"*70)
       model1_score, pred_model1, actual_model1 = get_bleu_score(model1,val_inputs[0], tokenizer, vocab)
       model2_score, pred_model2, actual_model2 = get_bleu_score(model2,val_inputs[0], tokenizer, vocab)
-    instances_gone+= batch_size
-    if instances_gone % 50 ==0:
-    
       print('\n lets look at predictions and scores \n')
       logging.info('actual model1'+ str(actual_model1))
       logging.info('predicted model1'+ str(pred_model1))
@@ -245,20 +261,7 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
       logging.info('model1_score'+ str(model1_score))
       logging.info('model2_score'+ str(model2_score))
 
-        # writer.add_scalar('Loss/model1', loss_model1, epoch)
-        # writer.add_scalar('Loss/model2', loss_model2, epoch)
-      print('-'*40+'training batch stats after'+str(instances_gone)+'instances'+'-'*40)
-      print('Epoch:'+str(epoch)+'batch_loss_model1:'+str(loss_model1.item())+'batch_loss_model2:'+str(loss_model2.item()))
-          
-
-      # if step % args.report_freq == 0:
-    
-      # logging.info(f"{'Epoch':^7} | {'Train Loss model 1':^12}  | {'Train Loss model 2':^12}")
-      
-      # logging.info("-"*70)
-      
-      # logging.info(f"{epoch + 1:^7} | {loss_model1:^7} | {loss_model2:^12.6f}")
-
+  
 
   return epoch_loss_model1, epoch_loss_model2
 
@@ -302,7 +305,7 @@ def infer(valid_dataloader, model2, instances_gone):
       ######################################################################################
 
       # the training loss
-      if instances_gone % 20 == 0:
+      if instances_gone % report_freq == 0:
         print('*'*20 + 'batch validation stats'+'*'*20)
         print('validation epoch loss:' + str(valid_loss))
         logging.info('*'*20 + 'validation stats after'+ str(instances_gone) + 'instances' +'*'*20)
