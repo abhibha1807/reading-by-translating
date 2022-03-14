@@ -14,7 +14,7 @@ class Model1(nn.Module):
     print('forward pass through encoder')
     #print(input, input.size())
     encoder_hidden = self.enc.initHidden()
-    print('dtype hidden:', encoder_hidden.dtype)
+    #print('dtype hidden:', encoder_hidden.dtype)#torch.float32
     input_length = input.size(0)
     encoder_outputs = torch.zeros(input_length, self.enc.hidden_size, device=device)# how to pass max_length
     
@@ -35,6 +35,8 @@ class Model1(nn.Module):
     #print(target)
     decoder_input = torch.tensor([[SOS_token]], device=device) #where to put SOS_token
     decoder_hidden = encoder_hidden
+    print('dtype hidden:', decoder_hidden.dtype)#torch.float32
+    print('dtype decoder input:', decoder_input.dtype)
     loss = 0
     for di in range(target_length):
         decoder_output, decoder_hidden, decoder_attention = self.dec(
