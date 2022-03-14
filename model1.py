@@ -11,9 +11,10 @@ class Model1(nn.Module):
     self.criterion = criterion
 
   def enc_forward(self, input):
-    #print('forward pass through encoder')
+    print('forward pass through encoder')
     #print(input, input.size())
     encoder_hidden = self.enc.initHidden()
+    print('dtype hidden:', encoder_hidden.dtype)
     input_length = input.size(0)
     encoder_outputs = torch.zeros(input_length, self.enc.hidden_size, device=device)# how to pass max_length
     

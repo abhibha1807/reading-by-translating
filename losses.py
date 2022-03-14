@@ -12,10 +12,12 @@ def loss1(inputs, model, idxs, A, batch_size, vocab):
     for i in range(inputs.size(0)):
         # try:
         input_train = inputs[i][0]
+        print('dtype input:', input_train.dtype)
         onehot_input = torch.zeros(input_train.size(0), vocab, device = device)
         index_tensor = input_train
         onehot_input.scatter_(1, index_tensor, 1.)
         input_train = onehot_input
+        print('dtype input new:', input_train.dtype)
         #print(input_train.size())
         target_train = inputs[i][1]
         idx = A_idx[i]
