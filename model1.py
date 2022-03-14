@@ -36,7 +36,7 @@ class Model1(nn.Module):
     decoder_input = torch.tensor([[SOS_token]], device=device) #where to put SOS_token
     decoder_hidden = encoder_hidden
     print('dtype hidden:', decoder_hidden.dtype)#torch.float32
-    print('dtype decoder input:', decoder_input.dtype)
+    print('dtype decoder input:', decoder_input.dtype)#torch.int64
     loss = 0
     for di in range(target_length):
         decoder_output, decoder_hidden, decoder_attention = self.dec(
