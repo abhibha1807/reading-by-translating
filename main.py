@@ -32,22 +32,22 @@ parser.add_argument('--begin_epoch', type=float, default=0, help='PC Method begi
 parser.add_argument('--stop_epoch', type=float, default=25, help='Stop training on the framework')
 parser.add_argument('--report_freq', type=float, default=2000, help='report frequency')
 
-parser.add_argument('--gpu', type=int, default=0, help='gpu device id')
 parser.add_argument('--epochs', type=int, default=100, help='num of training epochs')
-parser.add_argument('--seed', type=int, default=seed_, help='random seed')
+
+parser.add_argument('--batch_size', type=int, default=10, help='batch size')
 
 parser.add_argument('--grad_clip', type=float, default=5, help='gradient clipping')
 parser.add_argument('--A_lr', type=float, default=3e-4, help='learning rate for A')
 parser.add_argument('--A_wd', type=float, default=1e-6, help=' weight decay for A')
 
-
+parser.add_argument('--gpu', type=int, default=0, help='gpu device id')
+parser.add_argument('--seed', type=int, default=seed_, help='random seed')
 parser.add_argument('--max_length', type=int, default=10, help='max length of sentences')
 parser.add_argument('--vocabsize', type=int, default=4000, help='total vocab size')
 parser.add_argument('--save_location', type=str, default='./reading-by-translating/', help='save location')
 parser.add_argument('--min_freq', type=int, default=2, help='min freq of words to be included in vocab')
 parser.add_argument('--train_portion', type=float, default=0.9, help='fraction of dataset for training')
 parser.add_argument('--un_portion', type=float, default=0.25, help='fraction of training dataset for creating unlabled dataset')
-parser.add_argument('--batch_size', type=int, default=50, help='batch size')
 parser.add_argument('--hidden_size', type=int, default=256, help='hidden size')
 parser.add_argument('--model1_lr', type=float, default=1e-3, help='model1 starting lr')
 parser.add_argument('--model1_lr_min', type=float, default=5e-4, help='model1 min lr')
@@ -84,7 +84,7 @@ model2_mom = args.model2_mom
 A_wd = args.A_wd
 report_freq = args.report_freq
 
-args.save = '{}-{}-bs50'.format(args.save, time.strftime("%Y%m%d-%H%M%S"))
+args.save = '{}-{}-e100-wd0-loss'.format(args.save, time.strftime("%Y%m%d-%H%M%S"))
 create_exp_dir(args.save, scripts_to_save=glob.glob('*.py'))
 print('saving in:', str(args.save))
 writer = SummaryWriter('runs/'+str(args.save))
@@ -119,7 +119,7 @@ tokenizer = get_tokenizer(pairs, max_length, min_freq, vocabsize, save_location)
 
 vocab = tokenizer.get_vocab_size()
 print('vocab:', vocab)
-criterion = nn.NLLLoss(ignore_index = tokenizer.pad_token_id, reduction='none')
+criterion = nn.NLLLoss(ignore_index = tokenizer.token_to_id("[PAD]"), reduction='none')
 criterion = criterion.cuda()
 model1 = Model1(vocab, vocab, criterion)
 model2 = Model2( vocab,  vocab, criterion)
