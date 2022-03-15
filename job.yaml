@@ -3,7 +3,7 @@ kind: Job # Deployment will automatically restart when killed. Use Pod if not ne
 metadata:
   labels:
     k8s-app: research
-  name: abhibha-exp-lr-e50
+  name: abhibha-exp-debug
   namespace: ecepxie
 spec:
   template:

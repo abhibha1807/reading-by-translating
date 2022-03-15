@@ -29,10 +29,10 @@ print('using device', device)
 
 print('eecuting Attn Decoder')
 parser.add_argument('--begin_epoch', type=float, default=0, help='PC Method begin')
-parser.add_argument('--stop_epoch', type=float, default=50, help='Stop training on the framework')
-parser.add_argument('--report_freq', type=float, default=2000, help='report frequency')
+parser.add_argument('--stop_epoch', type=float, default=25, help='Stop training on the framework')
+parser.add_argument('--report_freq', type=float, default=10, help='report frequency')
 
-parser.add_argument('--epochs', type=int, default=1000, help='num of training epochs')
+parser.add_argument('--epochs', type=int, default=100, help='num of training epochs')
 
 parser.add_argument('--batch_size', type=int, default=10, help='batch size')
 
@@ -96,7 +96,7 @@ model2_mom = args.model2_mom
 A_wd = args.A_wd
 report_freq = args.report_freq
 
-args.save = '{}-{}-lr-e50'.format(args.save, time.strftime("%Y%m%d-%H%M%S"))
+args.save = '{}-{}-debug'.format(args.save, time.strftime("%Y%m%d-%H%M%S"))
 create_exp_dir(args.save, scripts_to_save=glob.glob('*.py'))
 print('saving in:', str(args.save))
 writer = SummaryWriter('runs/'+str(args.save))
@@ -162,9 +162,9 @@ print(len(train_portion), len(un_portion), len(valid_portion))
 logging.info('dataset')
 
 
-train_data = get_train_dataset(train_portion, tokenizer)
-un_data = get_un_dataset(un_portion, tokenizer)
-valid_data = get_valid_dataset(valid_portion, tokenizer)
+train_data = get_train_dataset(train_portion[0:100], tokenizer)
+un_data = get_un_dataset(un_portion[0:100], tokenizer)
+valid_data = get_valid_dataset(valid_portion[0:50], tokenizer)
 
 logging.info(f"{len(train_data):^7} | { len(un_data):^7} | { len(valid_data):^7}")
 
@@ -209,9 +209,9 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
     n = val_inputs.size(0)
 
 
-    # if args.begin_epoch <= epoch <= args.stop_epoch:
-    #   logging.info('in architect')
-    #   architect.step(train_inputs, un_inputs, val_inputs, model1_lr, A, idxs, criterion, model2_lr, model2_optim, model1_optim)
+    if args.begin_epoch <= epoch <= args.stop_epoch:
+      #logging.info('in architect')
+      architect.step(train_inputs, un_inputs, val_inputs, model1_lr, A, idxs, criterion, model2_lr, model2_optim, model1_optim)
   
     if epoch <= args.stop_epoch:
       
@@ -225,7 +225,7 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
 
       loss_model1.backward()
       
-      #nn.utils.clip_grad_norm(model1.parameters(), args.grad_clip)
+      nn.utils.clip_grad_norm(model1.parameters(), args.grad_clip)
       
       model1_optim.step()
     
@@ -235,7 +235,7 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
     batch_loss_model2 += loss_model2.item()
     #print(str(epoch)+'calculated batch loss model 2:', batch_loss_model2)
     loss_model2.backward()
-    #nn.utils.clip_grad_norm(model2.parameters(), args.grad_clip)
+    nn.utils.clip_grad_norm(model2.parameters(), args.grad_clip)
     model2_optim.step()
 
     # objs.update(loss_model2.item(), n)
