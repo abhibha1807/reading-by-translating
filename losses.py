@@ -6,9 +6,9 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 def loss1(inputs, model, idxs, A, batch_size, vocab):
     A_idx = A(idxs)
-    #print('A_idx:', A_idx)
+    print('A_idx:', A_idx)
     batch_loss = 0
-    #print('batch size:', inputs.size(0))
+    print('batch size:', inputs.size(0))
     for i in range(inputs.size(0)):
         # try:
         input_train = inputs[i][0]
@@ -19,13 +19,15 @@ def loss1(inputs, model, idxs, A, batch_size, vocab):
         input_train = onehot_input
         #print('dtype input new:', input_train.dtype) ##torch.float32
         #print(input_train.size())
+        print('onehot input:', input_train)
         target_train = inputs[i][1]
         idx = A_idx[i]
         enc_hidden, enc_outputs = model.enc_forward(input_train)
         loss = model.dec_forward(target_train, enc_hidden, enc_outputs) # todo: find loss for each instnce and multiply A with the loss vec.
-        #print('loss and idx size:', loss.size(), idx.size())
+        print('loss and idx :', loss, idx)
         loss = loss * idx
         batch_loss += loss 
+    print('batch loss loss1:',batch_loss)
     return batch_loss
         # except:
         #     print('skipping this_______________________________________')

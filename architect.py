@@ -29,6 +29,7 @@ class Architect(object):
   
   def _compute_unrolled_enc_dec_model(self, train_inputs, model1_lr, idxs, model1_optim):
     batch_loss = loss1(train_inputs, self.model1, idxs, self.A,  self.batch_size, self.vocab)
+    print('batch loss 1:', batch_loss)
     #Unrolled model
     theta = _concat(self.model1.parameters()).data
     # print(theta, len(theta))
