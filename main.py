@@ -368,8 +368,8 @@ for epoch in range(start_epoch, args.epochs):
     # logging.info the attention weights and inspect it
     if epoch % 5 == 0:
         print('SAVING MODELS')
-        torch.save(model1, 'model1.pt')
-        torch.save(model2, 'model2.pt')
+        torch.save(model1, args.save+'/model1.pt')
+        torch.save(model2, args.save+'/model2.pt')
         logging.info(str(("Attention Weights A : ", A.alpha)))
     # break
     
