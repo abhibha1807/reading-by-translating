@@ -30,10 +30,10 @@ print('using device', device)
 print('eecuting Attn Decoder')
 parser.add_argument('--begin_epoch', type=float, default=0, help='PC Method begin')
 parser.add_argument('--stop_epoch', type=float, default=25, help='Stop training on the framework')
-parser.add_argument('--report_freq', type=float, default=1000, help='report frequency')
+parser.add_argument('--report_freq', type=float, default=2000, help='report frequency')
 
 parser.add_argument('--gpu', type=int, default=0, help='gpu device id')
-parser.add_argument('--epochs', type=int, default=10000, help='num of training epochs')
+parser.add_argument('--epochs', type=int, default=100, help='num of training epochs')
 parser.add_argument('--seed', type=int, default=seed_, help='random seed')
 
 parser.add_argument('--grad_clip', type=float, default=5, help='gradient clipping')
@@ -54,8 +54,8 @@ parser.add_argument('--model1_lr_min', type=float, default=5e-4, help='model1 mi
 parser.add_argument('--model2_lr', type=float, default=1e-3, help='model2 starting lr')
 parser.add_argument('--model2_lr_min', type=float, default=5e-4, help='model2 min lr')
 
-parser.add_argument('--model1_wd', type=float, default=1e-6, help='model1 weight decay')
-parser.add_argument('--model2_wd', type=float, default=1e-6, help='model2 weight decay')
+parser.add_argument('--model1_wd', type=float, default=0, help='model1 weight decay')
+parser.add_argument('--model2_wd', type=float, default=0, help='model2 weight decay')
 parser.add_argument('--model1_mom', type=float, default=0.9, help='model1 momentum')
 parser.add_argument('--model2_mom', type=float, default=0.9, help='model2 momentum')
 
@@ -84,7 +84,7 @@ model2_mom = args.model2_mom
 A_wd = args.A_wd
 report_freq = args.report_freq
 
-args.save = '{}-{}-wd1e6-e10k'.format(args.save, time.strftime("%Y%m%d-%H%M%S"))
+args.save = '{}-{}-e100-wd0-loss'.format(args.save, time.strftime("%Y%m%d-%H%M%S"))
 create_exp_dir(args.save, scripts_to_save=glob.glob('*.py'))
 print('saving in:', str(args.save))
 writer = SummaryWriter('runs/'+str(args.save))
@@ -119,7 +119,7 @@ tokenizer = get_tokenizer(pairs, max_length, min_freq, vocabsize, save_location)
 
 vocab = tokenizer.get_vocab_size()
 print('vocab:', vocab)
-criterion = nn.NLLLoss()
+criterion = nn.NLLLoss(ignore_index = tokenizer.pad_token_id, reduction='none')
 criterion = criterion.cuda()
 model1 = Model1(vocab, vocab, criterion)
 model2 = Model2( vocab,  vocab, criterion)

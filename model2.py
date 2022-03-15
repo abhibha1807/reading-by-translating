@@ -82,7 +82,7 @@ class Model2(nn.Module):
     # outputs = torch.stack(outputs)
     #print(outputs)
     decoded_sentence = tokenizer.decode(outputs)
-    print(decoded_sentence)
+    #print(decoded_sentence)
     return decoded_sentence
 
   
