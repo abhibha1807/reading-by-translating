@@ -34,7 +34,7 @@ parser.add_argument('--report_freq', type=float, default=2000, help='report freq
 
 parser.add_argument('--epochs', type=int, default=100, help='num of training epochs')
 
-parser.add_argument('--batch_size', type=int, default=10, help='batch size')
+parser.add_argument('--batch_size', type=int, default=50, help='batch size')
 
 parser.add_argument('--grad_clip', type=float, default=5, help='gradient clipping')
 parser.add_argument('--A_lr', type=float, default=3e-4, help='learning rate for A')
@@ -84,7 +84,7 @@ model2_mom = args.model2_mom
 A_wd = args.A_wd
 report_freq = args.report_freq
 
-args.save = '{}-{}-bs10'.format(args.save, time.strftime("%Y%m%d-%H%M%S"))
+args.save = '{}-{}-bs50'.format(args.save, time.strftime("%Y%m%d-%H%M%S"))
 create_exp_dir(args.save, scripts_to_save=glob.glob('*.py'))
 print('saving in:', str(args.save))
 writer = SummaryWriter('runs/'+str(args.save))
