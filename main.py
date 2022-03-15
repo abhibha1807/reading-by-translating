@@ -37,7 +37,10 @@ parser.add_argument('--epochs', type=int, default=100, help='num of training epo
 parser.add_argument('--batch_size', type=int, default=50, help='batch size')
 
 parser.add_argument('--grad_clip', type=float, default=5, help='gradient clipping')
-parser.add_argument('--A_lr', type=float, default=3e-4, help='learning rate for A')
+# parser.add_argument('--A_lr', type=float, default=3e-4, help='learning rate for A')
+#reduce lr 
+parser.add_argument('--A_lr', type=float, default=3e-6, help='learning rate for A')
+
 parser.add_argument('--A_wd', type=float, default=1e-6, help=' weight decay for A')
 
 parser.add_argument('--gpu', type=int, default=0, help='gpu device id')
@@ -49,10 +52,16 @@ parser.add_argument('--min_freq', type=int, default=2, help='min freq of words t
 parser.add_argument('--train_portion', type=float, default=0.9, help='fraction of dataset for training')
 parser.add_argument('--un_portion', type=float, default=0.25, help='fraction of training dataset for creating unlabled dataset')
 parser.add_argument('--hidden_size', type=int, default=256, help='hidden size')
-parser.add_argument('--model1_lr', type=float, default=1e-3, help='model1 starting lr')
-parser.add_argument('--model1_lr_min', type=float, default=5e-4, help='model1 min lr')
-parser.add_argument('--model2_lr', type=float, default=1e-3, help='model2 starting lr')
-parser.add_argument('--model2_lr_min', type=float, default=5e-4, help='model2 min lr')
+# parser.add_argument('--model1_lr', type=float, default=1e-3, help='model1 starting lr')
+# parser.add_argument('--model1_lr_min', type=float, default=5e-4, help='model1 min lr')
+# parser.add_argument('--model2_lr', type=float, default=1e-3, help='model2 starting lr')
+# parser.add_argument('--model2_lr_min', type=float, default=5e-4, help='model2 min lr')
+
+#reduce lr
+parser.add_argument('--model1_lr', type=float, default=1e-4, help='model1 starting lr')
+parser.add_argument('--model1_lr_min', type=float, default=5e-6, help='model1 min lr')
+parser.add_argument('--model2_lr', type=float, default=1e-4, help='model2 starting lr')
+parser.add_argument('--model2_lr_min', type=float, default=5e-6, help='model2 min lr')
 
 parser.add_argument('--model1_wd', type=float, default=0, help='model1 weight decay')
 parser.add_argument('--model2_wd', type=float, default=0, help='model2 weight decay')
@@ -84,7 +93,7 @@ model2_mom = args.model2_mom
 A_wd = args.A_wd
 report_freq = args.report_freq
 
-args.save = '{}-{}-bs50'.format(args.save, time.strftime("%Y%m%d-%H%M%S"))
+args.save = '{}-{}-lr'.format(args.save, time.strftime("%Y%m%d-%H%M%S"))
 create_exp_dir(args.save, scripts_to_save=glob.glob('*.py'))
 print('saving in:', str(args.save))
 writer = SummaryWriter('runs/'+str(args.save))
@@ -203,7 +212,7 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
   
     if epoch <= args.stop_epoch:
       
-      logging.info('otherwise')
+      #logging.info('otherwise')
       model1_optim.zero_grad()
       loss_model1 = loss1(train_inputs, model1, idxs, A, batch_size, vocab)
       #print('training loss model1:', loss_model1)
