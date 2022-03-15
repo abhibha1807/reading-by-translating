@@ -95,7 +95,7 @@ model2_mom = args.model2_mom
 A_wd = args.A_wd
 report_freq = args.report_freq
 
-args.save = '{}-{}-un0.5'.format(args.save, time.strftime("%Y%m%d-%H%M%S"))
+args.save = '{}-{}-gradclip'.format(args.save, time.strftime("%Y%m%d-%H%M%S"))
 create_exp_dir(args.save, scripts_to_save=glob.glob('*.py'))
 print('saving in:', str(args.save))
 writer = SummaryWriter('runs/'+str(args.save))
@@ -224,7 +224,7 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
 
       loss_model1.backward()
       
-      nn.utils.clip_grad_norm(model1.parameters(), args.grad_clip)
+      #nn.utils.clip_grad_norm(model1.parameters(), args.grad_clip)
       
       model1_optim.step()
     
@@ -234,7 +234,7 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
     batch_loss_model2 += loss_model2.item()
     #print(str(epoch)+'calculated batch loss model 2:', batch_loss_model2)
     loss_model2.backward()
-    nn.utils.clip_grad_norm(model2.parameters(), args.grad_clip)
+    #nn.utils.clip_grad_norm(model2.parameters(), args.grad_clip)
     model2_optim.step()
 
     # objs.update(loss_model2.item(), n)
