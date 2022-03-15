@@ -277,7 +277,7 @@ def infer(valid_dataloader, model2, instances_gone):
     valid_batch_loss = 0
     epoch_val_loss = 0
     #val batch inputs
-    for i in range(args.batch_size):
+    for i in range(n):
       input_train = val_inputs[i][0]
       onehot_input = torch.zeros(input_train.size(0),vocab, device = 'cuda')
       index_tensor = input_train
