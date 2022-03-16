@@ -46,7 +46,7 @@ parser.add_argument('--A_wd', type=float, default=1e-6, help=' weight decay for 
 parser.add_argument('--gpu', type=int, default=0, help='gpu device id')
 parser.add_argument('--seed', type=int, default=seed_, help='random seed')
 parser.add_argument('--max_length', type=int, default=10, help='max length of sentences')
-parser.add_argument('--vocabsize', type=int, default=3000, help='total vocab size')
+parser.add_argument('--vocabsize', type=int, default=7000, help='total vocab size')
 parser.add_argument('--save_location', type=str, default='./reading-by-translating/', help='save location')
 parser.add_argument('--min_freq', type=int, default=2, help='min freq of words to be included in vocab')
 parser.add_argument('--train_portion', type=float, default=0.9, help='fraction of dataset for training')
