@@ -13,7 +13,7 @@ def loss1(inputs, model, idxs, A, batch_size, vocab):
         # try:
         input_train = inputs[i][0]
         #print('dtype input:', input_train.dtype)
-        onehot_input = torch.zeros(input_train.size(0), vocab, device = device)
+        onehot_input = torch.zeros(input_train.size(0), vocab, device = device, requires_grad=True)
         index_tensor = input_train
         onehot_input.scatter_(1, index_tensor, 1.)
         input_train = onehot_input
@@ -73,6 +73,7 @@ def loss2(un_inputs, model1, model2, batch_size, vocab):
                     break
 
             #print(decoder_outputs) #pseudo target
+            print('before dec_soft_idxs:', dec_soft_idxs)
             decoder_outputs = torch.stack(decoder_outputs)#differentiable,no break in computation graph
 
             print('decoder_outputs:',decoder_outputs)
