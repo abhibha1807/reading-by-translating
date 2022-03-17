@@ -48,7 +48,7 @@ def loss2(un_inputs, model1, model2, batch_size, vocab):
             # onehot_input.scatter_(1, index_tensor, 1.)
             # input_un = onehot_input
             # print('input:', input_un)
-            enc_hidden, enc_outputs = model2.enc_forward(input_un)
+            enc_hidden, enc_outputs = model1.enc_forward(input_un)
             print('enc hidden:', enc_hidden)
             print('enc_outputs:', enc_outputs)
 
@@ -73,7 +73,7 @@ def loss2(un_inputs, model1, model2, batch_size, vocab):
                     break
 
             #print(decoder_outputs) #pseudo target
-            print('before dec_soft_idxs:', dec_soft_idxs)
+            print('before dec_soft_idxs:', dec_soft_idxs)# every tensor has grad fun assopciated with it.
             decoder_outputs = torch.stack(decoder_outputs)#differentiable,no break in computation graph
 
             print('decoder_outputs:',decoder_outputs)
