@@ -1,7 +1,23 @@
 from Enc_Dec import *
 from dataset import *
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+class Embedding_(nn.Module):
+  def __init__(self, embedding_layer):
+    super(Embedding_, self).__init__()
+    self.embedding = embedding_layer
 
+  def forward(self, mask):
+    print('in ebedding forward', mask.ndim, mask)
+    print('embedding mat dim:', self.embedding.weight.size())
+    # if mask.ndim == 1:
+    if  mask.dtype == torch.long:
+        #assert mask.dtype == torch.long
+        return self.embedding(mask)
+    
+    # assert mask.dtype == torch.float
+    # here the mask is the one-hot encoding
+    else:
+      return torch.matmul(mask, self.embedding.weight)
 class Model1(nn.Module):
   def __init__(self, input_size, output_size, criterion, enc_hidden_size=256, dec_hidden_size=256):
     super(Model1, self).__init__()
@@ -9,6 +25,7 @@ class Model1(nn.Module):
     #self.dec = DecoderRNN(dec_hidden_size, output_size)
     self.dec = AttnDecoderRNN(dec_hidden_size, output_size)
     self.criterion = criterion
+    self.embedding = Embedding_(self.enc.embedding)
 
   def enc_forward(self, input):
     #print('forward pass through encoder')
@@ -20,8 +37,9 @@ class Model1(nn.Module):
     
     for ei in range(input_length):
       # print('input_ei:', input[ei])
+      embedded = self.embedding(input[ei]).view(1, 1, -1)
       encoder_output, encoder_hidden = self.enc(
-          input[ei], encoder_hidden)
+          embedded, encoder_hidden)
       encoder_outputs[ei] = encoder_output[0, 0]
     
     #print(encoder_hidden.size(),encoder_outputs.size())
@@ -59,14 +77,15 @@ class Model1(nn.Module):
 
   def generate(self, input, tokenizer, vocab):
     print('generating')
-    onehot_input = torch.zeros(input.size(0), vocab,  device='cuda')
-    #index_tensor = torch.squeeze(input, dim=-1)
-    #print(input.size())
-    index_tensor = input
-    #print(onehot_input.size(),index_tensor.size() )
-    onehot_input.scatter_(1, index_tensor, 1.)
-    input_train = onehot_input
-    #print('input valid size:', input_train.size())
+    # onehot_input = torch.zeros(input.size(0), vocab,  device='cuda')
+    # #index_tensor = torch.squeeze(input, dim=-1)
+    # #print(input.size())
+    # index_tensor = input
+    # #print(onehot_input.size(),index_tensor.size() )
+    # onehot_input.scatter_(1, index_tensor, 1.)
+    # input_train = onehot_input
+    # #print('input valid size:', input_train.size())
+    input_train = input
     enc_hidden, enc_outputs = self.enc_forward(input_train)
     decoder_input = torch.tensor([[SOS_token]], device=device) #where to put SOS_token
     decoder_hidden = enc_hidden

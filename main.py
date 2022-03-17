@@ -292,10 +292,10 @@ def infer(valid_dataloader, model2, instances_gone):
     #val batch inputs
     for i in range(n):
       input_train = val_inputs[i][0]
-      onehot_input = torch.zeros(input_train.size(0),vocab, device = 'cuda')
-      index_tensor = input_train
-      onehot_input.scatter_(1, index_tensor, 1.)
-      input_train = onehot_input
+      # onehot_input = torch.zeros(input_train.size(0),vocab, device = 'cuda')
+      # index_tensor = input_train
+      # onehot_input.scatter_(1, index_tensor, 1.)
+      # input_train = onehot_input
       #print('input valid size:', input_train.size())
       target_train = val_inputs[i][1]
       

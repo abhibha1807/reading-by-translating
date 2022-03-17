@@ -7,28 +7,29 @@ from dataset import *
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 #custom class for encoder embedding
-class Enc_Embedding(nn.Module):
-    def __init__(self, vocab, hidden_size=256):
-      super(Enc_Embedding, self).__init__()
-      self.embedding_matrix = torch.rand(vocab, hidden_size, device = device)
+# class Enc_Embedding(nn.Module):
+#     def __init__(self, vocab, hidden_size=256):
+#       super(Enc_Embedding, self).__init__()
+#       self.embedding_matrix = torch.rand(vocab, hidden_size, device = device)
 
-    def forward(self, onehot_input):
-      emb_vector = torch.matmul(onehot_input, self.embedding_matrix) 
-      emb_vector.to("cuda")
-      return emb_vector
+#     def forward(self, onehot_input):
+#       emb_vector = torch.matmul(onehot_input, self.embedding_matrix) 
+#       emb_vector.to("cuda")
+#       return emb_vector
 
 #encoder class
 class EncoderRNN(nn.Module):
     def __init__(self, input_size, hidden_size):
         super(EncoderRNN, self).__init__()
         self.hidden_size = hidden_size
-        self.embedding = Enc_Embedding(input_size, hidden_size)
+        #self.embedding = Enc_Embedding(input_size, hidden_size)
+        self.embedding = nn.Embedding(input_size, hidden_size)
         self.gru = nn.GRU(hidden_size, hidden_size)
 
     
     def forward(self, input, hidden):
-        embedded = self.embedding(input).view(1, 1, -1)
-        output = embedded
+        #embedded = self.embedding(input).view(1, 1, -1)
+        output = input
         output, hidden = self.gru(output, hidden)
         return output, hidden
 
