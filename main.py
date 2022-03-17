@@ -29,10 +29,10 @@ print('using device', device)
 
 print('eecuting Attn Decoder')
 parser.add_argument('--begin_epoch', type=float, default=0, help='PC Method begin')
-parser.add_argument('--stop_epoch', type=float, default=25, help='Stop training on the framework')
+parser.add_argument('--stop_epoch', type=float, default=50, help='Stop training on the framework')
 parser.add_argument('--report_freq', type=float, default=10, help='report frequency')
 
-parser.add_argument('--epochs', type=int, default=100, help='num of training epochs')
+parser.add_argument('--epochs', type=int, default=200, help='num of training epochs')
 
 parser.add_argument('--batch_size', type=int, default=10, help='batch size')
 
@@ -96,7 +96,7 @@ model2_mom = args.model2_mom
 A_wd = args.A_wd
 report_freq = args.report_freq
 
-args.save = '{}-{}-debug'.format(args.save, time.strftime("%Y%m%d-%H%M%S"))
+args.save = '{}-{}-debug-e50'.format(args.save, time.strftime("%Y%m%d-%H%M%S"))
 create_exp_dir(args.save, scripts_to_save=glob.glob('*.py'))
 print('saving in:', str(args.save))
 writer = SummaryWriter('runs/'+str(args.save))
@@ -231,9 +231,9 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
     
     model2_optim.zero_grad()
     loss_model2 = loss2(un_inputs, model1, model2, batch_size, vocab)
-    #print(str(epoch)+'is loss being calculated or not?:', loss_model2)
+    print(str(epoch)+'is loss being calculated or not?:', loss_model2)
     batch_loss_model2 += loss_model2.item()
-    #print(str(epoch)+'calculated batch loss model 2:', batch_loss_model2)
+    print(str(epoch)+'calculated batch loss model 2:', batch_loss_model2)
     loss_model2.backward()
     nn.utils.clip_grad_norm(model2.parameters(), args.grad_clip)
     model2_optim.step()
