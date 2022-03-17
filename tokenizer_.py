@@ -1,4 +1,6 @@
+import sys
 import os
+import json
 from tokenizers import BertWordPieceTokenizer
 from tokenizers.processors import BertProcessing
 import argparse
