@@ -29,12 +29,12 @@ print('using device', device)
 
 print('eecuting Attn Decoder')
 parser.add_argument('--begin_epoch', type=float, default=0, help='PC Method begin')
-parser.add_argument('--stop_epoch', type=float, default=50, help='Stop training on the framework')
+parser.add_argument('--stop_epoch', type=float, default=25, help='Stop training on the framework')
 parser.add_argument('--report_freq', type=float, default=10, help='report frequency')
 
-parser.add_argument('--epochs', type=int, default=200, help='num of training epochs')
+parser.add_argument('--epochs', type=int, default=300, help='num of training epochs')
 
-parser.add_argument('--batch_size', type=int, default=10, help='batch size')
+parser.add_argument('--batch_size', type=int, default=50, help='batch size')
 
 parser.add_argument('--grad_clip', type=float, default=5, help='gradient clipping')
 parser.add_argument('--A_lr', type=float, default=3e-4, help='learning rate for A')
@@ -55,16 +55,16 @@ parser.add_argument('--un_portion', type=float, default=0.5, help='fraction of t
 
 parser.add_argument('--hidden_size', type=int, default=256, help='hidden size')
 
-parser.add_argument('--model1_lr', type=float, default=1e-3, help='model1 starting lr')
-parser.add_argument('--model1_lr_min', type=float, default=5e-4, help='model1 min lr')
-parser.add_argument('--model2_lr', type=float, default=1e-3, help='model2 starting lr')
-parser.add_argument('--model2_lr_min', type=float, default=5e-4, help='model2 min lr')
+# parser.add_argument('--model1_lr', type=float, default=1e-3, help='model1 starting lr')
+# parser.add_argument('--model1_lr_min', type=float, default=5e-4, help='model1 min lr')
+# parser.add_argument('--model2_lr', type=float, default=1e-3, help='model2 starting lr')
+# parser.add_argument('--model2_lr_min', type=float, default=5e-4, help='model2 min lr')
 
 #reduce lr
-# parser.add_argument('--model1_lr', type=float, default=1e-4, help='model1 starting lr')
-# parser.add_argument('--model1_lr_min', type=float, default=5e-6, help='model1 min lr')
-# parser.add_argument('--model2_lr', type=float, default=1e-4, help='model2 starting lr')
-# parser.add_argument('--model2_lr_min', type=float, default=5e-6, help='model2 min lr')
+parser.add_argument('--model1_lr', type=float, default=1e-4, help='model1 starting lr')
+parser.add_argument('--model1_lr_min', type=float, default=5e-6, help='model1 min lr')
+parser.add_argument('--model2_lr', type=float, default=1e-4, help='model2 starting lr')
+parser.add_argument('--model2_lr_min', type=float, default=5e-6, help='model2 min lr')
 
 parser.add_argument('--model1_wd', type=float, default=0, help='model1 weight decay')
 parser.add_argument('--model2_wd', type=float, default=0, help='model2 weight decay')
@@ -96,7 +96,7 @@ model2_mom = args.model2_mom
 A_wd = args.A_wd
 report_freq = args.report_freq
 
-args.save = '{}-{}-debug-e50'.format(args.save, time.strftime("%Y%m%d-%H%M%S"))
+args.save = '{}-{}-e25'.format(args.save, time.strftime("%Y%m%d-%H%M%S"))
 create_exp_dir(args.save, scripts_to_save=glob.glob('*.py'))
 print('saving in:', str(args.save))
 writer = SummaryWriter('runs/'+str(args.save))
@@ -162,9 +162,9 @@ print(len(train_portion), len(un_portion), len(valid_portion))
 logging.info('dataset')
 
 
-train_data = get_train_dataset(train_portion[0:100], tokenizer)
-un_data = get_un_dataset(un_portion[0:100], tokenizer)
-valid_data = get_valid_dataset(valid_portion[0:50], tokenizer)
+train_data = get_train_dataset(train_portion, tokenizer)
+un_data = get_un_dataset(un_portion, tokenizer)
+valid_data = get_valid_dataset(valid_portion, tokenizer)
 
 logging.info(f"{len(train_data):^7} | { len(un_data):^7} | { len(valid_data):^7}")
 
