@@ -64,7 +64,7 @@ class Model2(nn.Module):
         loss += self.criterion(decoder_output, target[di])
         if decoder_input.item() == EOS_token:
             break
-    return loss
+    return loss/target_length
 
 
   def new(self, vocab):
