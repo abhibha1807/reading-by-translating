@@ -7,8 +7,8 @@ class Embedding_(nn.Module):
     self.embedding = embedding_layer
 
   def forward(self, mask):
-    print('in ebedding forward', mask.ndim, mask)
-    print('embedding mat dim:', self.embedding.weight.size())
+    # print('in ebedding forward', mask.ndim, mask)
+    # print('embedding mat dim:', self.embedding.weight.size())
     # if mask.ndim == 1:
     if  mask.dtype == torch.long:
         #assert mask.dtype == torch.long
