@@ -265,7 +265,7 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
       logging.info('\n')
       logging.info('model1_score'+ str(model1_score))
       logging.info('model2_score'+ str(model2_score))
-    break
+    # break
 
   return batch_loss_model1, batch_loss_model2
 
@@ -384,7 +384,7 @@ for epoch in range(start_epoch, args.epochs):
         torch.save(model1, args.save+'/model1.pt')
         torch.save(model2, args.save+'/model2.pt')
         logging.info(str(("Attention Weights A : ", A.alpha)))
-    break
+    # break
     
 
    
