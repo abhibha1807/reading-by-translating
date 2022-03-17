@@ -44,7 +44,7 @@ parser.add_argument('--A_lr', type=float, default=1e-6, help='learning rate for 
 parser.add_argument('--A_wd', type=float, default=1e-6, help=' weight decay for A')
 
 parser.add_argument('--gpu', type=int, default=0, help='gpu device id')
-parser.add_argument('--seed', type=int, default=seed_, help='random seed')
+parser.add_argument('--seed', type=int, default=10, help='random seed')
 parser.add_argument('--max_length', type=int, default=10, help='max length of sentences')
 parser.add_argument('--vocabsize', type=int, default=7000, help='total vocab size')
 parser.add_argument('--save_location', type=str, default='./reading-by-translating/', help='save location')
@@ -131,7 +131,7 @@ tokenizer = get_tokenizer(pairs, max_length, min_freq, vocabsize, save_location)
 
 vocab = tokenizer.get_vocab_size()
 print('vocab:', vocab)
-criterion = nn.NLLLoss(ignore_index = tokenizer.token_to_id("[PAD]"), reduction='none')
+criterion = nn.NLLLoss(ignore_index = tokenizer.token_to_id("pad"), reduction='none')
 criterion = criterion.cuda()
 model1 = Model1(vocab, vocab, criterion)
 model2 = Model2( vocab,  vocab, criterion)
