@@ -3,7 +3,7 @@ kind: Job # Deployment will automatically restart when killed. Use Pod if not ne
 metadata:
   labels:
     k8s-app: research
-  name: abhibha-testexp
+  name: abhibha-exp-debug
   namespace: ecepxie
 spec:
   template:
@@ -20,13 +20,13 @@ spec:
         command: ["bash","train.sh"]
         resources:
           requests:
-            memory: "16Gi"
-            cpu: "4"
-            nvidia.com/gpu: 2
+            memory: "8Gi"
+            cpu: "1"
+            nvidia.com/gpu: 1
           limits:
-            memory: "32Gi"
-            cpu: "4"
-            nvidia.com/gpu: 2
+            memory: "8Gi"
+            cpu: "1"
+            nvidia.com/gpu: 1
         volumeMounts:
         - mountPath: /abhibha-volume
           name: abhibha-volume
@@ -34,12 +34,12 @@ spec:
         - name: abhibha-volume
           persistentVolumeClaim:
             claimName: abhibha-volume
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-            - matchExpressions:
-              - key: gpu-type
-                operator: In # Use NotIn for other types
-                values:
-                - 1080Ti
+      # affinity:
+      #   nodeAffinity:
+      #     requiredDuringSchedulingIgnoredDuringExecution:
+      #       nodeSelectorTerms:
+      #       - matchExpressions:
+      #         - key: gpu-type
+                # operator: In # Use NotIn for other types
+                # values:
+                # - 1080Ti

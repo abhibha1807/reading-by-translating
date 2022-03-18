@@ -29,6 +29,7 @@ class Architect(object):
   
   def _compute_unrolled_enc_dec_model(self, train_inputs, model1_lr, idxs, model1_optim):
     batch_loss = loss1(train_inputs, self.model1, idxs, self.A,  self.batch_size, self.vocab)
+    print('batch loss 1:', batch_loss)
     #Unrolled model
     theta = _concat(self.model1.parameters()).data
     # print(theta, len(theta))
@@ -197,15 +198,15 @@ class Architect(object):
       #val batch inputs
       for i in range(self.batch_size):
         input_train = val_inputs[i][0]
-        onehot_input = torch.zeros(input_train.size(0), self.vocab, device=device)
-        index_tensor = input_train
-        onehot_input.scatter_(1, index_tensor, 1.)
-        input_train = onehot_input
+        # onehot_input = torch.zeros(input_train.size(0), self.vocab, device=device)
+        # index_tensor = input_train
+        # onehot_input.scatter_(1, index_tensor, 1.)
+        # input_train = onehot_input
         #print('input valid size:', input_train.size())
         target_train = val_inputs[i][1]
        
         enc_hidden, enc_outputs = unrolled_model2.enc_forward(input_train)
-        valid_loss = unrolled_model2.dec_forward(target_train, enc_hidden) 
+        valid_loss = unrolled_model2.dec_forward(target_train, enc_hidden,enc_outputs) 
         #print('valid loss:', valid_loss)
         valid_batch_loss += valid_loss
       unrolled_model2.train()
