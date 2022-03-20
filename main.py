@@ -29,10 +29,10 @@ print('using device', device)
 
 print('eecuting Attn Decoder')
 parser.add_argument('--begin_epoch', type=float, default=0, help='PC Method begin')
-parser.add_argument('--stop_epoch', type=float, default=25, help='Stop training on the framework')
-parser.add_argument('--report_freq', type=float, default=10, help='report frequency')
+parser.add_argument('--stop_epoch', type=float, default=50, help='Stop training on the framework')
+parser.add_argument('--report_freq', type=float, default=1000, help='report frequency')
 
-parser.add_argument('--epochs', type=int, default=300, help='num of training epochs')
+parser.add_argument('--epochs', type=int, default=100, help='num of training epochs')
 
 parser.add_argument('--batch_size', type=int, default=50, help='batch size')
 
@@ -96,7 +96,7 @@ model2_mom = args.model2_mom
 A_wd = args.A_wd
 report_freq = args.report_freq
 
-args.save = '{}-{}-e25'.format(args.save, time.strftime("%Y%m%d-%H%M%S"))
+args.save = '{}-{}-e50-step'.format(args.save, time.strftime("%Y%m%d-%H%M%S"))
 create_exp_dir(args.save, scripts_to_save=glob.glob('*.py'))
 print('saving in:', str(args.save))
 writer = SummaryWriter('runs/'+str(args.save))
@@ -194,6 +194,7 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
   # top5 = utils.AvgrageMeter()
 
   batch_loss_model1, batch_loss_model2, batch_count = 0, 0, 0
+  valid_batch_loss = 0
 
     
   for step, batch in enumerate(train_dataloader):
@@ -211,32 +212,32 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
 
     if args.begin_epoch <= epoch <= args.stop_epoch:
       #logging.info('in architect')
-      architect.step(train_inputs, un_inputs, val_inputs, model1_lr, A, idxs, criterion, model2_lr, model2_optim, model1_optim)
+      valid_batch_loss = architect.step(train_inputs, un_inputs, val_inputs, model1_lr, A, idxs, criterion, model2_lr, model2_optim, model1_optim)
   
-    if epoch <= args.stop_epoch:
+    # if epoch <= args.stop_epoch:
       
-      #logging.info('otherwise')
-      model1_optim.zero_grad()
-      loss_model1 = loss1(train_inputs, model1, idxs, A, batch_size, vocab)
-      #print('training loss model1:', loss_model1)
+    #   #logging.info('otherwise')
+    #   model1_optim.zero_grad()
+    #   loss_model1 = loss1(train_inputs, model1, idxs, A, batch_size, vocab)
+    #   #print('training loss model1:', loss_model1)
       
-      # store the batch loss
-      batch_loss_model1 += loss_model1.item()
+    #   # store the batch loss
+    #   batch_loss_model1 += loss_model1.item()
 
-      loss_model1.backward()
+    #   loss_model1.backward()
       
-      nn.utils.clip_grad_norm(model1.parameters(), args.grad_clip)
+    #   nn.utils.clip_grad_norm(model1.parameters(), args.grad_clip)
       
-      model1_optim.step()
+    #   model1_optim.step()
     
-    model2_optim.zero_grad()
-    loss_model2 = loss2(un_inputs, model1, model2, batch_size, vocab)
-    print(str(epoch)+'is loss being calculated or not?:', loss_model2)
-    batch_loss_model2 += loss_model2.item()
-    print(str(epoch)+'calculated batch loss model 2:', batch_loss_model2)
-    loss_model2.backward()
-    nn.utils.clip_grad_norm(model2.parameters(), args.grad_clip)
-    model2_optim.step()
+    # model2_optim.zero_grad()
+    # loss_model2 = loss2(un_inputs, model1, model2, batch_size, vocab)
+    # print(str(epoch)+'is loss being calculated or not?:', loss_model2)
+    # batch_loss_model2 += loss_model2.item()
+    # print(str(epoch)+'calculated batch loss model 2:', batch_loss_model2)
+    # loss_model2.backward()
+    # nn.utils.clip_grad_norm(model2.parameters(), args.grad_clip)
+    # model2_optim.step()
 
     # objs.update(loss_model2.item(), n)
     instances_gone+= batch_size
@@ -267,7 +268,8 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
       logging.info('model2_score'+ str(model2_score))
     # break
 
-  return batch_loss_model1, batch_loss_model2
+  #return batch_loss_model1, batch_loss_model2
+  return valid_batch_loss
 
       
 def infer(valid_dataloader, model2, instances_gone):
@@ -339,25 +341,32 @@ for epoch in range(start_epoch, args.epochs):
     logging.info(str(('epoch %d lr model1 %e lr model2 %e', epoch, model1_lr, model1_lr)))
 
     # training
-    epoch_loss_model1, epoch_loss_model2 = train(epoch, train_dataloader, un_dataloader, valid_dataloader, 
+    # epoch_loss_model1, epoch_loss_model2 = train(epoch, train_dataloader, un_dataloader, valid_dataloader, 
+    #     architect, A, model1, model2,  model1_optim, model2_optim, model1_lr, model2_lr,instances_gone_train)
+    
+    valid_batch_loss = train(epoch, train_dataloader, un_dataloader, valid_dataloader, 
         architect, A, model1, model2,  model1_optim, model2_optim, model1_lr, model2_lr,instances_gone_train)
     
-    print('+'*20+'TRAIN EPOCH STATS'+'+'*20)
-    print(str(epoch_loss_model1), str(epoch_loss_model2))
+    # print('+'*20+'TRAIN EPOCH STATS'+'+'*20)
+    # print(str(epoch_loss_model1), str(epoch_loss_model2))
+    # logging.info('+'*20+'TRAIN EPOCH STATS'+'+'*20)
+    # logging.info(str(epoch_loss_model1)+'  '+str(epoch_loss_model2))
+
     logging.info('+'*20+'TRAIN EPOCH STATS'+'+'*20)
-    logging.info(str(epoch_loss_model1)+'  '+str(epoch_loss_model2))
+    logging.info(str(valid_batch_loss))
+    
     
     logging.info('\n')
 
-    epoch_val_loss = infer(valid_dataloader, model2, instances_gone_val)
-    print('+'*20+'VAL EPOCH STATS'+'+'*20)
-    print(str(epoch_val_loss))
-    logging.info('+'*20+'VAL EPOCH STATS'+'+'*20)
-    logging.info(str(epoch_val_loss))
+    # epoch_val_loss = infer(valid_dataloader, model2, instances_gone_val)
+    # print('+'*20+'VAL EPOCH STATS'+'+'*20)
+    # print(str(epoch_val_loss))
+    # logging.info('+'*20+'VAL EPOCH STATS'+'+'*20)
+    # logging.info(str(epoch_val_loss))
     
-    writer.add_scalar('TrainLoss/model1', epoch_loss_model1, epoch)
-    writer.add_scalar('TrainLoss/model2', epoch_loss_model2, epoch)
-    writer.add_scalar('ValLoss/model2', epoch_val_loss, epoch)
+    # writer.add_scalar('TrainLoss/model1', epoch_loss_model1, epoch)
+    # writer.add_scalar('TrainLoss/model2', epoch_loss_model2, epoch)
+    # writer.add_scalar('ValLoss/model2', epoch_val_loss, epoch)
     
     scheduler_model1.step()
     
@@ -369,14 +378,7 @@ for epoch in range(start_epoch, args.epochs):
 
     ################################################################################################
 
-    # Note to the user: add all the information needed to analyse on the logfile
-    
-    # logging.info(f"{'Epoch':^7} | {'Train Loss model1':^12} | {'Train Loss model2':^12}")
-    
-    # logging.info("-"*70)
-    
-    # logging.info(f"{epoch + 1:^7} | {loss_model1:^7} | {loss_model1:^12.6f} ")
-        
+   
     # logging info
     # logging.info the attention weights and inspect it
     if epoch % 5 == 0:

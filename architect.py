@@ -198,11 +198,6 @@ class Architect(object):
       #val batch inputs
       for i in range(self.batch_size):
         input_train = val_inputs[i][0]
-        # onehot_input = torch.zeros(input_train.size(0), self.vocab, device=device)
-        # index_tensor = input_train
-        # onehot_input.scatter_(1, index_tensor, 1.)
-        # input_train = onehot_input
-        #print('input valid size:', input_train.size())
         target_train = val_inputs[i][1]
        
         enc_hidden, enc_outputs = unrolled_model2.enc_forward(input_train)
@@ -219,7 +214,6 @@ class Architect(object):
             vector_s_dash.append(grad.data)
         if grad is None:
             vector_s_dash.append(torch.autograd.Variable(torch.zeros(p.size()).type(torch.float32),requires_grad=True).cuda().data)
-      # print('Unrolled DS model')
 
       
       #update A
@@ -232,14 +226,15 @@ class Architect(object):
             v.grad = Variable(g.data)
         else:
             v.grad.data.copy_(g.data)
-      #print('before A:', self.A)
+      print('before A:', self.A)
       self.A_optim.step()
-      #print('after A:', self.A)
+      print('after A:', self.A)
 
       del unrolled_model1
 
       del unrolled_model2
 
       gc.collect()
+      return valid_batch_loss
 
 
