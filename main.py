@@ -264,9 +264,10 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
       predicted = (tokenizer.decode((decoded_batch[0][0])))
       print(predicted)
       #predicted = pad_sentences(predicted)
-      length_pred = len(predicted.split(' '))
+      length_pred = len(predicted)
       # actual = tokenizer.decode(list((test_inputs[1])))
       actual = tokenizer.decode(list((torch.squeeze(target_beam, dim=0))))
+      print(actual)
       length_actual = len(predicted.split(' '))
       if length_pred>length_actual:
         actual = pad_sentences(actual, length_pred)
