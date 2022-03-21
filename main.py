@@ -268,7 +268,7 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
       actual = tokenizer.decode(list((torch.squeeze(target_beam, dim=0))))
       actual = pad_sentences(actual, length)
       print('\n')
-      print('predicted:', predicted)
+      print('predicted:', predicted.split(' '))
       print('actual:',' '.join(actual))
       print(str(len(actual))+'  '+ str(len(predicted.split(' '))))
       print(bleu_score(predicted.split(' '), actual))
