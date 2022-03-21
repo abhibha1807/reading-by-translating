@@ -15,9 +15,9 @@ SOS_token = 0
 EOS_token = 1
 MAX_LENGTH = 10
 
-def pad_sentences(sentence):
+def pad_sentences(sentence, length):
   s = sentence.split(' ')
-  while len(s)<=MAX_LENGTH:
+  while len(s)<=length:
     s.append('[PAD]')
   print(s)
   return s

@@ -262,13 +262,15 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
       decoded_batch = beam_decode(target_beam, enc_hidden, model2.dec, enc_outputs)
       print(decoded_batch)
       predicted = (tokenizer.decode((decoded_batch[0][0])))
-      predicted = pad_sentences(predicted)
+      #predicted = pad_sentences(predicted)
+      length = len(predicted.split(' '))
       # actual = tokenizer.decode(list((test_inputs[1])))
       actual = tokenizer.decode(list((torch.squeeze(target_beam, dim=0))))
-      actual = pad_sentences(actual)
+      actual = pad_sentences(actual, length)
       print('\n')
       print('predicted:', predicted)
       print('actual:', actual)
+      print(bleu_score(predicted, actual))
 
     
     
