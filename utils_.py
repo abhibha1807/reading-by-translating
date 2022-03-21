@@ -153,7 +153,7 @@ def beam_decode(target_tensor, decoder_hiddens, decoder, encoder_outputs=None):
                     continue
 
             # decode for one step using decoder
-            decoder_output, decoder_hidden, decoder_attention = decoder(decoder_input, decoder_hidden, encoder_output)
+            decoder_output, decoder_hidden, decoder_attention = decoder(decoder_input, decoder_hidden,  torch.squeeze(encoder_output, dim=1))
 
             # PUT HERE REAL BEAM SEARCH OF TOP
             log_prob, indexes = torch.topk(decoder_output, beam_width)
