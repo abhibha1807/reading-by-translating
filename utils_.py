@@ -43,33 +43,33 @@ def create_exp_dir(path, scripts_to_save=None):
       dst_file = os.path.join(path, 'scripts', os.path.basename(script))
       shutil.copyfile(script, dst_file)
 
-class DecoderRNN(nn.Module):
-    def __init__(self, embedding_size, hidden_size, output_size, cell_type, dropout=0.1):
-        '''
-        Illustrative decoder
-        '''
-        super(DecoderRNN, self).__init__()
-        self.hidden_size = hidden_size
-        self.cell_type = cell_type
-        self.embedding = nn.Embedding(num_embeddings=output_size,
-                                      embedding_dim=embedding_size,
-                                      )
+# class DecoderRNN(nn.Module):
+#     def __init__(self, embedding_size, hidden_size, output_size, cell_type, dropout=0.1):
+#         '''
+#         Illustrative decoder
+#         '''
+#         super(DecoderRNN, self).__init__()
+#         self.hidden_size = hidden_size
+#         self.cell_type = cell_type
+#         self.embedding = nn.Embedding(num_embeddings=output_size,
+#                                       embedding_dim=embedding_size,
+#                                       )
 
-        self.rnn = nn.GRU(embedding_size, hidden_size, bidirectional=True, dropout=dropout, batch_first=False)
-        self.dropout_rate = dropout
-        self.out = nn.Linear(hidden_size, output_size)
+#         self.rnn = nn.GRU(embedding_size, hidden_size, bidirectional=True, dropout=dropout, batch_first=False)
+#         self.dropout_rate = dropout
+#         self.out = nn.Linear(hidden_size, output_size)
 
-    def forward(self, input, hidden, not_used):
-        embedded = self.embedding(input).transpose(0, 1)  # [B,1] -> [ 1, B, D]
-        embedded = F.dropout(embedded, self.dropout_rate)
+#     def forward(self, input, hidden, not_used):
+#         embedded = self.embedding(input).transpose(0, 1)  # [B,1] -> [ 1, B, D]
+#         embedded = F.dropout(embedded, self.dropout_rate)
 
-        output = embedded
+#         output = embedded
 
-        output, hidden = self.rnn(output, hidden)
+#         output, hidden = self.rnn(output, hidden)
 
-        out = self.out(output.squeeze(0))
-        output = F.log_softmax(out, dim=1)
-        return output, hidden
+#         out = self.out(output.squeeze(0))
+#         output = F.log_softmax(out, dim=1)
+#         return output, hidden
 
 
 class BeamSearchNode(object):
@@ -92,6 +92,10 @@ class BeamSearchNode(object):
         # Add here a function for shaping a reward
 
         return self.logp / float(self.leng - 1 + 1e-6) + alpha * reward
+
+    #function in the class BeamSearchNode
+    def __lt__(self, other):
+        return self.prob < other.prob
 
 
 # decoder = DecoderRNN()
