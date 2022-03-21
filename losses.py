@@ -49,12 +49,12 @@ def loss2(un_inputs, model1, model2, batch_size, vocab):
             # input_un = onehot_input
             # print('input:', input_un)
             enc_hidden, enc_outputs = model1.enc_forward(input_un)
-            print('enc hidden:', enc_hidden)
-            print('enc_outputs:', enc_outputs)
+           # print('enc hidden:', enc_hidden)
+           # print('enc_outputs:', enc_outputs)
 
             decoder_input = torch.tensor([[SOS_token]], device=device)#where to put SOS_token
             decoder_hidden = enc_hidden
-            print('forward pass through decoder')
+           # print('forward pass through decoder')
             
             dec_soft_idxs = []
             decoder_outputs = []
@@ -73,10 +73,10 @@ def loss2(un_inputs, model1, model2, batch_size, vocab):
                     break
 
             #print(decoder_outputs) #pseudo target
-            print('before dec_soft_idxs:', dec_soft_idxs)# every tensor has grad fun assopciated with it.
+            #print('before dec_soft_idxs:', dec_soft_idxs)# every tensor has grad fun assopciated with it.
             decoder_outputs = torch.stack(decoder_outputs)#differentiable,no break in computation graph
 
-            print('decoder_outputs:',decoder_outputs)
+           # print('decoder_outputs:',decoder_outputs)
 
             # gumbel softmax (prepare target for generating pseudo input using encoder)
             onehot_input_encoder1 = torch.zeros(decoder_outputs.size(0), vocab, device = device)
@@ -84,9 +84,9 @@ def loss2(un_inputs, model1, model2, batch_size, vocab):
             index_tensor = decoder_outputs
             #print(index_tensor.size())
             dec_soft_idxs = (torch.stack(dec_soft_idxs))
-            print('dec_soft_idxs:', dec_soft_idxs)
+            #print('dec_soft_idxs:', dec_soft_idxs)
             onehot_input_encoder1 = onehot_input_encoder1.scatter_(1, index_tensor, 1.).float().detach() + (dec_soft_idxs).sum() - (dec_soft_idxs).sum().detach()
-            print('onehot_input_encoder1:', onehot_input_encoder1)
+            #print('onehot_input_encoder1:', onehot_input_encoder1)
 
             enc_hidden_, enc_outputs_ = model1.enc_forward(onehot_input_encoder1)
             
@@ -96,7 +96,7 @@ def loss2(un_inputs, model1, model2, batch_size, vocab):
             # greedy decoding -> similar to model.generate() (hugging face)
             decoder_input = torch.tensor([[SOS_token]], device=device)#where to put SOS_token
             decoder_hidden = enc_hidden_
-            print('decoder_hidden:', decoder_hidden)
+            #print('decoder_hidden:', decoder_hidden)
 
             dec_soft_idxs = []
             decoder_outputs = []
@@ -114,15 +114,15 @@ def loss2(un_inputs, model1, model2, batch_size, vocab):
             
             # gumbel softmax 
             input_to_model2 = torch.stack(decoder_outputs)
-            print('input_to_model2 :', input_to_model2)
+            #print('input_to_model2 :', input_to_model2)
             onehot_input_model2 = torch.zeros(input_to_model2.size(0), vocab, device = device)
             #print(onehot_input.size())
             index_tensor = input_to_model2
             #print(index_tensor.size())
             dec_soft_idxs = (torch.stack(dec_soft_idxs))
-            print('dec_soft_idxs:', dec_soft_idxs)
+            #print('dec_soft_idxs:', dec_soft_idxs)
             onehot_input_model2 = onehot_input_model2.scatter_(1, index_tensor, 1.).float().detach() + (dec_soft_idxs).sum() - (dec_soft_idxs).sum().detach()
-            print('onehot_input_model2:', onehot_input_model2)
+            #print('onehot_input_model2:', onehot_input_model2)
 
             pseudo_input = onehot_input_model2 
             # print('pseudo input:', pseudo_input, pseudo_input.size())
@@ -130,7 +130,7 @@ def loss2(un_inputs, model1, model2, batch_size, vocab):
             #model2 forward pass
             enc_hidden, enc_outputs = model2.enc_forward(pseudo_input)
             loss = model2.dec_forward(pseudo_target, enc_hidden, enc_outputs) # todo: find loss for each instnce and multiply A with the loss vec.
-            print('loss:', loss)
+            #print('loss:', loss)
             batch_loss += loss 
 
             del onehot_input_encoder1 , onehot_input_model2
