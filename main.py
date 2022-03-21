@@ -30,7 +30,7 @@ print('using device', device)
 print('eecuting Attn Decoder')
 parser.add_argument('--begin_epoch', type=float, default=0, help='PC Method begin')
 parser.add_argument('--stop_epoch', type=float, default=25, help='Stop training on the framework')
-parser.add_argument('--report_freq', type=float, default=10, help='report frequency')
+parser.add_argument('--report_freq', type=float, default=1000, help='report frequency')
 
 parser.add_argument('--epochs', type=int, default=100, help='num of training epochs')
 
@@ -96,7 +96,7 @@ model2_mom = args.model2_mom
 A_wd = args.A_wd
 report_freq = args.report_freq
 
-args.save = '{}-{}-e50-step'.format(args.save, time.strftime("%Y%m%d-%H%M%S"))
+args.save = '{}-{}-beam'.format(args.save, time.strftime("%Y%m%d-%H%M%S"))
 create_exp_dir(args.save, scripts_to_save=glob.glob('*.py'))
 print('saving in:', str(args.save))
 writer = SummaryWriter('runs/'+str(args.save))
@@ -162,9 +162,9 @@ print(len(train_portion), len(un_portion), len(valid_portion))
 logging.info('dataset')
 
 
-train_data = get_train_dataset(train_portion[0:100], tokenizer)
-un_data = get_un_dataset(un_portion[0:100], tokenizer)
-valid_data = get_valid_dataset(valid_portion[0:100], tokenizer)
+train_data = get_train_dataset(train_portion, tokenizer)
+un_data = get_un_dataset(un_portion, tokenizer)
+valid_data = get_valid_dataset(valid_portion, tokenizer)
 
 logging.info(f"{len(train_data):^7} | { len(un_data):^7} | { len(valid_data):^7}")
 
@@ -232,9 +232,9 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
     
     model2_optim.zero_grad()
     loss_model2 = loss2(un_inputs, model1, model2, batch_size, vocab)
-    print(str(epoch)+'is loss being calculated or not?:', loss_model2)
+    #print(str(epoch)+'is loss being calculated or not?:', loss_model2)
     batch_loss_model2 += loss_model2.item()
-    print(str(epoch)+'calculated batch loss model 2:', batch_loss_model2)
+    #print(str(epoch)+'calculated batch loss model 2:', batch_loss_model2)
     loss_model2.backward()
     nn.utils.clip_grad_norm(model2.parameters(), args.grad_clip)
     model2_optim.step()
@@ -247,18 +247,18 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
     :param encoder_outputs: if you are using attention mechanism you can pass encoder outputs, [T, B, H] where T is the maximum length of input sentence
     :return: decoded_batch
     '''
-
-    n = val_inputs.size(0)
-    #val batch inputs
-    for i in range(n):
-      input_beam = val_inputs[i][0]
-      target_beam = val_inputs[i][1]
+    if instances_gone % report_freq == 0:
+      n = val_inputs.size(0)
+      #val batch inputs
+     
+      input_beam = val_inputs[0][0]
+      target_beam = val_inputs[0][1]
       enc_hidden, enc_outputs = model2.enc_forward(input_beam)
       target_beam = torch.unsqueeze(target_beam, dim=0)
       enc_outputs = torch.unsqueeze(enc_outputs, dim=1)
-      print('target:', target_beam.size())
-      print('hidden:', enc_hidden.size())
-      print('encoder_outputs:', enc_outputs.size())
+      # print('target:', target_beam.size())
+      # print('hidden:', enc_hidden.size())
+      # print('encoder_outputs:', enc_outputs.size())
       decoded_batch = beam_decode(target_beam, enc_hidden, model2.dec, enc_outputs)
       print(decoded_batch)
       predicted = (tokenizer.decode((decoded_batch[0][0])))
@@ -300,7 +300,7 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
       # logging.info('\n')
       # logging.info('model1_score'+ str(model1_score))
       # logging.info('model2_score'+ str(model2_score))
-    break
+    # break
 
   return batch_loss_model1, batch_loss_model2
   #return valid_batch_loss
@@ -346,7 +346,7 @@ def infer(valid_dataloader, model2, instances_gone):
         print('validation epoch loss:' + str(valid_loss))
         logging.info('*'*20 + 'validation stats after'+ str(instances_gone) + 'instances' +'*'*20)
         logging.info('validation epoch loss:' + str(valid_loss))
-    break
+    # break
   return epoch_val_loss
   
 
@@ -417,7 +417,7 @@ for epoch in range(start_epoch, args.epochs):
         torch.save(model1, args.save+'/model1.pt')
         torch.save(model2, args.save+'/model2.pt')
         logging.info(str(("Attention Weights A : ", A.alpha)))
-    break
+    # break
     
 
    

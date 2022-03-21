@@ -24,10 +24,10 @@ def loss1(inputs, model, idxs, A, batch_size, vocab):
         idx = A_idx[i]
         enc_hidden, enc_outputs = model.enc_forward(input_train)
         loss = model.dec_forward(target_train, enc_hidden, enc_outputs) # todo: find loss for each instnce and multiply A with the loss vec.
-        print('loss and idx :', loss, idx)
+        #print('loss and idx :', loss, idx)
         loss = loss * idx
         batch_loss += loss 
-    print('batch loss loss1:',batch_loss)
+   # print('batch loss loss1:',batch_loss)
     return batch_loss
         # except:
         #     print('skipping this_______________________________________')
