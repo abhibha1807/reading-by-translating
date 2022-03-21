@@ -120,7 +120,7 @@ def beam_decode(target_tensor, decoder_hiddens, decoder, encoder_outputs=None):
         encoder_output = encoder_outputs[:,idx, :].unsqueeze(1)
 
         # Start with the start of the sentence token
-        decoder_input = torch.LongTensor([[SOS_token]], device=device)
+        decoder_input = torch.tensor([[SOS_token]], device=device)
 
         # Number of sentence to generate
         endnodes = []
