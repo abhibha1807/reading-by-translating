@@ -29,7 +29,7 @@ print('using device', device)
 
 print('eecuting Attn Decoder')
 parser.add_argument('--begin_epoch', type=float, default=0, help='PC Method begin')
-parser.add_argument('--stop_epoch', type=float, default=50, help='Stop training on the framework')
+parser.add_argument('--stop_epoch', type=float, default=25, help='Stop training on the framework')
 parser.add_argument('--report_freq', type=float, default=10, help='report frequency')
 
 parser.add_argument('--epochs', type=int, default=100, help='num of training epochs')
@@ -261,7 +261,13 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
       print('encoder_outputs:', enc_outputs.size())
       decoded_batch = beam_decode(target_beam, enc_hidden, model2.dec, enc_outputs)
       print(decoded_batch)
-      print(tokenizer.decode((decoded_batch[0][0])))
+      predicted = (tokenizer.decode((decoded_batch[0][0])))
+      predicted = pad_sentences(predicted)
+      actual = tokenizer.decode(target_beam)
+      actual = pad_sentences(actual)
+      print('\n')
+      print('predicted:', predicted)
+      print('actual:', actual)
 
     
     
