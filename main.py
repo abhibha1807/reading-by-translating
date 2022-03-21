@@ -260,7 +260,8 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
       print('hidden:', enc_hidden.size())
       print('encoder_outputs:', enc_outputs.size())
       decoded_batch = beam_decode(target_beam, enc_hidden, model2.dec, enc_outputs)
-      print(decoded_batch)
+      print(decoded_batch.size())
+
     
     
     # if step % args.report_freq == 0:
