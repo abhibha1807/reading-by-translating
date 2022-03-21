@@ -30,7 +30,7 @@ print('using device', device)
 print('eecuting Attn Decoder')
 parser.add_argument('--begin_epoch', type=float, default=0, help='PC Method begin')
 parser.add_argument('--stop_epoch', type=float, default=25, help='Stop training on the framework')
-parser.add_argument('--report_freq', type=float, default=1000, help='report frequency')
+parser.add_argument('--report_freq', type=float, default=20, help='report frequency')
 
 parser.add_argument('--epochs', type=int, default=100, help='num of training epochs')
 
@@ -162,9 +162,9 @@ print(len(train_portion), len(un_portion), len(valid_portion))
 logging.info('dataset')
 
 
-train_data = get_train_dataset(train_portion, tokenizer)
-un_data = get_un_dataset(un_portion, tokenizer)
-valid_data = get_valid_dataset(valid_portion, tokenizer)
+train_data = get_train_dataset(train_portion[0:100], tokenizer)
+un_data = get_un_dataset(un_portion[0:100], tokenizer)
+valid_data = get_valid_dataset(valid_portion[0:100], tokenizer)
 
 logging.info(f"{len(train_data):^7} | { len(un_data):^7} | { len(valid_data):^7}")
 
