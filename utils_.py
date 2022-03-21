@@ -94,8 +94,11 @@ class BeamSearchNode(object):
         return self.logp / float(self.leng - 1 + 1e-6) + alpha * reward
 
     #function in the class BeamSearchNode
+    # def __lt__(self, other):
+    #     return self.prob < other.prob
+
     def __lt__(self, other):
-        return self.prob < other.prob
+        return self.logp < other.logp
 
 
 # decoder = DecoderRNN()
