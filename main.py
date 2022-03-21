@@ -268,7 +268,7 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
       # actual = tokenizer.decode(list((test_inputs[1])))
       actual = tokenizer.decode(list((torch.squeeze(target_beam, dim=0))))
       print('tok decode actual :', actual)
-      length_actual = len(predicted.split(' '))
+      length_actual = len(actual.split(' '))
       print('len pred:', length_pred)
       print('len actual:', length_actual)
       if length_pred>length_actual:
