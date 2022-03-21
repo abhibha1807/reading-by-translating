@@ -270,6 +270,7 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
       print('\n')
       print('predicted:', predicted)
       print('actual:', actual)
+      print(len(actual.split(' '))+'  '+ len(predicted.split(' ')))
       print(bleu_score(predicted, actual))
 
     
