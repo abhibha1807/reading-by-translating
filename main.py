@@ -263,7 +263,7 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
       print(decoded_batch)
       predicted = (tokenizer.decode((decoded_batch[0][0])))
       predicted = pad_sentences(predicted)
-      actual = tokenizer.decode(target_beam)
+      actual = tokenizer.decode(list(target_beam))
       actual = pad_sentences(actual)
       print('\n')
       print('predicted:', predicted)
