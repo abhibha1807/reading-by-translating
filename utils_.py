@@ -20,7 +20,7 @@ def pad_sentences(sentence, length):
   while len(s)<length:
     s.append('[PAD]')
   print(s)
-  return ' '.join(s)
+  return s
   
 
 def get_bleu_score(model,test_inputs, tokenizer, vocab):
