@@ -2,7 +2,8 @@ from torchtext.data.metrics import bleu_score
 from model2 import *
 import os
 import shutil
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+# device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+device = "cpu"
 
 import operator
 import torch
