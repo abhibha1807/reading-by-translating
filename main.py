@@ -264,19 +264,20 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
       predicted = (tokenizer.decode((decoded_batch[0][0])))
       print('tok decode pred:', predicted)
       #predicted = pad_sentences(predicted)
-      length_pred = len(predicted)
+      length_pred = len(predicted.split(' '))
       # actual = tokenizer.decode(list((test_inputs[1])))
       actual = tokenizer.decode(list((torch.squeeze(target_beam, dim=0))))
       print('tok decode actual :', actual)
       length_actual = len(predicted.split(' '))
+      print('len pred:', length_pred)
+      print('len actual:', length_actual)
       if length_pred>length_actual:
         actual = pad_sentences(actual, length_pred)
       else:
         predicted = pad_sentences(predicted, length_actual)
       print('\n')
       print('predicted:', predicted)
-      print('actual:',' '.join(actual))
-      print(str(len(actual))+'  '+ str(len(predicted)))
+      print('actual:', actual)
       print(bleu_score(predicted, actual))
 
     
