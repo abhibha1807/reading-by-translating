@@ -255,7 +255,7 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
       target_beam = val_inputs[i][1]
       enc_hidden, enc_outputs = model2.enc_forward(input_beam)
       target_beam = torch.unsqueeze(target_beam, dim=0)
-      encoder_outputs = torch.unsqueeze(encoder_outputs, dim=1)
+      enc_outputs = torch.unsqueeze(enc_outputs, dim=1)
       print('target:', target_beam.size())
       print('hidden:', enc_hidden.size())
       print('encoder_outputs:', enc_outputs.size())
