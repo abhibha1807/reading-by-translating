@@ -261,7 +261,7 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
       print('encoder_outputs:', enc_outputs.size())
       decoded_batch = beam_decode(target_beam, enc_hidden, model2.dec, enc_outputs)
       print(decoded_batch)
-      print(tokenizer.decode(decoded_batch[0]))
+      print(tokenizer.decode(torch.stack(decoded_batch[0])))
 
     
     
