@@ -104,9 +104,9 @@ def beam_decode(target_tensor, decoder_hiddens, decoder, encoder_outputs=None):
     :param encoder_outputs: if you are using attention mechanism you can pass encoder outputs, [T, B, H] where T is the maximum length of input sentence
     :return: decoded_batch
     '''
-    target_tensor.todevice("cpu")
-    decoder_hiddens.todevice("cpu")
-    encoder_outputs.todevice("cpu")
+    target_tensor.to("cpu")
+    decoder_hiddens.to("cpu")
+    encoder_outputs.to("cpu")
     beam_width = 10
     topk = 1  # how many sentence do you want to generate
     decoded_batch = []
