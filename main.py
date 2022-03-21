@@ -272,10 +272,10 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
       else:
         predicted = pad_sentences(predicted, length_actual)
       print('\n')
-      print('predicted:', predicted.split(' '))
+      print('predicted:', predicted)
       print('actual:',' '.join(actual))
-      print(str(len(actual))+'  '+ str(len(predicted.split(' '))))
-      print(bleu_score(predicted.split(' '), actual))
+      print(str(len(actual))+'  '+ str(len(predicted)))
+      print(bleu_score(predicted, actual))
 
     
     
