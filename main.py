@@ -241,6 +241,12 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
 
     # objs.update(loss_model2.item(), n)
     instances_gone+= batch_size
+    '''
+    :param target_tensor: target indexes tensor of shape [B, T] where B is the batch size and T is the maximum length of the output sentence
+    :param decoder_hidden: input tensor of shape [1, B, H] for start of the decoding
+    :param encoder_outputs: if you are using attention mechanism you can pass encoder outputs, [T, B, H] where T is the maximum length of input sentence
+    :return: decoded_batch
+    '''
 
     n = val_inputs.size(0)
     #val batch inputs
@@ -248,6 +254,9 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
       input_beam = val_inputs[i][0]
       target_beam = val_inputs[i][1]
       enc_hidden, enc_outputs = model2.enc_forward(input_beam)
+      print('target:', target_beam.size())
+      print('hidden:', enc_hidden.size())
+      print('encoder_outputs:', enc_outputs.size())
       decoded_batch = beam_decode(target_beam, enc_hidden, model2.dec, enc_outputs)
       print(decoded_batch)
     
