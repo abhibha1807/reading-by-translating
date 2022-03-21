@@ -270,7 +270,7 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
       if length_pred>length_actual:
         actual = pad_sentences(actual, length_pred)
       else:
-        predicted = pad_sentences(predicted.split(' '), length_actual)
+        predicted = pad_sentences(predicted, length_actual)
       print('\n')
       print('predicted:', predicted.split(' '))
       print('actual:',' '.join(actual))
