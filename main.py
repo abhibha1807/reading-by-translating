@@ -41,7 +41,9 @@ parser.add_argument('--A_lr', type=float, default=3e-4, help='learning rate for 
 #reduce lr 
 # parser.add_argument('--A_lr', type=float, default=1e-6, help='learning rate for A')
 
-parser.add_argument('--A_wd', type=float, default=1e-6, help=' weight decay for A')
+# parser.add_argument('--A_wd', type=float, default=1e-6, help=' weight decay for A')
+parser.add_argument('--A_wd', type=float, default=0, help=' weight decay for A')
+
 
 parser.add_argument('--gpu', type=int, default=0, help='gpu device id')
 parser.add_argument('--seed', type=int, default=10, help='random seed')
