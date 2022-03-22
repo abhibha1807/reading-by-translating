@@ -114,14 +114,14 @@ logging.getLogger().addHandler(fh)
 
 
 # Setting the seeds
-np.random.seed(args.seed)
-torch.cuda.set_device(args.gpu)
-cudnn.benchmark = True
-torch.manual_seed(args.seed)
-cudnn.enabled=True
-torch.cuda.manual_seed(args.seed)
-logging.info('gpu device = %d' % args.gpu)
-logging.info("args = %s", args)
+# np.random.seed(args.seed)
+# torch.cuda.set_device(args.gpu)
+# cudnn.benchmark = True
+# torch.manual_seed(args.seed)
+# cudnn.enabled=True
+# torch.cuda.manual_seed(args.seed)
+# logging.info('gpu device = %d' % args.gpu)
+# logging.info("args = %s", args)
 
 #load data
 input_lang, output_lang, pairs = prepareData('eng', 'fra', True)
