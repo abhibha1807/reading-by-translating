@@ -229,7 +229,7 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
       batch_loss_model1 += loss_model1.item()
 
       loss_model1.backward()
-      print('model1 enc mbeding grad:', model1.enc.embedding.weight.grad)
+      print('model1 enc mbeding grad:', model1.enc.embedding.weight.grad.data.sum())
       #print('model1 enc gru grad:', model1.enc.gru.weight.grad)
       print('model1 dec attn grad:', model1.dec.attn.weight.grad)
       print('model1 dec attn combine grad:', model1.dec.attn_combine.weight.grad)
@@ -246,7 +246,7 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
     batch_loss_model2 += loss_model2.item()
     #print(str(epoch)+'calculated batch loss model 2:', batch_loss_model2)
     loss_model2.backward()
-    print('model2 enc embeding grad:', model2.enc.embedding.weight.grad)
+    print('model2 enc embeding grad:', model2.enc.embedding.weight.grad.data.sum())
     #print('model2 enc gru grad:', model2.enc.gru.weight.grad)
     
     print('model2 dec attn grad:', model2.dec.attn.weight.grad)
