@@ -103,7 +103,7 @@ class Architect(object):
           if grad is not None:
               l.append(grad)
           if grad is None:
-              l.append(torch.autograd.Variable(torch.zeros(p.size()).type(torch.float32),requires_grad=True).cuda())
+              l.append(torch.autograd.Variable(torch.zeros(p.size()).type(torch.float32),requires_grad=True).to(device))
       dtheta = _concat(l).data + self.model2_wd*theta
 
       # convert to the model
@@ -116,7 +116,7 @@ class Architect(object):
     for p, v in zip(self.model1.parameters(), vector):
       if v is None:
           #.cuda()
-          v=torch.autograd.Variable(torch.zeros(p.size()).type(torch.float32),requires_grad=True).cuda().data
+          v=torch.autograd.Variable(torch.zeros(p.size()).type(torch.float32),requires_grad=True).to(device).data
       p.data.add_(R, v)
     loss = loss1(train_inputs, self.model1, idxs, self.A,  self.batch_size, self.vocab)
     #print('loss:', loss)
@@ -127,7 +127,7 @@ class Architect(object):
     for p, v in zip(self.model1.parameters(), vector):
       if v is None:
           #.cuda()
-          v=torch.autograd.Variable(torch.zeros(p.size()).type(torch.float32),requires_grad=True).cuda().data
+          v=torch.autograd.Variable(torch.zeros(p.size()).type(torch.float32),requires_grad=True).to(device).data
       p.data.sub_(2*R, v)
     loss = loss1(train_inputs, self.model1, idxs, self.A,  self.batch_size, self.vocab)
     grads_n = torch.autograd.grad(loss, self.A.parameters())
@@ -137,7 +137,7 @@ class Architect(object):
     for p, v in zip(self.model1.parameters(), vector):
       if v is None:
           #.cuda()
-          v=torch.autograd.Variable(torch.zeros(p.size()).type(torch.float32),requires_grad=True).cuda().data
+          v=torch.autograd.Variable(torch.zeros(p.size()).type(torch.float32),requires_grad=True).to(device).data
       p.data.add_(R, v)
 
     return [(x-y).div_(2*R) for x, y in zip(grads_p, grads_n)]
@@ -214,7 +214,7 @@ class Architect(object):
         if grad is not None:
             vector_s_dash.append(grad.data)
         if grad is None:
-            vector_s_dash.append(torch.autograd.Variable(torch.zeros(p.size()).type(torch.float32),requires_grad=True).cuda().data)
+            vector_s_dash.append(torch.autograd.Variable(torch.zeros(p.size()).type(torch.float32),requires_grad=True).to(device).data)
 
       
       #update A

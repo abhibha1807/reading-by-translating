@@ -5,7 +5,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 class Embedding_(nn.Module):
   def __init__(self, embedding_layer):
     super(Embedding_, self).__init__()
-    self.embedding = embedding_layer.cuda()
+    self.embedding = embedding_layer.to(device)
 
   def forward(self, mask):
     # print('in ebedding forward', mask.ndim, mask)

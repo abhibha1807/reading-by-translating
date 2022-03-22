@@ -34,7 +34,7 @@ class EncoderRNN(nn.Module):
         return output, hidden
 
     def initHidden(self):
-        return torch.zeros(1, 1, self.hidden_size, device='cuda')
+        return torch.zeros(1, 1, self.hidden_size, device=device)
 
       
 
@@ -97,7 +97,7 @@ class AttnDecoderRNN(nn.Module):
         return output, hidden, attn_weights
 
     def initHidden(self):
-        return torch.zeros(1, 1, self.hidden_size, device='cuda')
+        return torch.zeros(1, 1, self.hidden_size, device=device)
 
   
 

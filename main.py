@@ -136,11 +136,11 @@ tokenizer = get_tokenizer(pairs, max_length, min_freq, vocabsize, save_location)
 vocab = tokenizer.get_vocab_size()
 print('vocab:', vocab)
 criterion = nn.NLLLoss(ignore_index = tokenizer.token_to_id("pad"), reduction='none')
-criterion = criterion.cuda()
+criterion = criterion.to(device)
 model1 = Model1(vocab, vocab, criterion)
 model2 = Model2( vocab,  vocab, criterion)
-model1 = model1.cuda()
-model2 = model2.cuda()
+model1 = model1.to(device)
+model2 = model2.to(device)
 model1_optim = SGD(model1.parameters(), lr=model1_lr, momentum=model1_mom,weight_decay=model1_wd)
 model2_optim = SGD(model2.parameters(), lr=model2_lr, momentum=model1_mom,weight_decay=model1_wd)
 
@@ -187,7 +187,7 @@ un_dataloader = DataLoader(un_data, sampler=RandomSampler(un_data),
 A = attention_params(len(train_data))
 
 print('A:', list(A.parameters()))
-A = A.cuda()
+A = A.to(device)
 architect = Architect(model1, model1_mom, model1_wd, A, A_lr, A_wd, device, model2, model2_wd, model2_mom, batch_size,vocab)
 
 
@@ -205,12 +205,12 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
     model1.train()
     model2.train()
     #summary_bart = Variable(batch[2], requires_grad=False).cuda()
-    train_inputs = Variable(batch[0], requires_grad=False).cuda() #train inputs.
-    idxs = Variable(batch[1],requires_grad=False).cuda() #A
+    train_inputs = Variable(batch[0], requires_grad=False).to(device) #train inputs.
+    idxs = Variable(batch[1],requires_grad=False).to(device) #A
     un_batch = next(iter(un_dataloader)) 
-    un_inputs = Variable(un_batch[0], requires_grad=False).cuda()
+    un_inputs = Variable(un_batch[0], requires_grad=False).to(device)
     val_batch = next(iter(valid_dataloader)) 
-    val_inputs = Variable(val_batch[0], requires_grad=False).cuda()
+    val_inputs = Variable(val_batch[0], requires_grad=False).to(device)
    
 
 
@@ -344,7 +344,7 @@ def infer(valid_dataloader, model2, instances_gone):
     model2.eval()
     
     # Input and its attentions
-    val_inputs = Variable(batch_val[0], requires_grad=False).cuda()
+    val_inputs = Variable(batch_val[0], requires_grad=False).to(device)
     
     # Number of datapoints
     n = val_inputs.size(0)

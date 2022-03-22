@@ -4,15 +4,15 @@ import torch
 import numpy as np
 # from hyperparams import *
 seed_ = 1024
-def seed_torch(seed=0):
-    random.seed(seed)
-    os.environ['PYTHONHASHSEED'] = str(seed)
-    np.random.seed(seed)
-    torch.manual_seed(seed)
-    torch.cuda.manual_seed(seed)
-    torch.backends.cudnn.deterministic = True
+# def seed_torch(seed=0):
+#     random.seed(seed)
+#     os.environ['PYTHONHASHSEED'] = str(seed)
+#     np.random.seed(seed)
+#     torch.manual_seed(seed)
+#     torch.cuda.manual_seed(seed)
+#     torch.backends.cudnn.deterministic = True
     
-seed_torch(seed_)
+# seed_torch(seed_)
 
 class attention_params(torch.nn.Module):
     def __init__(self, N):
