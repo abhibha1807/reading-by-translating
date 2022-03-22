@@ -28,7 +28,7 @@ def loss1(inputs, model, idxs, A, batch_size, vocab):
         loss = loss * idx
         batch_loss += loss 
    # print('batch loss loss1:',batch_loss)
-    return batch_loss
+    return batch_loss/inputs.size(0)
         # except:
         #     print('skipping this_______________________________________')
         
@@ -137,7 +137,7 @@ def loss2(un_inputs, model1, model2, batch_size, vocab):
                 
             gc.collect()   
             #print('batch_loss:', batch_loss)
-    return batch_loss
+    return batch_loss/batch_size
         # except:
         #     print('skipping this_______________________________________')
 
