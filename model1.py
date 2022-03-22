@@ -4,7 +4,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 class Embedding_(nn.Module):
   def __init__(self, embedding_layer):
     super(Embedding_, self).__init__()
-    self.embedding = embedding_layer
+    self.embedding = embedding_layer.cuda()
 
   def forward(self, mask):
     # print('in ebedding forward', mask.ndim, mask)
@@ -25,7 +25,7 @@ class Model1(nn.Module):
     #self.dec = DecoderRNN(dec_hidden_size, output_size)
     self.dec = AttnDecoderRNN(dec_hidden_size, output_size)
     self.criterion = criterion
-    self.embedding = Embedding_(self.enc.embedding)
+    self.embedding = Embedding_(self.enc.embedding).requires_grad_()
 
   def enc_forward(self, input):
     #print('forward pass through encoder')
