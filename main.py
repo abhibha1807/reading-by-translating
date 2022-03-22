@@ -225,6 +225,7 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
       batch_loss_model1 += loss_model1.item()
 
       loss_model1.backward()
+      print('model1 embeding grad:', model1.enc.embedding.weight.grad)
       
       nn.utils.clip_grad_norm(model1.parameters(), args.grad_clip)
       
@@ -236,6 +237,7 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
     batch_loss_model2 += loss_model2.item()
     #print(str(epoch)+'calculated batch loss model 2:', batch_loss_model2)
     loss_model2.backward()
+    print('model2 embeding grad:', model2.enc.embedding.weight.grad)
     nn.utils.clip_grad_norm(model2.parameters(), args.grad_clip)
     model2_optim.step()
 
