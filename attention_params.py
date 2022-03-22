@@ -17,7 +17,7 @@ seed_torch(seed_)
 class attention_params(torch.nn.Module):
     def __init__(self, N):
         super(attention_params, self).__init__()# = super().__init__()
-        self.alpha = torch.nn.Parameter(torch.ones(N)/N)
+        self.alpha = torch.nn.Parameter(torch.rand(N)/N)
         self.softmax = torch.nn.Softmax(dim=-1)
         
     def forward(self, idx):

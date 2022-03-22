@@ -36,7 +36,7 @@ parser.add_argument('--epochs', type=int, default=100, help='num of training epo
 
 parser.add_argument('--batch_size', type=int, default=10, help='batch size')
 ####################################################################################
-parser.add_argument('--grad_clip', type=float, default=1, help='gradient clipping')
+parser.add_argument('--grad_clip', type=float, default=5, help='gradient clipping')
 parser.add_argument('--A_lr', type=float, default=3e-4, help='learning rate for A')
 #reduce lr 
 # parser.add_argument('--A_lr', type=float, default=1e-6, help='learning rate for A')
