@@ -57,21 +57,23 @@ parser.add_argument('--un_portion', type=float, default=0.5, help='fraction of t
 
 parser.add_argument('--hidden_size', type=int, default=256, help='hidden size')
 
-# parser.add_argument('--model1_lr', type=float, default=1e-3, help='model1 starting lr')
-# parser.add_argument('--model1_lr_min', type=float, default=5e-4, help='model1 min lr')
-# parser.add_argument('--model2_lr', type=float, default=1e-3, help='model2 starting lr')
-# parser.add_argument('--model2_lr_min', type=float, default=5e-4, help='model2 min lr')
+parser.add_argument('--model1_lr', type=float, default=1e-3, help='model1 starting lr')
+parser.add_argument('--model1_lr_min', type=float, default=5e-4, help='model1 min lr')
+parser.add_argument('--model2_lr', type=float, default=1e-3, help='model2 starting lr')
+parser.add_argument('--model2_lr_min', type=float, default=5e-4, help='model2 min lr')
 
 #reduce lr
-parser.add_argument('--model1_lr', type=float, default=1e-4, help='model1 starting lr')
-parser.add_argument('--model1_lr_min', type=float, default=5e-6, help='model1 min lr')
-parser.add_argument('--model2_lr', type=float, default=1e-4, help='model2 starting lr')
-parser.add_argument('--model2_lr_min', type=float, default=5e-6, help='model2 min lr')
+# parser.add_argument('--model1_lr', type=float, default=1e-4, help='model1 starting lr')
+# parser.add_argument('--model1_lr_min', type=float, default=5e-6, help='model1 min lr')
+# parser.add_argument('--model2_lr', type=float, default=1e-4, help='model2 starting lr')
+# parser.add_argument('--model2_lr_min', type=float, default=5e-6, help='model2 min lr')
 
 parser.add_argument('--model1_wd', type=float, default=0, help='model1 weight decay')
 parser.add_argument('--model2_wd', type=float, default=0, help='model2 weight decay')
-parser.add_argument('--model1_mom', type=float, default=0.9, help='model1 momentum')
-parser.add_argument('--model2_mom', type=float, default=0.9, help='model2 momentum')
+# parser.add_argument('--model1_mom', type=float, default=0.9, help='model1 momentum')
+# parser.add_argument('--model2_mom', type=float, default=0.9, help='model2 momentum')
+parser.add_argument('--model1_mom', type=float, default=0.0, help='model1 momentum')
+parser.add_argument('--model2_mom', type=float, default=0.0, help='model2 momentum')
 
 parser.add_argument('--save', type=str, default='EXP', help='experiment name')
 
