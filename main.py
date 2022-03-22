@@ -226,10 +226,10 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
 
       loss_model1.backward()
       print('model1 enc mbeding grad:', model1.enc.embedding.weight.grad)
-      print('model1 enc gru grad:', model1.enc.gru.weight.grad)
+      #print('model1 enc gru grad:', model1.enc.gru.weight.grad)
       print('model1 dec attn grad:', model1.dec.attn.weight.grad)
       print('model1 dec attn combine grad:', model1.dec.attn_combine.weight.grad)
-      print('model1 dec gru grad:', model1.dec.gru.weight.grad)
+      #print('model1 dec gru grad:', model1.dec.gru.weight.grad)
         
       
       nn.utils.clip_grad_norm_(model1.parameters(), args.grad_clip)
@@ -243,11 +243,11 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
     #print(str(epoch)+'calculated batch loss model 2:', batch_loss_model2)
     loss_model2.backward()
     print('model2 enc embeding grad:', model2.enc.embedding.weight.grad)
-    print('model2 enc gru grad:', model2.enc.gru.weight.grad)
+    #print('model2 enc gru grad:', model2.enc.gru.weight.grad)
     
     print('model2 dec attn grad:', model2.dec.attn.weight.grad)
     print('model2 dec attn combine grad:', model2.dec.attn_combine.weight.grad)
-    print('model2 dec gru grad:', model2.dec.gru.weight.grad)
+    #print('model2 dec gru grad:', model2.dec.gru.weight.grad)
     nn.utils.clip_grad_norm_(model2.parameters(), args.grad_clip)
     model2_optim.step()
 
