@@ -18,7 +18,7 @@ MAX_LENGTH = 10
 def pad_sentences(sentence, length):
   s = sentence.split(' ')
   while len(s)<length:
-    s.append('[PAD]')
+    s.append('<PAD>')
   print(s)
   return ' '.join(s)
   

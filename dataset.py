@@ -111,7 +111,7 @@ def prepareData(lang1, lang2, reverse=False):
     input_lang, output_lang, pairs = readLangs(lang1, lang2, reverse)
     print("Read %s sentence pairs" % len(pairs))
     pairs = filterPairs(pairs)
-    pairs = pad_sentences(pairs)
+    # pairs = pad_sentences(pairs)
     print("Trimmed to %s sentence pairs" % len(pairs))
     print("Counting words...")
     for pair in pairs:
@@ -146,8 +146,8 @@ def get_train_dataset(pairs, tokenizer):
   for pair in pairs:
     source = torch.unsqueeze(torch.tensor(tokenizer.encode(pair[0]).ids), dim=-1)
     target = torch.unsqueeze(torch.tensor(tokenizer.encode(pair[1]).ids), dim=-1)
-    #print(pair[0], pair[1])
-    #print(source, target)
+    print(pair[0], pair[1])
+    print(source, target)
     tensor_pairs.append(torch.stack([source, target]))
   print('train tensor pairs:', tensor_pairs)
   print(torch.stack((tensor_pairs)).size())
