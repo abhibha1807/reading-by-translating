@@ -135,7 +135,7 @@ tokenizer = get_tokenizer(pairs, max_length, min_freq, vocabsize, save_location)
 
 vocab = tokenizer.get_vocab_size()
 print('vocab:', vocab)
-criterion = nn.NLLLoss(ignore_index = tokenizer.token_to_id("pad"), reduction='none')
+criterion = nn.NLLLoss(ignore_index = tokenizer.token_to_id("[PAD]"), reduction='none')
 criterion = criterion.to(device)
 model1 = Model1(vocab, vocab, criterion)
 model2 = Model2( vocab,  vocab, criterion)
