@@ -220,9 +220,9 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
    
 
 
-    if args.begin_epoch <= epoch <= args.stop_epoch:
-      #logging.info('in architect')
-      valid_batch_loss = architect.step(train_inputs, un_inputs, val_inputs, model1_lr, A, idxs, criterion, model2_lr, model2_optim, model1_optim)
+    # if args.begin_epoch <= epoch <= args.stop_epoch:
+    #   #logging.info('in architect')
+    #   valid_batch_loss = architect.step(train_inputs, un_inputs, val_inputs, model1_lr, A, idxs, criterion, model2_lr, model2_optim, model1_optim)
   
     if epoch <= args.stop_epoch:
       
