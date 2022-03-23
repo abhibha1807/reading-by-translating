@@ -263,40 +263,40 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
     :param encoder_outputs: if you are using attention mechanism you can pass encoder outputs, [T, B, H] where T is the maximum length of input sentence
     :return: decoded_batch
     '''
-    if instances_gone % report_freq == 0:
-      n = val_inputs.size(0)
+    # if instances_gone % report_freq == 0:
+    #   n = val_inputs.size(0)
       #val batch inputs
      
-      input_beam = val_inputs[0][0]
-      target_beam = val_inputs[0][1]
-      enc_hidden, enc_outputs = model2.enc_forward(input_beam)
-      target_beam = torch.unsqueeze(target_beam, dim=0)
-      enc_outputs = torch.unsqueeze(enc_outputs, dim=1)
-      # print('target:', target_beam.size())
-      # print('hidden:', enc_hidden.size())
-      # print('encoder_outputs:', enc_outputs.size())
-      decoded_batch = beam_decode(target_beam, enc_hidden, model2.dec, enc_outputs)
-      print(decoded_batch)
-      predicted = (tokenizer.decode((decoded_batch[0][0])))
-      print('tok decode pred:', predicted)
-      #predicted = pad_sentences(predicted)
-      length_pred = len(predicted.split(' '))
-      # actual = tokenizer.decode(list((test_inputs[1])))
-      actual = tokenizer.decode(list((torch.squeeze(target_beam, dim=0))))
-      print('tok decode actual :', actual)
-      length_actual = len(actual.split(' '))
-      print('len pred:', length_pred)
-      print('len actual:', length_actual)
-      if length_pred>length_actual:
-        actual = pad_sentences(actual, length_pred)
-      else:
-        predicted = pad_sentences(predicted, length_actual)
-      predicted = predicted.split(' ')
-      actual = actual.split(' ')
-      print('\n')
-      print('predicted:', predicted)
-      print('actual:', actual)
-      print(bleu_score(predicted, actual))
+      # input_beam = val_inputs[0][0]
+      # target_beam = val_inputs[0][1]
+      # enc_hidden, enc_outputs = model2.enc_forward(input_beam)
+      # target_beam = torch.unsqueeze(target_beam, dim=0)
+      # enc_outputs = torch.unsqueeze(enc_outputs, dim=1)
+      # # print('target:', target_beam.size())
+      # # print('hidden:', enc_hidden.size())
+      # # print('encoder_outputs:', enc_outputs.size())
+      # decoded_batch = beam_decode(target_beam, enc_hidden, model2.dec, enc_outputs)
+      # print(decoded_batch)
+      # predicted = (tokenizer.decode((decoded_batch[0][0])))
+      # print('tok decode pred:', predicted)
+      # #predicted = pad_sentences(predicted)
+      # length_pred = len(predicted.split(' '))
+      # # actual = tokenizer.decode(list((test_inputs[1])))
+      # actual = tokenizer.decode(list((torch.squeeze(target_beam, dim=0))))
+      # print('tok decode actual :', actual)
+      # length_actual = len(actual.split(' '))
+      # print('len pred:', length_pred)
+      # print('len actual:', length_actual)
+      # if length_pred>length_actual:
+      #   actual = pad_sentences(actual, length_pred)
+      # else:
+      #   predicted = pad_sentences(predicted, length_actual)
+      # predicted = predicted.split(' ')
+      # actual = actual.split(' ')
+      # print('\n')
+      # print('predicted:', predicted)
+      # print('actual:', actual)
+      # print(bleu_score(predicted, actual))
 
     
     
@@ -308,23 +308,23 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
       
       # logging.info(f"{epoch + 1:^7} | {top1.avg:^7} ")
 
-    # if instances_gone % report_freq == 0:
+    if instances_gone % report_freq == 0:
  
-      # print('-'*40+'training batch stats after'+str(instances_gone)+'instances'+'-'*40)
-      # print('Epoch:'+str(epoch)+'batch_loss_model2:'+str(loss_model2))
+      print('-'*40+'training batch stats after'+str(instances_gone)+'instances'+'-'*40)
+      print('Epoch:'+str(epoch)+'batch_loss_model2:'+str(loss_model2))
     
-      # print("-"*70)
-      # model1_score, pred_model1, actual_model1 = get_bleu_score(model1,val_inputs[0], tokenizer, vocab)
-      # model2_score, pred_model2, actual_model2 = get_bleu_score(model2,val_inputs[0], tokenizer, vocab)
-      # print('\n lets look at predictions and scores \n')
-      # logging.info('actual model1'+ str(actual_model1))
-      # logging.info('predicted model1'+ str(pred_model1))
-      # logging.info('\n')
-      # logging.info('actual model2'+ str(actual_model2))
-      # logging.info('predicted model2'+ str(pred_model2))
-      # logging.info('\n')
-      # logging.info('model1_score'+ str(model1_score))
-      # logging.info('model2_score'+ str(model2_score))
+      print("-"*70)
+      model1_score, pred_model1, actual_model1 = get_bleu_score(model1,val_inputs[0], tokenizer, vocab)
+      model2_score, pred_model2, actual_model2 = get_bleu_score(model2,val_inputs[0], tokenizer, vocab)
+      print('\n lets look at predictions and scores \n')
+      logging.info('actual model1'+ str(actual_model1))
+      logging.info('predicted model1'+ str(pred_model1))
+      logging.info('\n')
+      logging.info('actual model2'+ str(actual_model2))
+      logging.info('predicted model2'+ str(pred_model2))
+      logging.info('\n')
+      logging.info('model1_score'+ str(model1_score))
+      logging.info('model2_score'+ str(model2_score))
     # break
 
   return batch_loss_model1, batch_loss_model2
