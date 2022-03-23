@@ -208,15 +208,15 @@ class Architect(object):
       unrolled_model2.train()
       valid_batch_loss.backward()
 
-      vector_s_dash=[]
+      l=[]
       for p in unrolled_model2.parameters():
         grad=p.grad
         if grad is not None:
-            vector_s_dash.append(grad.data)
+            l.append(grad.data)
         if grad is None:
-            vector_s_dash.append(torch.autograd.Variable(torch.zeros(p.size()).type(torch.float32),requires_grad=True).to(device).data)
+            l.append(torch.autograd.Variable(torch.zeros(p.size()).type(torch.float32),requires_grad=True).to(device).data)
 
-      
+      vector_s_dash = l
       #update A
       implicit_grads_A = self._outer_A(vector_s_dash, train_inputs, un_inputs, idxs, unrolled_model1,
             unrolled_model2, model1_lr, model2_lr)

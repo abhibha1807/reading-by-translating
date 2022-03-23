@@ -34,7 +34,7 @@ parser.add_argument('--report_freq', type=float, default=5, help='report frequen
 
 parser.add_argument('--epochs', type=int, default=100, help='num of training epochs')
 
-parser.add_argument('--batch_size', type=int, default=5, help='batch size')
+parser.add_argument('--batch_size', type=int, default=1, help='batch size')
 ####################################################################################
 parser.add_argument('--grad_clip', type=float, default=5, help='gradient clipping')
 parser.add_argument('--A_lr', type=float, default=3e-4, help='learning rate for A')

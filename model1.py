@@ -21,9 +21,9 @@ class Embedding_(nn.Module):
 class Model1(nn.Module):
   def __init__(self, input_size, output_size, criterion, enc_hidden_size=256, dec_hidden_size=256):
     super(Model1, self).__init__()
-    self.enc = EncoderRNN(input_size, enc_hidden_size)
+    self.enc = EncoderRNN(input_size, enc_hidden_size).requires_grad_()
     #self.dec = DecoderRNN(dec_hidden_size, output_size)
-    self.dec = AttnDecoderRNN(dec_hidden_size, output_size)
+    self.dec = AttnDecoderRNN(dec_hidden_size, output_size).requires_grad_()
     self.criterion = criterion
     self.embedding = Embedding_(self.enc.embedding).requires_grad_()
 

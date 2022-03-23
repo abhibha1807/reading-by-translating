@@ -23,8 +23,8 @@ def train_tokenizer(dataset, max_length, min_freq, vocabsize, save_location):
     min_freq = min_freq
     vocabsize = vocabsize
 
-    # tokenizer = BertWordPieceTokenizer()
-    tokenizer = Tokenizer(WordLevel())
+    tokenizer = BertWordPieceTokenizer()
+    # tokenizer = Tokenizer(WordLevel())
     tokenizer.do_lower_case = False
     special_tokens = ["[S]","[PAD]","[/S]","[UNK]","[MASK]", "[SEP]","[CLS]"]
     tokenizer.train_from_iterator(dataset, vocab_size=vocabsize, min_frequency=min_freq, special_tokens = special_tokens)
