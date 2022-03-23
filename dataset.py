@@ -146,13 +146,13 @@ def get_train_dataset(pairs, tokenizer):
   for pair in pairs:
     source = torch.unsqueeze(torch.tensor(tokenizer.encode(pair[0]).ids), dim=-1)
     target = torch.unsqueeze(torch.tensor(tokenizer.encode(pair[1]).ids), dim=-1)
-    print(pair[0], pair[1])
-    print(source, target)
+    #print(pair[0], pair[1])
+    #print(source, target)
     tensor_pairs.append(torch.stack([source, target]))
-  print('train tensor pairs:', tensor_pairs)
+  #print('train tensor pairs:', tensor_pairs)
   print(torch.stack((tensor_pairs)).size())
   train_data = TensorDataset(torch.stack((tensor_pairs)), attn_idx)
-  print('train data:', train_data)
+  #print('train data:', train_data)
   return train_data
 
 def get_un_dataset(pairs, tokenizer):

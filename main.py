@@ -212,7 +212,7 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
     val_batch = next(iter(valid_dataloader)) 
     val_inputs = Variable(val_batch[0], requires_grad=False).to(device)
 
-    print('\n', train_inputs, '\n')
+    #print('\n', train_inputs, '\n')
    
 
 
