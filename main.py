@@ -31,10 +31,10 @@ print('using device', device)
 
 print('eecuting Attn Decoder')
 parser.add_argument('--begin_epoch', type=float, default=0, help='PC Method begin')
-parser.add_argument('--stop_epoch', type=float, default=50, help='Stop training on the framework')
-parser.add_argument('--report_freq', type=float, default=5, help='report frequency')
+parser.add_argument('--stop_epoch', type=float, default=100, help='Stop training on the framework')
+parser.add_argument('--report_freq', type=float, default=20, help='report frequency')
 
-parser.add_argument('--epochs', type=int, default=100, help='num of training epochs')
+parser.add_argument('--epochs', type=int, default=500, help='num of training epochs')
 
 parser.add_argument('--batch_size', type=int, default=1, help='batch size')
 ####################################################################################
@@ -244,7 +244,7 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
       #print('model1 dec gru grad:', model1.dec.gru.weight.grad)
         
       
-      nn.utils.clip_grad_norm_(model1.parameters(), args.grad_clip)
+      #nn.utils.clip_grad_norm_(model1.parameters(), args.grad_clip)
       
       model1_optim.step()
     
@@ -260,7 +260,7 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
     print('model2 dec attn grad:', model2.dec.attn.weight.grad)
     print('model2 dec attn combine grad:', model2.dec.attn_combine.weight.grad)
     #print('model2 dec gru grad:', model2.dec.gru.weight.grad)
-    nn.utils.clip_grad_norm_(model2.parameters(), args.grad_clip)
+    #nn.utils.clip_grad_norm_(model2.parameters(), args.grad_clip)
     model2_optim.step()
 
     # objs.update(loss_model2.item(), n)
