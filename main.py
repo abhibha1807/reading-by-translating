@@ -141,13 +141,17 @@ model1 = Model1(vocab, vocab, criterion)
 model2 = Model2( vocab,  vocab, criterion)
 model1 = model1.to(device)
 model2 = model2.to(device)
-model1_optim = SGD(model1.parameters(), lr=model1_lr, momentum=model1_mom,weight_decay=model1_wd)
-model2_optim = SGD(model2.parameters(), lr=model2_lr, momentum=model1_mom,weight_decay=model1_wd)
+# model1_optim = SGD(model1.parameters(), lr=model1_lr, momentum=model1_mom,weight_decay=model1_wd)
+# model2_optim = SGD(model2.parameters(), lr=model2_lr, momentum=model1_mom,weight_decay=model1_wd)
+
+model1_optim = torch.optim.Adam(model1.parameters(),lr=model1_lr)
+model2_optim = torch.optim.Adam(model1.parameters(),lr=model1_lr)
 
 
-scheduler_model1  = torch.optim.lr_scheduler.CosineAnnealingLR(model1_optim, float(args.epochs), eta_min=args.model1_lr_min)
 
-scheduler_model2  = torch.optim.lr_scheduler.CosineAnnealingLR(model2_optim, float(args.epochs), eta_min=args.model1_lr_min)
+# scheduler_model1  = torch.optim.lr_scheduler.CosineAnnealingLR(model1_optim, float(args.epochs), eta_min=args.model1_lr_min)
+
+# scheduler_model2  = torch.optim.lr_scheduler.CosineAnnealingLR(model2_optim, float(args.epochs), eta_min=args.model1_lr_min)
 
 #split 80% train 10% val 10% test
 n = len(pairs)
@@ -391,9 +395,9 @@ for epoch in range(start_epoch, args.epochs):
     instances_gone_train = 0
     instances_gone_val = 0
 
-    model1_lr = scheduler_model1.get_lr()[0]
+    # model1_lr = scheduler_model1.get_lr()[0]
 
-    model2_lr = scheduler_model2.get_lr()[0]
+    # model2_lr = scheduler_model2.get_lr()[0]
 
 
     logging.info(str(('epoch %d lr model1 %e lr model2 %e', epoch, model1_lr, model1_lr)))
@@ -426,9 +430,9 @@ for epoch in range(start_epoch, args.epochs):
     writer.add_scalar('TrainLoss/model2', epoch_loss_model2, epoch)
     writer.add_scalar('ValLoss/model2', epoch_val_loss, epoch)
     
-    scheduler_model1.step()
+    # scheduler_model1.step()
     
-    scheduler_model2.step()
+    # scheduler_model2.step()
     
     
     # logging.info(str(('train_loss_model1 %e train_loss_model2 %e', epoch_loss_model1, epoch_loss_model2)))
