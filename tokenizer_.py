@@ -2,6 +2,9 @@ import sys
 import os
 import json
 from tokenizers import BertWordPieceTokenizer
+from tokenizers import Tokenizer
+from tokenizers.models import  WordLevel
+
 from transformers import BertTokenizer
 from tokenizers.processors import BertProcessing
 import argparse
@@ -21,7 +24,7 @@ def train_tokenizer(dataset, max_length, min_freq, vocabsize, save_location):
     vocabsize = vocabsize
 
     # tokenizer = BertWordPieceTokenizer()
-    tokenizer = BertTokenizer()
+    tokenizer = Tokenizer(WordLevel())
     tokenizer.do_lower_case = False
     special_tokens = ["[S]","[PAD]","[/S]","[UNK]","[MASK]", "[SEP]","[CLS]"]
     tokenizer.train_from_iterator(dataset, vocab_size=vocabsize, min_frequency=min_freq, special_tokens = special_tokens)
