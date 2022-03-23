@@ -1,3 +1,4 @@
+from tkinter.tix import MAX
 from torchtext.data.metrics import bleu_score
 from model2 import *
 import os
@@ -26,10 +27,12 @@ def pad_sentences(sentence, length):
 def get_bleu_score(model,test_inputs, tokenizer, vocab):
     predicted = model.generate(test_inputs[0], tokenizer, vocab)
     actual = tokenizer.decode(list((test_inputs[1])))
-    predicted = pad_sentences(predicted, MAX_LENGTH)
-    actual = pad_sentences(actual,MAX_LENGTH)
-    # print('predicted sentence:', predicted)
-    # print('actual sentence:', actual)
+    predicted = tokenizer.pad(predicted, max_length = MAX_LENGTH)
+    actual = tokenizer.pad(actual, max_length = MAX_LENGTH)
+    # predicted = pad_sentences(predicted, MAX_LENGTH)
+    # actual = pad_sentences(actual,MAX_LENGTH)
+    print('predicted sentence:', predicted)
+    print('actual sentence:', actual)
     return bleu_score(predicted, actual), ' '.join(predicted), ' '.join(actual)
 
 def create_exp_dir(path, scripts_to_save=None):
