@@ -21,7 +21,8 @@ def pad_sentences(sentence, length):
   while len(s)<=length:
     s.append('<PAD>')
   print(s)
-  return ' '.join(s)
+#   return ' '.join(s)
+  return s
   
 
 def get_bleu_score(model,test_inputs, tokenizer, vocab):
@@ -31,7 +32,8 @@ def get_bleu_score(model,test_inputs, tokenizer, vocab):
     # actual = tokenizer.padding(actual, max_length = MAX_LENGTH)
     predicted = pad_sentences(predicted, MAX_LENGTH)
     actual = pad_sentences(actual,MAX_LENGTH)
-    # print('predicted sentence:', predicted)
+
+    # print('predicted sentence:', len(predicted))
     # print('actual sentence:', actual)
     return bleu_score(predicted, actual), ' '.join(predicted), ' '.join(actual)
 
