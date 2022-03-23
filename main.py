@@ -1,3 +1,5 @@
+
+   
 import utils
 from torch.utils.data import DataLoader, RandomSampler
 from torch.autograd import Variable
@@ -170,9 +172,9 @@ print(len(train_portion), len(un_portion), len(valid_portion))
 logging.info('dataset')
 
 
-train_data = get_train_dataset(train_portion[100:110], tokenizer)
-un_data = get_un_dataset(un_portion[100:110], tokenizer)
-valid_data = get_valid_dataset(valid_portion[100:105], tokenizer)
+train_data = get_train_dataset(train_portion[0:10], tokenizer)
+un_data = get_un_dataset(un_portion[0:10], tokenizer)
+valid_data = get_valid_dataset(valid_portion[0:5], tokenizer)
 
 logging.info(f"{len(train_data):^7} | { len(un_data):^7} | { len(valid_data):^7}")
 
@@ -451,4 +453,3 @@ for epoch in range(start_epoch, args.epochs):
     # break
     
 
-   

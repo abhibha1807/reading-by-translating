@@ -1,3 +1,5 @@
+
+   
 import sys
 import os
 import json
@@ -47,5 +49,4 @@ def get_tokenizer(pairs, max_length, min_freq, vocabsize, save_location):
     # tokenizer = train_tokenizer([i[1] for i in pairs],  max_length, min_freq, vocabsize, save_location)
     tokenizer = train_tokenizer(pairs,  max_length, min_freq, vocabsize, save_location)
     return tokenizer
-
 

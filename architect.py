@@ -238,4 +238,3 @@ class Architect(object):
       gc.collect()
       return valid_batch_loss
 
-

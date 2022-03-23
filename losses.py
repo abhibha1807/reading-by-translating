@@ -142,5 +142,3 @@ def loss2(un_inputs, model1, model2, batch_size, vocab):
         #     print('skipping this_______________________________________')
 
         
-
-
