@@ -46,7 +46,7 @@ parser.add_argument('--A_wd', type=float, default=0, help=' weight decay for A')
 
 
 parser.add_argument('--gpu', type=int, default=0, help='gpu device id')
-parser.add_argument('--seed', type=int, default=10, help='random seed')
+parser.add_argument('--seed', type=int, default=100, help='random seed')
 parser.add_argument('--max_length', type=int, default=10, help='max length of sentences')
 parser.add_argument('--vocabsize', type=int, default=4000, help='total vocab size')
 parser.add_argument('--save_location', type=str, default='./reading-by-translating/', help='save location')
@@ -166,9 +166,9 @@ print(len(train_portion), len(un_portion), len(valid_portion))
 logging.info('dataset')
 
 
-train_data = get_train_dataset(train_portion[0:100], tokenizer)
-un_data = get_un_dataset(un_portion[0:100], tokenizer)
-valid_data = get_valid_dataset(valid_portion[0:100], tokenizer)
+train_data = get_train_dataset(train_portion[0:10], tokenizer)
+un_data = get_un_dataset(un_portion[0:10], tokenizer)
+valid_data = get_valid_dataset(valid_portion[0:5], tokenizer)
 
 logging.info(f"{len(train_data):^7} | { len(un_data):^7} | { len(valid_data):^7}")
 
