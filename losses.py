@@ -116,10 +116,10 @@ def loss2(un_inputs, model1, model2, batch_size, vocab):
                 if decoder_input.item() == EOS_token:
                     break
             
-            print('decoder_outputs:',decoder_outputs, decoder_outputs.requires_grad)
+            print('decoder_outputs:',decoder_outputs)
             # gumbel softmax 
             input_to_model2 = torch.stack(decoder_outputs)
-            print('input_to_model2 :', input_to_model2.requires_grad)
+            print('input_to_model2 :', input_to_model2)
             onehot_input_model2 = torch.zeros(input_to_model2.size(0), vocab, device = device)
             print(onehot_input_model2.size(),onehot_input_model2.requires_grad)
             index_tensor = input_to_model2
