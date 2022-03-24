@@ -79,7 +79,7 @@ def loss2(un_inputs, model1, model2, batch_size, vocab):
             print('decoder_outputs:',decoder_outputs, decoder_outputs.requires_grad)
 
             # gumbel softmax (prepare target for generating pseudo input using encoder)
-            onehot_input_encoder1 = torch.zeros(decoder_outputs.size(0), vocab, device = device)
+            onehot_input_encoder1 = torch.zeros(decoder_outputs.size(0), vocab, device = device, requires_grad=True)
             print('onehot_input_encoder1:', onehot_input_encoder1, onehot_input_encoder1.requires_grad)
             index_tensor = decoder_outputs
             #print(index_tensor)
