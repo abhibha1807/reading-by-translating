@@ -79,7 +79,7 @@ def loss2(un_inputs, model1, model2, batch_size, vocab):
             print('decoder_outputs:',decoder_outputs, decoder_outputs.requires_grad)
 
             # gumbel softmax (prepare target for generating pseudo input using encoder)
-            onehot_input_encoder1 = torch.zeros(decoder_outputs.size(0), vocab, device = device, requires_grad=True)
+            onehot_input_encoder1 = torch.zeros(decoder_outputs.size(0), vocab, device = device)
             print('onehot_input_encoder1:', onehot_input_encoder1, onehot_input_encoder1.requires_grad)
             index_tensor = decoder_outputs
             #print(index_tensor)
@@ -89,6 +89,8 @@ def loss2(un_inputs, model1, model2, batch_size, vocab):
             print('onehot_input_encoder1:', onehot_input_encoder1, onehot_input_encoder1.requires_grad)
 
             enc_hidden_, enc_outputs_ = model1.enc_forward(onehot_input_encoder1)
+            print('enc hidden_:', enc_hidden_, enc_hidden_.requires_grad)
+            print('enc_outputs_:', enc_outputs_, enc_outputs_.requires_grad)
             
             pseudo_target = decoder_outputs
 
@@ -104,28 +106,31 @@ def loss2(un_inputs, model1, model2, batch_size, vocab):
                 decoder_output, decoder_hidden, decoder_attention = model1.dec(
                     decoder_input, decoder_hidden, enc_outputs_)
                 topv, topi = decoder_output.topk(1)
+                print('decoder output:', decoder_output,decoder_output.requires_grad)
                 decoder_input = topi.squeeze().detach()  # detach from history as input
                 dec_soft_idx, dec_idx = torch.max(decoder_output, dim = -1, keepdims = True)
+                print('dec soft idx size:', dec_soft_idx, dec_soft_idx.requires_grad)
                 dec_soft_idxs.append(dec_soft_idx)
                 decoder_outputs.append(torch.unsqueeze(torch.argmax(decoder_output), dim = -1))
 
                 if decoder_input.item() == EOS_token:
                     break
             
+            print('decoder_outputs:',decoder_outputs, decoder_outputs.requires_grad)
             # gumbel softmax 
             input_to_model2 = torch.stack(decoder_outputs)
-            #print('input_to_model2 :', input_to_model2)
+            print('input_to_model2 :', input_to_model2.requires_grad)
             onehot_input_model2 = torch.zeros(input_to_model2.size(0), vocab, device = device)
-            #print(onehot_input.size())
+            print(onehot_input_model2.size(),onehot_input_model2.requires_grad)
             index_tensor = input_to_model2
             #print(index_tensor.size())
             dec_soft_idxs = (torch.stack(dec_soft_idxs))
-            #print('dec_soft_idxs:', dec_soft_idxs)
+            print('dec_soft_idxs:', dec_soft_idxs)
             onehot_input_model2 = onehot_input_model2.scatter_(1, index_tensor, 1.).float().detach() + (dec_soft_idxs).sum() - (dec_soft_idxs).sum().detach()
-            #print('onehot_input_model2:', onehot_input_model2)
+            print('onehot_input_model2:', onehot_input_model2)
 
             pseudo_input = onehot_input_model2 
-            # print('pseudo input:', pseudo_input, pseudo_input.size())
+            print('pseudo input:', pseudo_input, pseudo_input.requires_grad)
 
             #model2 forward pass
             enc_hidden, enc_outputs = model2.enc_forward(pseudo_input)
