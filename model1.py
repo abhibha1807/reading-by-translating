@@ -63,7 +63,7 @@ class Model1(nn.Module):
             decoder_input, decoder_hidden, encoder_outputs)
         topv, topi = decoder_output.topk(1)
         decoder_input = topi.squeeze().detach()  # detach from history as input
-        # print('decoder output:', decoder_output.size(), target[di].size() )
+        print('decoder output:', decoder_output.size(), target[di].size() )
         loss += self.criterion(decoder_output, target[di])
         if decoder_input.item() == EOS_token:
             break

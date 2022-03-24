@@ -18,7 +18,7 @@ def train_tokenizer(dataset, max_length, min_freq, vocabsize, save_location):
     """
 
     print('is the tokenizer trained right??')
-    print(dataset[0:2])
+    # print(dataset[0:2])
     # Get tokenization params
     save_location = save_location
     max_length = max_length
