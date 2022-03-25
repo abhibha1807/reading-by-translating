@@ -261,7 +261,7 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
     print('model2 dec attn grad:', model2.dec.attn.weight.grad)
     print('model2 dec attn combine grad:', model2.dec.attn_combine.weight.grad)
     #print('model2 dec gru grad:', model2.dec.gru.weight.grad)
-    nn.utils.clip_grad_norm_(model2.parameters(), args.grad_clip)
+    #nn.utils.clip_grad_norm_(model2.parameters(), args.grad_clip)
     model2_optim.step()
 
     # objs.update(loss_model2.item(), n)
