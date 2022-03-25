@@ -57,7 +57,7 @@ parser.add_argument('--train_portion', type=float, default=0.9, help='fraction o
 
 parser.add_argument('--un_portion', type=float, default=0.5, help='fraction of training dataset for creating unlabled dataset')
 
-parser.add_argument('--hidden_size', type=int, default=256, help='hidden size')
+parser.add_argument('--hidden_size', type=int, default=512, help='hidden size')
 
 parser.add_argument('--model1_lr', type=float, default=1e-3, help='model1 starting lr')
 parser.add_argument('--model1_lr_min', type=float, default=5e-4, help='model1 min lr')
