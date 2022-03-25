@@ -135,10 +135,11 @@ def loss2(un_inputs, model1, model2, batch_size, vocab):
             #model2 forward pass
             enc_hidden, enc_outputs = model2.enc_forward(pseudo_input)
             loss = model2.dec_forward(pseudo_target, enc_hidden, enc_outputs) # todo: find loss for each instnce and multiply A with the loss vec.
+            prinst('\nloss2:\n', loss)
             #print('loss:', loss)
             batch_loss += loss 
 
-            del onehot_input_encoder1 , onehot_input_model2
+            #del onehot_input_encoder1 , onehot_input_model2
                 
             gc.collect()   
             #print('batch_loss:', batch_loss)
