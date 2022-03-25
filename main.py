@@ -31,10 +31,10 @@ print('using device', device)
 
 print('eecuting Attn Decoder')
 parser.add_argument('--begin_epoch', type=float, default=0, help='PC Method begin')
-parser.add_argument('--stop_epoch', type=float, default=25, help='Stop training on the framework')
+parser.add_argument('--stop_epoch', type=float, default=50, help='Stop training on the framework')
 parser.add_argument('--report_freq', type=float, default=10, help='report frequency')
 
-parser.add_argument('--epochs', type=int, default=100, help='num of training epochs')
+parser.add_argument('--epochs', type=int, default=300, help='num of training epochs')
 
 parser.add_argument('--batch_size', type=int, default=1, help='batch size')
 ####################################################################################
@@ -71,7 +71,7 @@ parser.add_argument('--model2_lr_min', type=float, default=5e-4, help='model2 mi
 # parser.add_argument('--model2_lr_min', type=float, default=5e-6, help='model2 min lr')
 
 parser.add_argument('--model1_wd', type=float, default=0, help='model1 weight decay')
-parser.add_argument('--model2_wd', type=float, default=1e-2, help='model2 weight decay')
+parser.add_argument('--model2_wd', type=float, default=0, help='model2 weight decay')
 # parser.add_argument('--model1_mom', type=float, default=0.9, help='model1 momentum')
 # parser.add_argument('--model2_mom', type=float, default=0.9, help='model2 momentum')
 parser.add_argument('--model1_mom', type=float, default=0.0, help='model1 momentum')
