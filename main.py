@@ -154,7 +154,7 @@ model2_optim = torch.optim.Adam(model1.parameters(),lr=model1_lr)
 
 # scheduler_model1  = torch.optim.lr_scheduler.CosineAnnealingLR(model1_optim, float(args.epochs), eta_min=args.model1_lr_min)
 
-# scheduler_model2  = torch.optim.lr_scheduler.CosineAnnealingLR(model2_optim, float(args.epochs), eta_min=args.model1_lr_min)
+scheduler_model2  = torch.optim.lr_scheduler.CosineAnnealingLR(model2_optim, float(args.epochs), eta_min=args.model1_lr_min)
 
 #split 80% train 10% val 10% test
 n = len(pairs)
@@ -261,7 +261,7 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
     print('model2 dec attn grad:', model2.dec.attn.weight.grad)
     print('model2 dec attn combine grad:', model2.dec.attn_combine.weight.grad)
     #print('model2 dec gru grad:', model2.dec.gru.weight.grad)
-    #nn.utils.clip_grad_norm_(model2.parameters(), args.grad_clip)
+    nn.utils.clip_grad_norm_(model2.parameters(), args.grad_clip)
     model2_optim.step()
 
     # objs.update(loss_model2.item(), n)
@@ -400,7 +400,7 @@ for epoch in range(start_epoch, args.epochs):
 
     # model1_lr = scheduler_model1.get_lr()[0]
 
-    # model2_lr = scheduler_model2.get_lr()[0]
+    model2_lr = scheduler_model2.get_lr()[0]
 
 
     logging.info(str(('epoch %d lr model1 %e lr model2 %e', epoch, model1_lr, model1_lr)))
@@ -435,7 +435,7 @@ for epoch in range(start_epoch, args.epochs):
     
     # scheduler_model1.step()
     
-    # scheduler_model2.step()
+    scheduler_model2.step()
     
     
     # logging.info(str(('train_loss_model1 %e train_loss_model2 %e', epoch_loss_model1, epoch_loss_model2)))
