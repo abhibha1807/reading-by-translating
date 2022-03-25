@@ -67,8 +67,8 @@ parser.add_argument('--model1_lr_min', type=float, default=5e-4, help='model1 mi
 #reduce lr
 # parser.add_argument('--model1_lr', type=float, default=1e-4, help='model1 starting lr')
 # parser.add_argument('--model1_lr_min', type=float, default=5e-6, help='model1 min lr')
-parser.add_argument('--model2_lr', type=float, default=1e-7, help='model2 starting lr')
-parser.add_argument('--model2_lr_min', type=float, default=5e-6, help='model2 min lr')
+# parser.add_argument('--model2_lr', type=float, default=1e-7, help='model2 starting lr')
+# parser.add_argument('--model2_lr_min', type=float, default=5e-6, help='model2 min lr')
 
 parser.add_argument('--model1_wd', type=float, default=0, help='model1 weight decay')
 parser.add_argument('--model2_wd', type=float, default=0, help='model2 weight decay')
