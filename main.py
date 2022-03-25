@@ -31,10 +31,10 @@ print('using device', device)
 
 print('eecuting Attn Decoder')
 parser.add_argument('--begin_epoch', type=float, default=0, help='PC Method begin')
-parser.add_argument('--stop_epoch', type=float, default=100, help='Stop training on the framework')
+parser.add_argument('--stop_epoch', type=float, default=25, help='Stop training on the framework')
 parser.add_argument('--report_freq', type=float, default=10, help='report frequency')
 
-parser.add_argument('--epochs', type=int, default=300, help='num of training epochs')
+parser.add_argument('--epochs', type=int, default=100, help='num of training epochs')
 
 parser.add_argument('--batch_size', type=int, default=1, help='batch size')
 ####################################################################################
@@ -67,8 +67,8 @@ parser.add_argument('--model1_lr_min', type=float, default=5e-4, help='model1 mi
 #reduce lr
 # parser.add_argument('--model1_lr', type=float, default=1e-4, help='model1 starting lr')
 # parser.add_argument('--model1_lr_min', type=float, default=5e-6, help='model1 min lr')
-parser.add_argument('--model2_lr', type=float, default=1e-6, help='model2 starting lr')
-parser.add_argument('--model2_lr_min', type=float, default=5e-8, help='model2 min lr')
+parser.add_argument('--model2_lr', type=float, default=1e-7, help='model2 starting lr')
+parser.add_argument('--model2_lr_min', type=float, default=5e-6, help='model2 min lr')
 
 parser.add_argument('--model1_wd', type=float, default=0, help='model1 weight decay')
 parser.add_argument('--model2_wd', type=float, default=0, help='model2 weight decay')
@@ -154,7 +154,7 @@ model2_optim = torch.optim.Adam(model1.parameters(),lr=model1_lr)
 
 # scheduler_model1  = torch.optim.lr_scheduler.CosineAnnealingLR(model1_optim, float(args.epochs), eta_min=args.model1_lr_min)
 
-scheduler_model2  = torch.optim.lr_scheduler.CosineAnnealingLR(model2_optim, float(args.epochs), eta_min=args.model1_lr_min)
+# scheduler_model2  = torch.optim.lr_scheduler.CosineAnnealingLR(model2_optim, float(args.epochs), eta_min=args.model1_lr_min)
 
 #split 80% train 10% val 10% test
 n = len(pairs)
@@ -400,7 +400,7 @@ for epoch in range(start_epoch, args.epochs):
 
     # model1_lr = scheduler_model1.get_lr()[0]
 
-    model2_lr = scheduler_model2.get_lr()[0]
+    # model2_lr = scheduler_model2.get_lr()[0]
 
 
     logging.info(str(('epoch %d lr model1 %e lr model2 %e', epoch, model1_lr, model1_lr)))
@@ -435,7 +435,7 @@ for epoch in range(start_epoch, args.epochs):
     
     # scheduler_model1.step()
     
-    scheduler_model2.step()
+    # scheduler_model2.step()
     
     
     # logging.info(str(('train_loss_model1 %e train_loss_model2 %e', epoch_loss_model1, epoch_loss_model2)))
