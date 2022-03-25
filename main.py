@@ -71,7 +71,7 @@ parser.add_argument('--model2_lr_min', type=float, default=5e-4, help='model2 mi
 # parser.add_argument('--model2_lr_min', type=float, default=5e-6, help='model2 min lr')
 
 parser.add_argument('--model1_wd', type=float, default=0, help='model1 weight decay')
-parser.add_argument('--model2_wd', type=float, default=0, help='model2 weight decay')
+parser.add_argument('--model2_wd', type=float, default=1e-2, help='model2 weight decay')
 # parser.add_argument('--model1_mom', type=float, default=0.9, help='model1 momentum')
 # parser.add_argument('--model2_mom', type=float, default=0.9, help='model2 momentum')
 parser.add_argument('--model1_mom', type=float, default=0.0, help='model1 momentum')
@@ -245,7 +245,7 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
       #print('model1 dec gru grad:', model1.dec.gru.weight.grad)
         
       
-      #nn.utils.clip_grad_norm_(model1.parameters(), args.grad_clip)
+      nn.utils.clip_grad_norm_(model1.parameters(), args.grad_clip)
       
       model1_optim.step()
     
@@ -261,7 +261,7 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
     print('model2 dec attn grad:', model2.dec.attn.weight.grad)
     print('model2 dec attn combine grad:', model2.dec.attn_combine.weight.grad)
     #print('model2 dec gru grad:', model2.dec.gru.weight.grad)
-    #nn.utils.clip_grad_norm_(model2.parameters(), args.grad_clip)
+    nn.utils.clip_grad_norm_(model2.parameters(), args.grad_clip)
     model2_optim.step()
 
     # objs.update(loss_model2.item(), n)
