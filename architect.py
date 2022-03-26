@@ -37,13 +37,26 @@ class Architect(object):
         moment = _concat(model1_optim.state[v]['momentum_buffer'] for v in self.model1.parameters()).mul_(self.model1_mom)
     except:
         moment = torch.zeros_like(theta)
-    # print(moment)
-    dtheta = _concat(torch.autograd.grad(batch_loss, self.model1.parameters(), retain_graph = True, allow_unused=True )).data + self.model1_wd*theta
-    # print(dtheta)
+    # # print(moment)
+    # dtheta = _concat(torch.autograd.grad(batch_loss, self.model1.parameters(), retain_graph = True, allow_unused=True )).data + self.model1_wd*theta
+    # # print(dtheta)
+    # # convert to the model
+    # unrolled_model1 = self._construct_model1_from_theta(theta.sub(model1_lr, moment+dtheta))
+    # #print(unrolled_enc)
+    
+    grads=torch.autograd.grad(batch_loss, self.model1.parameters(), retain_graph = True ,allow_unused=True)
+    l=[]
+    for i,(p,grad) in enumerate(zip( self.model1.parameters(),grads)):
+        if grad is not None:
+            l.append(grad)
+        if grad is None:
+            l.append(torch.autograd.Variable(torch.zeros(p.size()).type(torch.float32),requires_grad=True).cuda())
+    dtheta = _concat(l).data + self.model1_wd*theta
+
     # convert to the model
-    unrolled_model1 = self._construct_model1_from_theta(theta.sub(model1_lr, moment+dtheta))
-    #print(unrolled_enc)
+    unrolled_model1 =self._construct_model1_from_theta(theta.sub(model1_lr, moment+dtheta))
     return unrolled_model1
+
 
 
   def _construct_model1_from_theta(self, theta):
