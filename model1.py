@@ -30,33 +30,33 @@ class Model1(nn.Module):
     self.embedding = Embedding_(self.enc.embedding).requires_grad_()
 
   def enc_forward(self, input):
-    #print('forward pass through encoder')
-    #print(input, input.size())
+    print('forward pass through encoder')
+    print('input', input, input.size())
     encoder_hidden = self.enc.initHidden()
     #print('dtype hidden:', encoder_hidden.dtype)#torch.float32
     input_length = input.size(0)
     encoder_outputs = torch.zeros(input_length, self.enc.hidden_size, device=device)# how to pass max_length
     
     for ei in range(input_length):
-      # print('input_ei:', input[ei])
+      print('input_ei:', input[ei])
       embedded = self.embedding(input[ei]).view(1, 1, -1)
       encoder_output, encoder_hidden = self.enc(
           embedded, encoder_hidden)
       encoder_outputs[ei] = encoder_output[0, 0]
     
-    #print(encoder_hidden.size(),encoder_outputs.size())
+    print(encoder_hidden.size(),encoder_outputs.size())
     return encoder_hidden, encoder_outputs
 
   
   def dec_forward(self, target, encoder_hidden, encoder_outputs):
-    #print('forward pass through decoder')
-    # print('target size:', target.size())
+    print('forward pass through decoder')
+    print('target size:', target.size())
     target_length = target.size(0)
     #print(target)
     decoder_input = torch.tensor([[SOS_token]], device=device) #where to put SOS_token
     decoder_hidden = encoder_hidden
-    #print('dtype hidden:', decoder_hidden.dtype)#torch.float32
-    #print('dtype decoder input:', decoder_input.dtype)#torch.int64
+    print('dtype hidden:', decoder_hidden.size())#torch.float32
+    print('dtype decoder input:', decoder_input.size())#torch.int64
     loss = 0
     for di in range(target_length):
       embedded = self.embedding(decoder_input).view(1, 1, -1)
