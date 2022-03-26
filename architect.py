@@ -181,7 +181,7 @@ class Architect(object):
 
     loss_aug_m = loss2(un_inputs, unrolled_model1, self.model2,self.batch_size, self.vocab)
     #print('loss aug m:', loss_aug_m)
-    vector_dash = torch.autograd.grad(loss_aug_m, unrolled_model1.parameters(), retain_graph = True)
+    vector_dash = torch.autograd.grad(loss_aug_m, unrolled_model1.parameters(), retain_graph = True, allow_unused=True)
     grad_part2 = self._hessian_vector_product_A(vector_dash, train_inputs, idxs)
     #print('grad_part2:', grad_part2)
 
