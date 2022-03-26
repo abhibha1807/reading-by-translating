@@ -38,7 +38,7 @@ class Architect(object):
     except:
         moment = torch.zeros_like(theta)
     # print(moment)
-    dtheta = _concat(torch.autograd.grad(batch_loss, self.model1.parameters(), retain_graph = True )).data + self.model1_wd*theta
+    dtheta = _concat(torch.autograd.grad(batch_loss, self.model1.parameters(), retain_graph = True, allow_unused=True )).data + self.model1_wd*theta
     # print(dtheta)
     # convert to the model
     unrolled_model1 = self._construct_model1_from_theta(theta.sub(model1_lr, moment+dtheta))
