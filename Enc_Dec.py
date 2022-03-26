@@ -78,8 +78,8 @@ class AttnDecoderRNN(nn.Module):
 
         
 
-    def forward(self, input, hidden, encoder_outputs):
-        embedded = self.embedding(input).view(1, 1, -1)
+    def forward(self, embedded, hidden, encoder_outputs):
+        #embedded = self.embedding(input).view(1, 1, -1)
         embedded = self.dropout(embedded)
 
         attn_weights = F.softmax(

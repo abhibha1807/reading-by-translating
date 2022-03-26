@@ -59,8 +59,9 @@ def loss2(un_inputs, model1, model2, batch_size, vocab):
             dec_soft_idxs = []
             decoder_outputs = []
             for di in range(MAX_LENGTH):
+                embedded = model1.embedding(decoder_input).view(1, 1, -1)
                 decoder_output, decoder_hidden, decoder_attention = model1.dec(
-                    decoder_input, decoder_hidden, enc_outputs)
+                    embedded, decoder_hidden, enc_outputs)
                 topv, topi = decoder_output.topk(1)
                 decoder_input = topi.squeeze().detach()  # detach from history as input
                 print('decoder output:', decoder_output,decoder_output.requires_grad)
@@ -103,8 +104,9 @@ def loss2(un_inputs, model1, model2, batch_size, vocab):
             dec_soft_idxs = []
             decoder_outputs = []
             for di in range(MAX_LENGTH):
+                embedded = model1.embedding(decoder_input).view(1, 1, -1)
                 decoder_output, decoder_hidden, decoder_attention = model1.dec(
-                    decoder_input, decoder_hidden, enc_outputs_)
+                    embedded, decoder_hidden, enc_outputs_)
                 topv, topi = decoder_output.topk(1)
                 print('decoder output:', decoder_output,decoder_output.requires_grad)
                 decoder_input = topi.squeeze().detach()  # detach from history as input

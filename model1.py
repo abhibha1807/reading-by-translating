@@ -59,14 +59,15 @@ class Model1(nn.Module):
     #print('dtype decoder input:', decoder_input.dtype)#torch.int64
     loss = 0
     for di in range(target_length):
-        decoder_output, decoder_hidden, decoder_attention = self.dec(
-            decoder_input, decoder_hidden, encoder_outputs)
-        topv, topi = decoder_output.topk(1)
-        decoder_input = topi.squeeze().detach()  # detach from history as input
-        print('decoder output:', decoder_output.size(), target[di].size() )
-        loss += self.criterion(decoder_output, target[di])
-        if decoder_input.item() == EOS_token:
-            break
+      embedded = self.embedding(decoder_input).view(1, 1, -1)
+      decoder_output, decoder_hidden, decoder_attention = self.dec(
+          embedded, decoder_hidden, encoder_outputs)
+      topv, topi = decoder_output.topk(1)
+      decoder_input = topi.squeeze().detach()  # detach from history as input
+      print('decoder output:', decoder_output.size(), target[di].size() )
+      loss += self.criterion(decoder_output, target[di])
+      if decoder_input.item() == EOS_token:
+          break
     return loss/target_length
 
   def new(self, vocab):
@@ -94,14 +95,15 @@ class Model1(nn.Module):
     loss = 0
     outputs = []
     for di in range(MAX_LENGTH):
-        decoder_output, decoder_hidden, decoder_attention = self.dec(
-            decoder_input, decoder_hidden, enc_outputs)
-        topv, topi = decoder_output.topk(1)
-        decoder_input = topi.squeeze().detach()  # detach from history as input
-        index = torch.argmax(decoder_output)
-        outputs.append(int(index))
-        if decoder_input.item() == EOS_token:
-            break
+      embedded = self.embedding(decoder_input).view(1, 1, -1)
+      decoder_output, decoder_hidden, decoder_attention = self.dec(
+          embedded, decoder_hidden, enc_outputs)
+      topv, topi = decoder_output.topk(1)
+      decoder_input = topi.squeeze().detach()  # detach from history as input
+      index = torch.argmax(decoder_output)
+      outputs.append(int(index))
+      if decoder_input.item() == EOS_token:
+          break
     # outputs = torch.stack(outputs)
     #print(outputs)
     decoded_sentence = tokenizer.decode(outputs)

@@ -61,8 +61,9 @@ class Model2(nn.Module):
     decoder_hidden = encoder_hidden
     loss = 0
     for di in range(target_length):
+        embedded = self.embedding(decoder_input).view(1, 1, -1)
         decoder_output, decoder_hidden, decoder_attention = self.dec(
-            decoder_input, decoder_hidden, encoder_outputs)
+            embedded, decoder_hidden, encoder_outputs)
         topv, topi = decoder_output.topk(1)
         decoder_input = topi.squeeze().detach()  # detach from history as input
         # print('decoder output:', decoder_output.size(), target[di].size() )
@@ -96,8 +97,9 @@ class Model2(nn.Module):
     loss = 0
     outputs = []
     for di in range(MAX_LENGTH):
+        embedded = self.embedding(decoder_input).view(1, 1, -1)
         decoder_output, decoder_hidden, decoder_attention = self.dec(
-            decoder_input, decoder_hidden, enc_outputs)
+            embedded, decoder_hidden, enc_outputs)
         topv, topi = decoder_output.topk(1)
         decoder_input = topi.squeeze().detach()  # detach from history as input
         index = torch.argmax(decoder_output)
