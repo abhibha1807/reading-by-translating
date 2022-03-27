@@ -47,7 +47,7 @@ def loss2(un_inputs, model1, model2, batch_size, vocab):
             # index_tensor = input_un
             # onehot_input.scatter_(1, index_tensor, 1.)
             # input_un = onehot_input
-            # print('input:', input_un)
+            print('input:', input_un)
             #enc_hidden, enc_outputs = model1.enc_forward(input_un)
             #print('enc hidden:', enc_hidden, enc_hidden.requires_grad)
             #print('enc_outputs:', enc_outputs, enc_outputs.requires_grad)
