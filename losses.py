@@ -76,8 +76,8 @@ def loss2(un_inputs, model1, model2, batch_size, vocab):
                 print('dec soft idx size:', dec_soft_idx, dec_soft_idx.requires_grad)
                 #print(dec_soft_idxs)
                 decoder_outputs.append(torch.unsqueeze(torch.argmax(decoder_output), dim = -1))
-                if decoder_input.item() == EOS_token:
-                    break
+                # if decoder_input.item() == EOS_token:
+                #     break
 
             #print(decoder_outputs) #pseudo target
             print('before dec_soft_idxs:', dec_soft_idxs)# every tensor has grad fun assopciated with it.
