@@ -68,7 +68,7 @@ def loss2(un_inputs, model1, model2, batch_size, vocab):
                 decoder_output, decoder_hidden = model1.dec(
                     embedded, decoder_hidden)
                 topv, topi = decoder_output.topk(1)
-                decoder_input = topi.squeeze().detach()  # detach from history as input
+                #decoder_input = topi.squeeze().detach()  # detach from history as input
                 
                 print('decoder output:', decoder_output,decoder_output.requires_grad)
                 dec_soft_idx, dec_idx = torch.max(decoder_output, dim = -1, keepdims = True)
