@@ -32,7 +32,7 @@ print('using device', device)
 print('eecuting Attn Decoder')
 parser.add_argument('--begin_epoch', type=float, default=0, help='PC Method begin')
 parser.add_argument('--stop_epoch', type=float, default=50, help='Stop training on the framework')
-parser.add_argument('--report_freq', type=float, default=10, help='report frequency')
+parser.add_argument('--report_freq', type=float, default=2, help='report frequency')
 
 parser.add_argument('--epochs', type=int, default=300, help='num of training epochs')
 
@@ -61,7 +61,7 @@ parser.add_argument('--hidden_size', type=int, default=256, help='hidden size')
 
 parser.add_argument('--model1_lr', type=float, default=1e-3, help='model1 starting lr')
 parser.add_argument('--model1_lr_min', type=float, default=5e-4, help='model1 min lr')
-parser.add_argument('--model2_lr', type=float, default=1e-5, help='model2 starting lr')
+parser.add_argument('--model2_lr', type=float, default=1e-4, help='model2 starting lr')
 parser.add_argument('--model2_lr_min', type=float, default=5e-4, help='model2 min lr')
 
 #reduce lr
@@ -100,7 +100,7 @@ model2_wd = args.model2_wd
 model1_mom = args.model1_mom
 model2_mom = args.model2_mom
 A_wd = args.A_wd
-report_freq = args.report_freq
+report_freq = args.batch_size
 
 args.save = '{}-{}-beam'.format(args.save, time.strftime("%Y%m%d-%H%M%S"))
 create_exp_dir(args.save, scripts_to_save=glob.glob('*.py'))
