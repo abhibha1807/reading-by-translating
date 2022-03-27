@@ -24,8 +24,8 @@ class Model1(nn.Module):
   def __init__(self, input_size, output_size, criterion, enc_hidden_size=256, dec_hidden_size=256):
     super(Model1, self).__init__()
     self.enc = EncoderRNN(input_size, enc_hidden_size).requires_grad_()
-    #self.dec = DecoderRNN(dec_hidden_size, output_size)
-    self.dec = AttnDecoderRNN(dec_hidden_size, output_size).requires_grad_()
+    self.dec = DecoderRNN(dec_hidden_size, output_size)
+    #self.dec = AttnDecoderRNN(dec_hidden_size, output_size).requires_grad_()
     self.criterion = criterion
     self.embedding = Embedding_(self.enc.embedding).requires_grad_()
 
@@ -60,8 +60,8 @@ class Model1(nn.Module):
     loss = 0
     for di in range(target_length):
       embedded = self.embedding(decoder_input).view(1, 1, -1)
-      decoder_output, decoder_hidden, decoder_attention = self.dec(
-          embedded, decoder_hidden, encoder_outputs)
+      decoder_output, decoder_hidden = self.dec(
+          embedded, decoder_hidden)
       topv, topi = decoder_output.topk(1)
       decoder_input = topi.squeeze().detach()  # detach from history as input
       print('decoder output:', decoder_output.size(), target[di].size() )
@@ -96,8 +96,8 @@ class Model1(nn.Module):
     outputs = []
     for di in range(MAX_LENGTH):
       embedded = self.embedding(decoder_input).view(1, 1, -1)
-      decoder_output, decoder_hidden, decoder_attention = self.dec(
-          embedded, decoder_hidden, enc_outputs)
+      decoder_output, decoder_hidden  = self.dec(
+          embedded, decoder_hidden)
       topv, topi = decoder_output.topk(1)
       decoder_input = topi.squeeze().detach()  # detach from history as input
       index = torch.argmax(decoder_output)

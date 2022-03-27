@@ -27,8 +27,8 @@ class Model2(nn.Module):
   def __init__(self, input_size, output_size, criterion, enc_hidden_size=256, dec_hidden_size=256):
     super(Model2, self).__init__()
     self.enc = EncoderRNN(input_size, enc_hidden_size).requires_grad_()
-    # self.dec = DecoderRNN(dec_hidden_size, output_size)
-    self.dec = AttnDecoderRNN(dec_hidden_size, output_size).requires_grad_()
+    self.dec = DecoderRNN(dec_hidden_size, output_size)
+    #self.dec = AttnDecoderRNN(dec_hidden_size, output_size).requires_grad_()
     self.criterion = criterion
     self.embedding = Embedding_(self.enc.embedding).requires_grad_()
     #scale embeddings
@@ -62,8 +62,8 @@ class Model2(nn.Module):
     loss = 0
     for di in range(target_length):
         embedded = self.embedding(decoder_input).view(1, 1, -1)
-        decoder_output, decoder_hidden, decoder_attention = self.dec(
-            embedded, decoder_hidden, encoder_outputs)
+        decoder_output, decoder_hidden = self.dec(
+            embedded, decoder_hidden)
         topv, topi = decoder_output.topk(1)
         decoder_input = topi.squeeze().detach()  # detach from history as input
         # print('decoder output:', decoder_output.size(), target[di].size() )
@@ -83,13 +83,7 @@ class Model2(nn.Module):
 
   def generate(self, input, tokenizer, vocab):
     print('generating')
-    # onehot_input = torch.zeros(input.size(0), vocab, device='cuda')
-    # #index_tensor = torch.squeeze(input, dim=-1)
-    # index_tensor = input
-    # #print(onehot_input.size(),index_tensor.size() )
-    # onehot_input.scatter_(1, index_tensor, 1.)
-    # input_train = onehot_input
-    # #print('input valid size:', input_train.size())
+
     input_train = input
     enc_hidden, enc_outputs = self.enc_forward(input_train)
     decoder_input = torch.tensor([[SOS_token]], device=device) #where to put SOS_token
@@ -98,8 +92,8 @@ class Model2(nn.Module):
     outputs = []
     for di in range(MAX_LENGTH):
         embedded = self.embedding(decoder_input).view(1, 1, -1)
-        decoder_output, decoder_hidden, decoder_attention = self.dec(
-            embedded, decoder_hidden, enc_outputs)
+        decoder_output, decoder_hidden = self.dec(
+            embedded, decoder_hidden)
         topv, topi = decoder_output.topk(1)
         decoder_input = topi.squeeze().detach()  # detach from history as input
         index = torch.argmax(decoder_output)
