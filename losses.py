@@ -61,6 +61,7 @@ def loss2(un_inputs, model1, model2, batch_size, vocab):
             dec_soft_idxs = []
             decoder_outputs = []
             for di in range(decoder_input.size(0)):
+                print(decoder_input[di])
                 embedded = model1.embedding(decoder_input[di]).view(1, 1, -1)
                 #embedded = model1.embedding(decoder_input[di])
                 print(embedded.size())
