@@ -56,7 +56,7 @@ def loss2(un_inputs, model1, model2, batch_size, vocab):
             #decoder_hidden = enc_hidden
            # print('forward pass through decoder')
             decoder_input = input_un
-            decoder_hidden = torch.zeros(1, 1, 256, device=device)
+            decoder_hidden = model1.dec.initHidden()
             
             dec_soft_idxs = []
             decoder_outputs = []
