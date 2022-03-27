@@ -40,6 +40,7 @@ class Model1(nn.Module):
     for ei in range(input_length):
       print('input_ei:', input[ei])
       embedded = self.embedding(input[ei]).view(1, 1, -1)
+      print('embedded:', embedded.size(), self.embedding(input[ei]).size())
       encoder_output, encoder_hidden = self.enc(
           embedded, encoder_hidden)
       encoder_outputs[ei] = encoder_output[0, 0]
