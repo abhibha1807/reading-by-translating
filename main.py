@@ -38,7 +38,7 @@ parser.add_argument('--epochs', type=int, default=300, help='num of training epo
 
 parser.add_argument('--batch_size', type=int, default=1, help='batch size')
 ####################################################################################
-parser.add_argument('--grad_clip', type=float, default=0.5, help='gradient clipping')
+parser.add_argument('--grad_clip', type=float, default=5, help='gradient clipping')
 parser.add_argument('--A_lr', type=float, default=3e-4, help='learning rate for A')
 #reduce lr 
 # parser.add_argument('--A_lr', type=float, default=1e-6, help='learning rate for A')
@@ -61,7 +61,7 @@ parser.add_argument('--hidden_size', type=int, default=256, help='hidden size')
 
 parser.add_argument('--model1_lr', type=float, default=1e-3, help='model1 starting lr')
 parser.add_argument('--model1_lr_min', type=float, default=5e-4, help='model1 min lr')
-parser.add_argument('--model2_lr', type=float, default=1e-4, help='model2 starting lr')
+parser.add_argument('--model2_lr', type=float, default=1e-10, help='model2 starting lr')
 parser.add_argument('--model2_lr_min', type=float, default=5e-4, help='model2 min lr')
 
 #reduce lr
@@ -173,9 +173,9 @@ print(len(train_portion), len(un_portion), len(valid_portion))
 logging.info('dataset')
 
 
-train_data = get_train_dataset(train_portion[0:2], tokenizer)
-un_data = get_un_dataset(un_portion[0:2], tokenizer)
-valid_data = get_valid_dataset(valid_portion[0:2], tokenizer)
+train_data = get_train_dataset(train_portion[0:10], tokenizer)
+un_data = get_un_dataset(un_portion[0:10], tokenizer)
+valid_data = get_valid_dataset(valid_portion[0:10], tokenizer)
 
 logging.info(f"{len(train_data):^7} | { len(un_data):^7} | { len(valid_data):^7}")
 
