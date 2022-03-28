@@ -64,8 +64,8 @@ class Model1(nn.Module):
       decoder_output, decoder_hidden = self.dec(
           embedded, decoder_hidden)
       topv, topi = decoder_output.topk(1)
-      decoder_input = topi.squeeze().detach()  # detach from history as input
-      #decoder_input = target[di]  #teacher forcing
+      #decoder_input = topi.squeeze().detach()  # detach from history as input
+      decoder_input = target[di]  #teacher forcing
       print('decoder output:', decoder_output.size(), target[di].size() )
       loss += self.criterion(decoder_output, target[di])
       if decoder_input.item() == EOS_token:
