@@ -31,10 +31,10 @@ print('using device', device)
 
 print('eecuting Attn Decoder')
 parser.add_argument('--begin_epoch', type=float, default=0, help='PC Method begin')
-parser.add_argument('--stop_epoch', type=float, default=50, help='Stop training on the framework')
+parser.add_argument('--stop_epoch', type=float, default=100, help='Stop training on the framework')
 parser.add_argument('--report_freq', type=float, default=2, help='report frequency')
 
-parser.add_argument('--epochs', type=int, default=300, help='num of training epochs')
+parser.add_argument('--epochs', type=int, default=1000, help='num of training epochs')
 
 parser.add_argument('--batch_size', type=int, default=1, help='batch size')
 ####################################################################################
@@ -103,7 +103,7 @@ model2_mom = args.model2_mom
 A_wd = args.A_wd
 report_freq = args.batch_size
 
-args.save = '{}-{}-beam'.format(args.save, time.strftime("%Y%m%d-%H%M%S"))
+args.save = '{}-{}-overfit-model2-e1000-1e-15'.format(args.save, time.strftime("%Y%m%d-%H%M%S"))
 create_exp_dir(args.save, scripts_to_save=glob.glob('*.py'))
 print('saving in:', str(args.save))
 writer = SummaryWriter('runs/'+str(args.save))
@@ -174,9 +174,9 @@ print(len(train_portion), len(un_portion), len(valid_portion))
 logging.info('dataset')
 
 
-train_data = get_train_dataset(train_portion[0:10], tokenizer)
-un_data = get_un_dataset(un_portion[0:10], tokenizer)
-valid_data = get_valid_dataset(valid_portion[0:10], tokenizer)
+train_data = get_train_dataset(train_portion[0:2], tokenizer)
+un_data = get_un_dataset(un_portion[0:2], tokenizer)
+valid_data = get_valid_dataset(valid_portion[0:2], tokenizer)
 
 logging.info(f"{len(train_data):^7} | { len(un_data):^7} | { len(valid_data):^7}")
 
