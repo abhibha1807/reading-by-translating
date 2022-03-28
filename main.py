@@ -174,9 +174,9 @@ print(len(train_portion), len(un_portion), len(valid_portion))
 logging.info('dataset')
 
 
-train_data = get_train_dataset(train_portion[0:2], tokenizer)
-un_data = get_un_dataset(un_portion[0:2], tokenizer)
-valid_data = get_valid_dataset(valid_portion[0:2], tokenizer)
+train_data = get_train_dataset(train_portion[0:10], tokenizer)
+un_data = get_un_dataset(un_portion[0:10], tokenizer)
+valid_data = get_valid_dataset(valid_portion[0:10], tokenizer)
 
 logging.info(f"{len(train_data):^7} | { len(un_data):^7} | { len(valid_data):^7}")
 
