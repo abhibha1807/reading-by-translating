@@ -64,6 +64,7 @@ parser.add_argument('--model1_lr_min', type=float, default=5e-4, help='model1 mi
 parser.add_argument('--model2_lr', type=float, default=1e-15, help='model2 starting lr')
 parser.add_argument('--model2_lr_min', type=float, default=5e-4, help='model2 min lr')
 
+
 #reduce lr
 # parser.add_argument('--model1_lr', type=float, default=1e-4, help='model1 starting lr')
 # parser.add_argument('--model1_lr_min', type=float, default=5e-6, help='model1 min lr')
