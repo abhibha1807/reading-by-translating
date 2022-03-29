@@ -72,7 +72,7 @@ parser.add_argument('--model2_lr_min', type=float, default=5e-4, help='model2 mi
 # parser.add_argument('--model2_lr_min', type=float, default=5e-6, help='model2 min lr')
 
 parser.add_argument('--model1_wd', type=float, default=0, help='model1 weight decay')
-parser.add_argument('--model2_wd', type=float, default=0, help='model2 weight decay')
+parser.add_argument('--model2_wd', type=float, default=0.1, help='model2 weight decay')
 # parser.add_argument('--model1_mom', type=float, default=0.9, help='model1 momentum')
 # parser.add_argument('--model2_mom', type=float, default=0.9, help='model2 momentum')
 parser.add_argument('--model1_mom', type=float, default=0.0, help='model1 momentum')
@@ -146,11 +146,11 @@ model2 = Model2( vocab, vocab, criterion)
 model1 = model1.to(device)
 model2 = model2.to(device)
 #momentum=model1_mom,weight_decay=model1_wd,  momentum=model1_mom,weight_decay=model1_wd
-model1_optim = SGD(model1.parameters(), lr=model1_lr)
-model2_optim = SGD(model2.parameters(), lr=model2_lr)
+# model1_optim = SGD(model1.parameters(), lr=model1_lr) #reduced to a value and stayed conbstant
+# model2_optim = SGD(model2.parameters(), lr=model2_lr)
 
-# model1_optim = torch.optim.Adam(model1.parameters(),lr=model1_lr) #  loss decreased and then inc 
-# model2_optim = torch.optim.Adam(model1.parameters(),lr=model1_lr)
+model1_optim = torch.optim.Adam(model1.parameters(),lr=model1_lr,weight_decay=model1_wd) #  loss decreased and then inc 
+model2_optim = torch.optim.Adam(model1.parameters(),lr=model1_lr, weight_decay=model1_wd)
 
 
 
