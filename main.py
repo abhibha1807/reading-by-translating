@@ -61,7 +61,7 @@ parser.add_argument('--hidden_size', type=int, default=256, help='hidden size')
 
 parser.add_argument('--model1_lr', type=float, default=1e-3, help='model1 starting lr')
 parser.add_argument('--model1_lr_min', type=float, default=5e-4, help='model1 min lr')
-parser.add_argument('--model2_lr', type=float, default=1e-10, help='model2 starting lr')
+parser.add_argument('--model2_lr', type=float, default=1e-3, help='model2 starting lr')
 parser.add_argument('--model2_lr_min', type=float, default=1e-20, help='model2 min lr')
 
 
