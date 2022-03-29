@@ -145,11 +145,12 @@ model1 = Model1(vocab, vocab, criterion)
 model2 = Model2( vocab, vocab, criterion)
 model1 = model1.to(device)
 model2 = model2.to(device)
-# model1_optim = SGD(model1.parameters(), lr=model1_lr, momentum=model1_mom,weight_decay=model1_wd)
-# model2_optim = SGD(model2.parameters(), lr=model2_lr, momentum=model1_mom,weight_decay=model1_wd)
+#momentum=model1_mom,weight_decay=model1_wd,  momentum=model1_mom,weight_decay=model1_wd
+model1_optim = SGD(model1.parameters(), lr=model1_lr)
+model2_optim = SGD(model2.parameters(), lr=model2_lr)
 
-model1_optim = torch.optim.Adam(model1.parameters(),lr=model1_lr)
-model2_optim = torch.optim.Adam(model1.parameters(),lr=model1_lr)
+# model1_optim = torch.optim.Adam(model1.parameters(),lr=model1_lr) #  loss decreased and then inc 
+# model2_optim = torch.optim.Adam(model1.parameters(),lr=model1_lr)
 
 
 
