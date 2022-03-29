@@ -405,7 +405,7 @@ for epoch in range(start_epoch, args.epochs):
     model2_lr = scheduler_model2.get_lr()[0]
 
 
-    logging.info(str(('epoch %d lr model1 %e lr model2 %e', epoch, model1_lr, model1_lr)))
+    logging.info(str(('epoch %d lr model1 %e lr model2 %e', epoch, model1_lr, model2_lr)))
 
     #training
     epoch_loss_model1, epoch_loss_model2 = train(epoch, train_dataloader, un_dataloader, valid_dataloader, 
