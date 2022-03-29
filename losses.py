@@ -135,7 +135,7 @@ def loss2(un_inputs, model1, model2, batch_size, vocab):
             print('onehot_input_model2:', onehot_input_model2)
 
             pseudo_input = onehot_input_model2 
-            print('pseudo input:', pseudo_input, pseudo_input.requires_grad)
+            print('pseudo input:', pseudo_input, pseudo_input.sum())
 
             #model2 forward pass
             enc_hidden, enc_outputs = model2.enc_forward(pseudo_input)
