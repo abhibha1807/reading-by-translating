@@ -47,8 +47,8 @@ class Model1(nn.Module):
     self.criterion = criterion
     self.embedding_enc = Embedding_Encoder(self.enc.embedding).requires_grad_()
     self.embedding_dec= Embedding_Decoder(self.dec.embedding).requires_grad_()
-    print('condn check',self.dec.embedding_dec.weight.size(), self.dec.out.weight.size())
-    if self.dec.embedding_dec.weight.size() == self.dec.out.weight.size():
+    print('condn check',self.dec.embedding.weight.size(), self.dec.out.weight.size())
+    if self.dec.embedding.weight.size() == self.dec.out.weight.size():
       print('condn fulfilled')
       self.linear2.weight = self.decoder.embedding.weight
 
