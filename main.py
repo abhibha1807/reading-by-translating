@@ -36,7 +36,7 @@ parser.add_argument('--report_freq', type=float, default=2, help='report frequen
 
 parser.add_argument('--epochs', type=int, default=500, help='num of training epochs')
 
-parser.add_argument('--batch_size', type=int, default=1, help='batch size')
+parser.add_argument('--batch_size', type=int, default=5, help='batch size')
 ####################################################################################
 parser.add_argument('--grad_clip', type=float, default=5, help='gradient clipping')
 parser.add_argument('--A_lr', type=float, default=3e-4, help='learning rate for A')
@@ -156,7 +156,7 @@ model2_optim = torch.optim.Adam(model1.parameters(),lr=model1_lr, weight_decay=m
 
 # scheduler_model1  = torch.optim.lr_scheduler.CosineAnnealingLR(model1_optim, float(args.epochs), eta_min=args.model1_lr_min)
 
-scheduler_model2  = torch.optim.lr_scheduler.CosineAnnealingLR(model2_optim, float(args.epochs), eta_min=args.model1_lr_min)
+# scheduler_model2  = torch.optim.lr_scheduler.CosineAnnealingLR(model2_optim, float(args.epochs), eta_min=args.model1_lr_min)
 
 #split 80% train 10% val 10% test
 n = len(pairs)
@@ -402,7 +402,7 @@ for epoch in range(start_epoch, args.epochs):
 
     # model1_lr = scheduler_model1.get_lr()[0]
 
-    model2_lr = scheduler_model2.get_lr()[0]
+    # model2_lr = scheduler_model2.get_lr()[0]
 
 
     logging.info(str(('epoch %d lr model1 %e lr model2 %e', epoch, model1_lr, model2_lr)))
@@ -437,7 +437,7 @@ for epoch in range(start_epoch, args.epochs):
     
     # scheduler_model1.step()
     
-    scheduler_model2.step()
+    # scheduler_model2.step()
     
     
     # logging.info(str(('train_loss_model1 %e train_loss_model2 %e', epoch_loss_model1, epoch_loss_model2)))
