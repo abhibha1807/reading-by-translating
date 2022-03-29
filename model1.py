@@ -87,7 +87,7 @@ class Model1(nn.Module):
       decoder_input = topi.squeeze().detach()  # detach from history as input
       #decoder_input = target[di]  #teacher forcing
       print('decoder output:', decoder_output.size(), target[di].size() )
-      decoder_output = torch.squeeze(decoder_output)
+      
       loss += self.criterion(decoder_output, target[di])
       if decoder_input.item() == EOS_token:
           break
