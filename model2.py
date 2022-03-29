@@ -52,6 +52,11 @@ class Model2(nn.Module):
     self.embedding_dec = Embedding_Decoder(self.dec.embedding).requires_grad_()
     #scale embeddings
     # self.enc_emb_scale = self.encoder.embed_scale
+    print('condn check',self.dec.embedding.weight.size(), self.dec.out.weight.size())
+    if self.dec.embedding.weight.size() == self.dec.out.weight.size():
+      print('condn fulfilled')
+      self.dec.embedding.weight = self.dec.out.weight
+
 
   def enc_forward(self, input):
     #print('forward pass through encoder')

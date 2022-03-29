@@ -50,7 +50,7 @@ class Model1(nn.Module):
     print('condn check',self.dec.embedding.weight.size(), self.dec.out.weight.size())
     if self.dec.embedding.weight.size() == self.dec.out.weight.size():
       print('condn fulfilled')
-      self.linear2.weight = self.decoder.embedding.weight
+      self.dec.embedding.weight = self.dec.out.weight
 
 
   def enc_forward(self, input):
