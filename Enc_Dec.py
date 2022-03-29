@@ -54,7 +54,7 @@ class DecoderRNN(nn.Module):
         #embedded = self.embedding(input).view(1, 1, -1)
         output = F.relu(embedded)
         output, hidden = self.gru(output, hidden)
-        #output = self.softmax(self.out(output[0])) #testing  cross entropy 
+        output = self.softmax(self.out(output[0])) #testing  cross entropy 
         return output, hidden
 
     def initHidden(self):

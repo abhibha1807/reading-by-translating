@@ -10,7 +10,7 @@ def loss1(inputs, model, idxs, A, batch_size, vocab):
     batch_loss = 0
     print('batch size:', inputs.size(0))
     for i in range(inputs.size(0)):
-        # try:
+      
         input_train = inputs[i][0]
         #print('dtype input:', input_train.dtype)
         # onehot_input = torch.zeros(input_train.size(0), vocab, device = device)
@@ -29,10 +29,7 @@ def loss1(inputs, model, idxs, A, batch_size, vocab):
         batch_loss += loss 
     print('batch loss loss1:',batch_loss)
     return batch_loss/inputs.size(0)
-        # except:
-        #     print('skipping this_______________________________________')
-        
-        
+      
     
 
 def loss2(un_inputs, model1, model2, batch_size, vocab):
@@ -41,7 +38,7 @@ def loss2(un_inputs, model1, model2, batch_size, vocab):
     
     #generate pseudo target by passing through decoder
     for i in range(batch_size):  
-        # try:
+      
             input_un = un_inputs[i][0]
             # onehot_input = torch.zeros(input_un.size(0), vocab, device = device)
             # index_tensor = input_un
@@ -62,7 +59,7 @@ def loss2(un_inputs, model1, model2, batch_size, vocab):
             decoder_outputs = []
             for di in range(MAX_LENGTH):
                 print(decoder_input[di])
-                embedded = model1.embedding(decoder_input[di]).view(1, 1, -1)
+                embedded = model1.embedding_dec(decoder_input[di]).view(1, 1, -1)
                 #embedded = model1.embedding(decoder_input[di])
                 print(embedded.size())
                 decoder_output, decoder_hidden = model1.dec(
@@ -110,7 +107,7 @@ def loss2(un_inputs, model1, model2, batch_size, vocab):
             dec_soft_idxs = []
             decoder_outputs = []
             for di in range(MAX_LENGTH):
-                embedded = model1.embedding(decoder_input).view(1, 1, -1)
+                embedded = model1.embedding_dec(decoder_input).view(1, 1, -1)
                 decoder_output, decoder_hidden = model1.dec(
                     embedded, decoder_hidden)
                 topv, topi = decoder_output.topk(1)
@@ -152,7 +149,4 @@ def loss2(un_inputs, model1, model2, batch_size, vocab):
             gc.collect()   
             #print('batch_loss:', batch_loss)
     return batch_loss/batch_size
-        # except:
-        #     print('skipping this_______________________________________')
 
-        
