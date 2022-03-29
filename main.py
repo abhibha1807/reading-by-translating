@@ -142,7 +142,7 @@ criterion = nn.NLLLoss(ignore_index = tokenizer.token_to_id("[PAD]"), reduction=
 #criterion = nn.CrossEntropyLoss(ignore_index = tokenizer.token_to_id("[PAD]"),  reduction='none')
 criterion = criterion.to(device)
 model1 = Model1(vocab, vocab, criterion)
-model2 = Model2( vocab,  vocab, criterion)
+model2 = Model2( vocab, vocab, criterion)
 model1 = model1.to(device)
 model2 = model2.to(device)
 # model1_optim = SGD(model1.parameters(), lr=model1_lr, momentum=model1_mom,weight_decay=model1_wd)
