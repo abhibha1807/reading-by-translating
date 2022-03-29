@@ -45,27 +45,27 @@ def loss2(un_inputs, model1, model2, batch_size, vocab):
             # onehot_input.scatter_(1, index_tensor, 1.)
             # input_un = onehot_input
             print('input:', input_un)
-            #enc_hidden, enc_outputs = model1.enc_forward(input_un)
-            #print('enc hidden:', enc_hidden, enc_hidden.requires_grad)
-            #print('enc_outputs:', enc_outputs, enc_outputs.requires_grad)
+            enc_hidden, enc_outputs = model1.enc_forward(input_un)
+            print('enc hidden:', enc_hidden, enc_hidden.requires_grad)
+            print('enc_outputs:', enc_outputs, enc_outputs.requires_grad)
 
-            #decoder_input = torch.tensor([[SOS_token]], device=device)#where to put SOS_token
-            #decoder_hidden = enc_hidden
+            decoder_input = torch.tensor([[SOS_token]], device=device)#where to put SOS_token
+            decoder_hidden = enc_hidden
            # print('forward pass through decoder')
-            decoder_input = input_un
-            decoder_hidden = model1.dec.initHidden()
+            # decoder_input = input_un
+            # decoder_hidden = model1.dec.initHidden()
             
             dec_soft_idxs = []
             decoder_outputs = []
             for di in range(MAX_LENGTH):
                 print(decoder_input[di])
-                embedded = model1.embedding_dec(decoder_input[di]).view(1, 1, -1)
+                embedded = model1.embedding_dec(decoder_input).view(1, 1, -1)
                 #embedded = model1.embedding(decoder_input[di])
                 print(embedded.size())
                 decoder_output, decoder_hidden = model1.dec(
                     embedded, decoder_hidden)
                 topv, topi = decoder_output.topk(1)
-                #decoder_input = topi.squeeze().detach()  # detach from history as input
+                decoder_input = topi.squeeze().detach()  # detach from history as input
                 
                 print('decoder output:', decoder_output,decoder_output.requires_grad)
                 dec_soft_idx, dec_idx = torch.max(decoder_output, dim = -1, keepdims = True)
@@ -73,8 +73,8 @@ def loss2(un_inputs, model1, model2, batch_size, vocab):
                 print('dec soft idx size:', dec_soft_idx, dec_soft_idx.requires_grad)
                 #print(dec_soft_idxs)
                 decoder_outputs.append(torch.unsqueeze(torch.argmax(decoder_output), dim = -1))
-                # if decoder_input.item() == EOS_token:
-                #     break
+                if decoder_input.item() == EOS_token:
+                    break
 
             #print(decoder_outputs) #pseudo target
             print('before dec_soft_idxs:', dec_soft_idxs)# every tensor has grad fun assopciated with it.
