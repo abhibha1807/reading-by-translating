@@ -1,4 +1,4 @@
-
+# https://huggingface.co/transformers/v3.3.1/_modules/transformers/modeling_fsmt.html embed scale from here 
 from torchtext.data.metrics import bleu_score
 from model2 import *
 import os
