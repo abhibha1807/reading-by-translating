@@ -104,6 +104,7 @@ class Architect(object):
   
   def _compute_unrolled_model2(self, un_inputs, unrolled_model1, idxs, model2_lr, model2_optim):
       batch_loss = loss2(un_inputs, unrolled_model1, self.model2,self.batch_size, self.vocab)
+      print('batchloss compute:', batch_loss)
       theta = _concat(self.model2.parameters()).data
       try:
           moment = _concat(model2_optim.state[v]['momentum_buffer'] for v in self.model2.parameters()).mul_(self.model2_mom)
