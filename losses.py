@@ -1,6 +1,7 @@
 import torch
 from dataset import *
 import gc
+import math
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
@@ -60,6 +61,7 @@ def loss2(un_inputs, model1, model2, batch_size, vocab):
             for di in range(MAX_LENGTH):
                 print(decoder_input)
                 embedded = model1.embedding_dec(decoder_input).view(1, 1, -1)
+                embedded = embedded/math.sqrt(256)
                 #embedded = model1.embedding(decoder_input[di])
                 print(embedded.size())
                 decoder_output, decoder_hidden = model1.dec(
@@ -108,6 +110,7 @@ def loss2(un_inputs, model1, model2, batch_size, vocab):
             decoder_outputs = []
             for di in range(MAX_LENGTH):
                 embedded = model1.embedding_dec(decoder_input).view(1, 1, -1)
+                embedded = embedded/math.sqrt(256)
                 decoder_output, decoder_hidden = model1.dec(
                     embedded, decoder_hidden)
                 topv, topi = decoder_output.topk(1)

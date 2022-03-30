@@ -2,6 +2,7 @@
    
 from Enc_Dec import *
 from dataset import *
+import math
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 class Embedding_Encoder(nn.Module):
@@ -56,6 +57,8 @@ class Model2(nn.Module):
     if self.dec.embedding.weight.size() == self.dec.out.weight.size():
       print('condn fulfilled')
       self.dec.embedding.weight = self.dec.out.weight
+    self.enc_hidden_size = enc_hidden_size
+    self.dec_hidden_size = dec_hidden_size
 
 
   def enc_forward(self, input):
@@ -69,6 +72,7 @@ class Model2(nn.Module):
       # print('input_ei:', input[ei])
       # inp_emb = self.embedding(input_ids)/self.enc_emb_scale
       embedded = self.embedding_enc(input[ei]).view(1, 1, -1)
+      embedded = embedded/math.sqrt(self.enc_hidden_size)
       encoder_output, encoder_hidden = self.enc(embedded, encoder_hidden)
       encoder_outputs[ei] = encoder_output[0, 0]
     
@@ -86,6 +90,8 @@ class Model2(nn.Module):
     loss = 0
     for di in range(target_length):
         embedded = self.embedding_dec(decoder_input).view(1, 1, -1)
+        embedded = embedded/math.sqrt(self.enc_hidden_size)
+        embedded = embedded/math.sqrt(self.dec_hidden_size)
         decoder_output, decoder_hidden = self.dec(
             embedded, decoder_hidden)
         topv, topi = decoder_output.topk(1)
