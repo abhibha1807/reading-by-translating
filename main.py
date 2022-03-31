@@ -61,7 +61,7 @@ parser.add_argument('--hidden_size', type=int, default=256, help='hidden size')
 
 parser.add_argument('--model1_lr', type=float, default=1e-3, help='model1 starting lr')
 parser.add_argument('--model1_lr_min', type=float, default=5e-4, help='model1 min lr')
-parser.add_argument('--model2_lr', type=float, default=1e-10, help='model2 starting lr')
+parser.add_argument('--model2_lr', type=float, default=5, help='model2 starting lr')
 parser.add_argument('--model2_lr_min', type=float, default=1e-20, help='model2 min lr')
 
 
@@ -234,7 +234,7 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
       #logging.info('otherwise')
       model1_optim.zero_grad()
       loss_model1 = loss1(train_inputs, model1, idxs, A, batch_size, vocab)
-      #print('training loss model1:', loss_model1)
+      print('training loss model1:', loss_model1)
       
       # store the batch loss
       batch_loss_model1 += loss_model1.item()
