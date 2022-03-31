@@ -43,14 +43,14 @@ class Model1(nn.Module):
   def __init__(self, input_size, output_size, criterion, enc_hidden_size=256, dec_hidden_size=256):
     super(Model1, self).__init__()
     self.enc = EncoderRNN(input_size, enc_hidden_size).requires_grad_()
-    self.dec = DecoderRNN(dec_hidden_size, output_size)
+    self.dec = DecoderRNN(dec_hidden_size, output_size).requires_grad_()
     #self.dec = AttnDecoderRNN(dec_hidden_size, output_size).requires_grad_()
     self.criterion = criterion
     self.embedding_enc = Embedding_Encoder(self.enc.embedding).requires_grad_()
     self.embedding_dec= Embedding_Decoder(self.dec.embedding).requires_grad_()
-    print('condn check',self.dec.embedding.weight.size(), self.dec.out.weight.size())
+    print('condn check1',self.dec.embedding.weight.size(), self.dec.out.weight.size())
     if self.dec.embedding.weight.size() == self.dec.out.weight.size():
-      print('condn fulfilled')
+      print('condn fulfilled1')
       self.dec.embedding.weight = self.dec.out.weight
     self.enc_hidden_size = enc_hidden_size
     self.dec_hidden_size = dec_hidden_size
