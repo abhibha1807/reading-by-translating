@@ -264,6 +264,12 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
     #print(str(epoch)+'calculated batch loss model 2:', batch_loss_model2)
     c = list(model2.parameters())[0].clone()
     loss_model2.backward()
+    for param in model2.parameters():
+      print(param.grad.data.sum())
+
+    # start debugger
+    import pdb; pdb.set_trace()
+
     print('model2 enc embeding grad:', model2.enc.embedding.weight.grad.data.sum())
     print(list(model2.parameters())[0].grad)
     #print('model2 enc gru grad:', model2.enc.gru.weight.grad)
