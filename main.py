@@ -257,11 +257,12 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
       print(torch.equal(a.data, b.data))
     
     model2_optim.zero_grad()
-    a = list(model2.parameters())[0].clone()
+    
     loss_model2 = loss2(un_inputs, model1, model2, batch_size, vocab)
     #print(str(epoch)+'is loss being calculated or not?:', loss_model2)
     batch_loss_model2 += loss_model2.item()
     #print(str(epoch)+'calculated batch loss model 2:', batch_loss_model2)
+    c = list(model2.parameters())[0].clone()
     loss_model2.backward()
     print('model2 enc embeding grad:', model2.enc.embedding.weight.grad.data.sum())
     print(list(model2.parameters())[0].grad)
@@ -269,13 +270,13 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
     
     #print('model2 dec attn grad:', model2.dec.attn.weight.grad)
     #print('model2 dec attn combine grad:', model2.dec.attn_combine.weight.grad)
-    #print('model2 dec gru grad:', model2.dec.gru.weight.grad)
+    #print('model2 dec g`ru grad:', model2.dec.gru.weight.grad)
     nn.utils.clip_grad_norm_(model2.parameters(), args.grad_clip)
     model2_optim.step()
-    b = list(model2.parameters())[0].clone()
+    d = list(model2.parameters())[0].clone()
     print('\n')
     print('are wts2 being updated??')
-    print(torch.equal(a.data, b.data))
+    print(torch.equal(c.data, d.data))
     
 
 
