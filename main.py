@@ -238,7 +238,7 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
       
       # store the batch loss
       batch_loss_model1 += loss_model1.item()
-
+      a = list(model1.parameters())[0]
       loss_model1.backward()
       print('model1 enc mbeding grad:', model1.enc.embedding.weight.grad.data.sum())
       #print('model1 enc gru grad:', model1.enc.gru.weight.grad)
@@ -250,6 +250,10 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
       nn.utils.clip_grad_norm_(model1.parameters(), args.grad_clip)
       
       model1_optim.step()
+      b = list(model1.parameters())[0]
+      print('\n')
+      print('are wts being updated??')
+      print(torch.equal(a.data, b.data))
     
     model2_optim.zero_grad()
     loss_model2 = loss2(un_inputs, model1, model2, batch_size, vocab)
