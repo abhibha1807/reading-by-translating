@@ -162,22 +162,22 @@ def loss2(un_inputs, model1, model2, batch_size, vocab):
     return batch_loss/batch_size
 
 #un_inputs, model2, batch_size, vocab
-def loss3(inputs, model, batch_size, vocab):
+# def loss3(inputs, model, batch_size, vocab):
  
    
-    batch_loss = 0
-    print('batch size:', inputs.size(0))
-    for i in range(inputs.size(0)):
+#     batch_loss = 0
+#     print('batch size:', inputs.size(0))
+#     for i in range(inputs.size(0)):
       
-        input_train = inputs[i][0]
-        target_train = inputs[i][1]
-        print('inout train:', input_train)
-        print('target train:', target_train)
-        enc_hidden, enc_outputs = model.enc_forward(input_train)
-        print('enc hidden:', enc_hidden, enc_outputs)
-        loss = model.dec_forward(target_train, enc_hidden, enc_outputs) # todo: find loss for each instnce and multiply A with the loss vec.
-        loss = loss 
-        batch_loss += loss 
-    print('batch loss loss1:',batch_loss)
-    return batch_loss/inputs.size(0)
+#         input_train = inputs[i][0]
+#         target_train = inputs[i][1]
+#         print('inout train:', input_train)
+#         print('target train:', target_train)
+#         enc_hidden, enc_outputs = model.enc_forward(input_train)
+#         print('enc hidden:', enc_hidden, enc_outputs)
+#         loss = model.dec_forward(target_train, enc_hidden, enc_outputs) # todo: find loss for each instnce and multiply A with the loss vec.
+#         loss = loss 
+#         batch_loss += loss 
+#     print('batch loss loss1:',batch_loss)
+#     return batch_loss/inputs.size(0)
       

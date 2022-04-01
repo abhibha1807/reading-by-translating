@@ -175,9 +175,9 @@ print(len(train_portion), len(un_portion), len(valid_portion))
 logging.info('dataset')
 
 
-train_data = get_train_dataset(train_portion, tokenizer)
-un_data = get_un_dataset(un_portion, tokenizer)
-valid_data = get_valid_dataset(valid_portion, tokenizer)
+train_data = get_train_dataset(train_portion[0:10], tokenizer)
+un_data = get_un_dataset(un_portion[0:10], tokenizer)
+valid_data = get_valid_dataset(valid_portion[0:10], tokenizer)
 
 logging.info(f"{len(train_data):^7} | { len(un_data):^7} | { len(valid_data):^7}")
 
@@ -225,41 +225,41 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
    
 
 
-    # if args.begin_epoch <= epoch <= args.stop_epoch:
-    #   #logging.info('in architect')
-    #   valid_batch_loss = architect.step(train_inputs, un_inputs, val_inputs, model1_lr, A, idxs, criterion, model2_lr, model2_optim, model1_optim)
+    if args.begin_epoch <= epoch <= args.stop_epoch:
+      #logging.info('in architect')
+      valid_batch_loss = architect.step(train_inputs, un_inputs, val_inputs, model1_lr, A, idxs, criterion, model2_lr, model2_optim, model1_optim)
   
-    # if epoch <= args.stop_epoch:
+    if epoch <= args.stop_epoch:
       
-    #   #logging.info('otherwise')
-    #   model1_optim.zero_grad()
-    #   loss_model1 = loss1(train_inputs, model1, idxs, A, batch_size, vocab)
-    #   print('training loss model1:', loss_model1)
+      #logging.info('otherwise')
+      model1_optim.zero_grad()
+      loss_model1 = loss1(train_inputs, model1, idxs, A, batch_size, vocab)
+      print('training loss model1:', loss_model1)
       
-    #   # store the batch loss
-    #   batch_loss_model1 += loss_model1.item()
-    #   a = list(model1.parameters())[0].clone()
-    #   loss_model1.backward()
-    #   print('model1 enc mbeding grad:', model1.enc.embedding.weight.grad.data.sum())
-    #   print(list(model1.parameters())[0].grad)
-    #   #print('model1 enc gru grad:', model1.enc.gru.weight.grad)
-    #   #print('model1 dec attn grad:', model1.dec.attn.weight.grad)
-    #   #print('model1 dec attn combine grad:', model1.dec.attn_combine.weight.grad)
-    #   #print('model1 dec gru grad:', model1.dec.gru.weight.grad)
+      # store the batch loss
+      batch_loss_model1 += loss_model1.item()
+      a = list(model1.parameters())[0].clone()
+      loss_model1.backward()
+      print('model1 enc mbeding grad:', model1.enc.embedding.weight.grad.data.sum())
+      print(list(model1.parameters())[0].grad)
+      #print('model1 enc gru grad:', model1.enc.gru.weight.grad)
+      #print('model1 dec attn grad:', model1.dec.attn.weight.grad)
+      #print('model1 dec attn combine grad:', model1.dec.attn_combine.weight.grad)
+      #print('model1 dec gru grad:', model1.dec.gru.weight.grad)
         
       
-    #   nn.utils.clip_grad_norm_(model1.parameters(), args.grad_clip)
+      nn.utils.clip_grad_norm_(model1.parameters(), args.grad_clip)
       
-    #   model1_optim.step()
-    #   b = list(model1.parameters())[0].clone()
-    #   print('\n')
-    #   print('are wts being updated??')
-    #   print(torch.equal(a.data, b.data))
+      model1_optim.step()
+      b = list(model1.parameters())[0].clone()
+      print('\n')
+      print('are wts being updated??')
+      print(torch.equal(a.data, b.data))
     
     model2_optim.zero_grad()
     
-    # loss_model2 = loss2(un_inputs, model1, model2, batch_size, vocab)
-    loss_model2 = loss3(un_inputs, model2, batch_size, vocab)
+    loss_model2 = loss2(un_inputs, model1, model2, batch_size, vocab)
+    #loss_model2 = loss3(un_inputs, model2, batch_size, vocab)
     print(str(epoch)+'is loss being calculated or not?:', loss_model2)
     batch_loss_model2 += loss_model2.item()
     #print(str(epoch)+'calculated batch loss model 2:', batch_loss_model2)
