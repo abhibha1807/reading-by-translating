@@ -31,12 +31,12 @@ print('using device', device)
 
 print('eecuting Attn Decoder')
 parser.add_argument('--begin_epoch', type=float, default=0, help='PC Method begin')
-parser.add_argument('--stop_epoch', type=float, default=100, help='Stop training on the framework')
+parser.add_argument('--stop_epoch', type=float, default=25, help='Stop training on the framework')
 parser.add_argument('--report_freq', type=float, default=10, help='report frequency')
 
-parser.add_argument('--epochs', type=int, default=500, help='num of training epochs')
+parser.add_argument('--epochs', type=int, default=100, help='num of training epochs')
 
-parser.add_argument('--batch_size', type=int, default=10, help='batch size')
+parser.add_argument('--batch_size', type=int, default=1, help='batch size')
 ####################################################################################
 parser.add_argument('--grad_clip', type=float, default=5, help='gradient clipping')
 parser.add_argument('--A_lr', type=float, default=3e-4, help='learning rate for A')
@@ -63,6 +63,7 @@ parser.add_argument('--model1_lr', type=float, default=1e-3, help='model1 starti
 parser.add_argument('--model1_lr_min', type=float, default=5e-4, help='model1 min lr')
 parser.add_argument('--model2_lr', type=float, default=1e-3, help='model2 starting lr')
 parser.add_argument('--model2_lr_min', type=float, default=5e-4, help='model2 min lr')
+
 
 
 #reduce lr
