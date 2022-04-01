@@ -96,7 +96,7 @@ class Model2(nn.Module):
             embedded, decoder_hidden)
         topv, topi = decoder_output.topk(1)
         decoder_input = topi.squeeze().detach()  # detach from history as input
-        print('decoder output:', decoder_output.size(), target[di].size() )
+        print('decoder output model2:', decoder_output, target[di].size())
         #decoder_input = target[di]  #teacher forcing
         loss += self.criterion(decoder_output, target[di])
         print('calculated loss grad fn:', loss, loss.grad_fn)
