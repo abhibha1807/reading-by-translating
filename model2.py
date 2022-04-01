@@ -99,6 +99,7 @@ class Model2(nn.Module):
         print('decoder output:', decoder_output.size(), target[di].size() )
         #decoder_input = target[di]  #teacher forcing
         loss += self.criterion(decoder_output, target[di])
+        print('calculated loss grad fn:', loss, loss.grad_fn)
         if decoder_input.item() == EOS_token:
             break
     return loss/target_length
