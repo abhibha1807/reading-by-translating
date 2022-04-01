@@ -90,7 +90,6 @@ class Model2(nn.Module):
     loss = 0
     for di in range(target_length):
         embedded = self.embedding_dec(decoder_input).view(1, 1, -1)
-        embedded = embedded/math.sqrt(self.enc_hidden_size)
         embedded = embedded/math.sqrt(self.dec_hidden_size)
         decoder_output, decoder_hidden = self.dec(
             embedded, decoder_hidden)

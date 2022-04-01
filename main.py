@@ -150,7 +150,7 @@ model2 = model2.to(device)
 # model2_optim = SGD(model2.parameters(), lr=model2_lr)
 
 model1_optim = torch.optim.Adam(model1.parameters(),lr=model1_lr,weight_decay=model1_wd) #  loss decreased and then inc 
-model2_optim = torch.optim.Adam(model1.parameters(),lr=model1_lr, weight_decay=model1_wd)
+model2_optim = torch.optim.Adam(model2.parameters(),lr=model1_lr, weight_decay=model1_wd)
 
 
 

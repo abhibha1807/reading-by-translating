@@ -171,7 +171,10 @@ def loss3(inputs, model, batch_size, vocab):
       
         input_train = inputs[i][0]
         target_train = inputs[i][1]
+        print('inout train:', input_train)
+        print('target train:', target_train)
         enc_hidden, enc_outputs = model.enc_forward(input_train)
+        print('enc hidden:', enc_hidden, enc_outputs)
         loss = model.dec_forward(target_train, enc_hidden, enc_outputs) # todo: find loss for each instnce and multiply A with the loss vec.
         loss = loss 
         batch_loss += loss 
