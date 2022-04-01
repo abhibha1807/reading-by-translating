@@ -458,7 +458,7 @@ for epoch in range(start_epoch, args.epochs):
     
     scheduler_model1.step()
     
-    # scheduler_model2.step()
+    scheduler_model2.step()
     
     
     # logging.info(str(('train_loss_model1 %e train_loss_model2 %e', epoch_loss_model1, epoch_loss_model2)))
