@@ -31,12 +31,12 @@ print('using device', device)
 
 print('eecuting Attn Decoder')
 parser.add_argument('--begin_epoch', type=float, default=0, help='PC Method begin')
-parser.add_argument('--stop_epoch', type=float, default=25, help='Stop training on the framework')
+parser.add_argument('--stop_epoch', type=float, default=100, help='Stop training on the framework')
 parser.add_argument('--report_freq', type=float, default=10, help='report frequency')
 
-parser.add_argument('--epochs', type=int, default=100, help='num of training epochs')
+parser.add_argument('--epochs', type=int, default=500, help='num of training epochs')
 
-parser.add_argument('--batch_size', type=int, default=1, help='batch size')
+parser.add_argument('--batch_size', type=int, default=10, help='batch size')
 ####################################################################################
 parser.add_argument('--grad_clip', type=float, default=5, help='gradient clipping')
 parser.add_argument('--A_lr', type=float, default=3e-4, help='learning rate for A')
@@ -104,7 +104,7 @@ model2_mom = args.model2_mom
 A_wd = args.A_wd
 report_freq = args.batch_size
 
-args.save = '{}-{}-train-model1'.format(args.save, time.strftime("%Y%m%d-%H%M%S"))
+args.save = '{}-{}-train-bs10-e100'.format(args.save, time.strftime("%Y%m%d-%H%M%S"))
 create_exp_dir(args.save, scripts_to_save=glob.glob('*.py'))
 print('saving in:', str(args.save))
 writer = SummaryWriter('runs/'+str(args.save))
@@ -151,7 +151,7 @@ model2 = model2.to(device)
 # model2_optim = SGD(model2.parameters(), lr=model2_lr)
 
 model1_optim = torch.optim.Adam(model1.parameters(),lr=model1_lr,weight_decay=model1_wd) #  loss decreased and then inc 
-model2_optim = torch.optim.Adam(model2.parameters(),lr=model1_lr, weight_decay=model1_wd)
+model2_optim = torch.optim.Adam(model2.parameters(),lr=model2_lr, weight_decay=model2_wd)
 
 
 
@@ -176,9 +176,9 @@ print(len(train_portion), len(un_portion), len(valid_portion))
 logging.info('dataset')
 
 
-train_data = get_train_dataset(train_portion[0:10], tokenizer)
-un_data = get_un_dataset(un_portion[0:10], tokenizer)
-valid_data = get_valid_dataset(valid_portion[0:10], tokenizer)
+train_data = get_train_dataset(train_portion, tokenizer)
+un_data = get_un_dataset(un_portion, tokenizer)
+valid_data = get_valid_dataset(valid_portion, tokenizer)
 
 logging.info(f"{len(train_data):^7} | { len(un_data):^7} | { len(valid_data):^7}")
 
@@ -475,6 +475,7 @@ for epoch in range(start_epoch, args.epochs):
         torch.save(model1, args.save+'/model1.pt')
         torch.save(model2, args.save+'/model2.pt')
         logging.info(str(("Attention Weights A : ", A.alpha)))
+        print('saving in:', str(args.save))
     # break
     
 
