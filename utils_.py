@@ -41,7 +41,7 @@ def get_bleu_score(model,test_inputs, tokenizer, vocab):
     print('actual sentence:', actual)
     print('bleu score:', bleu(actual, predicted, smoothing_function=chencherry.method1))
 
-    return bleu(actual, predicted, smoothing_function=chencherry.method1)
+    return bleu(actual, predicted, smoothing_function=chencherry.method1), predicted, actual
 
 def create_exp_dir(path, scripts_to_save=None):
   if not os.path.exists(path):
