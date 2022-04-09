@@ -2,6 +2,8 @@
 from torchtext.data.metrics import bleu_score
 from model2 import *
 import os
+from nltk.translate.bleu_score import SmoothingFunction
+from nltk.translate import bleu
 import shutil
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 # device = "cuda"
@@ -11,6 +13,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from queue import PriorityQueue
+
+chencherry = SmoothingFunction()
 
 SOS_token = 0
 EOS_token = 1
@@ -33,9 +37,11 @@ def get_bleu_score(model,test_inputs, tokenizer, vocab):
     predicted = pad_sentences(predicted, MAX_LENGTH)
     actual = pad_sentences(actual,MAX_LENGTH)
 
-    # print('predicted sentence:', len(predicted))
-    # print('actual sentence:', actual)
-    return bleu_score(predicted, actual), ' '.join(predicted), ' '.join(actual)
+    print('predicted sentence:', predicted)
+    print('actual sentence:', actual)
+    print('bleu score:', bleu(actual, predicted, smoothing_function=chencherry.method1))
+
+    return bleu(actual, predicted, smoothing_function=chencherry.method1)
 
 def create_exp_dir(path, scripts_to_save=None):
   if not os.path.exists(path):
