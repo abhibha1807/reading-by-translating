@@ -209,6 +209,8 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
 
   batch_loss_model1, batch_loss_model2, batch_count = 0, 0, 0
   valid_batch_loss = 0
+  model1_score, model2_score = 0, 0
+  
 
     
   for step, batch in enumerate(train_dataloader):
@@ -347,9 +349,9 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
       print('Epoch:'+str(epoch)+'batch_loss_model2:'+str(loss_model2))
     
       print("-"*70)
-      model1_score, pred_model1, actual_model1 = get_bleu_score(model1,val_inputs[0], tokenizer, vocab)
-      model2_score, pred_model2, actual_model2 = get_bleu_score(model2,val_inputs[0], tokenizer, vocab)
-      print('\n lets look at predictions and scores \n')
+      model1_score, pred_model1, actual_model1 = get_bleu_score(model1,train_inputs[0], tokenizer, vocab)
+      model2_score, pred_model2, actual_model2 = get_bleu_score(model2,train_inputs[0], tokenizer, vocab)
+      print('\n lets look at predictions and scores for training \n')
       logging.info('actual model1'+ str(actual_model1))
       logging.info('predicted model1'+ str(pred_model1))
       logging.info('\n')
@@ -358,9 +360,10 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
       logging.info('\n')
       logging.info('model1_score'+ str(model1_score))
       logging.info('model2_score'+ str(model2_score))
+     
     # break
 
-  return batch_loss_model1, batch_loss_model2
+  return batch_loss_model1, batch_loss_model2, model1_score, model2_score
   #return valid_batch_loss
 
       
@@ -369,6 +372,7 @@ def infer(valid_dataloader, model2, instances_gone):
   # objs = utils.AvgrageMeter()
   # top1 = utils.AvgrageMeter()
   # top5 = utils.AvgrageMeter()
+  model2_score = 0
   
   softmax = torch.nn.Softmax(-1)
 
@@ -404,8 +408,16 @@ def infer(valid_dataloader, model2, instances_gone):
         print('validation epoch loss:' + str(valid_loss))
         logging.info('*'*20 + 'validation stats after'+ str(instances_gone) + 'instances' +'*'*20)
         logging.info('validation epoch loss:' + str(valid_loss))
+        print("-"*70)
+        model2_score, pred_model2, actual_model2 = get_bleu_score(model2,val_inputs[0], tokenizer, vocab)
+        print('\n lets look at predictions and scores for validation \n')
+        logging.info('actual model2'+ str(actual_model2))
+        logging.info('predicted model2'+ str(pred_model2))
+        logging.info('\n')
+        logging.info('model2_score'+ str(model2_score))
+        
     # break
-  return epoch_val_loss
+  return epoch_val_loss, model2_score
   
 
     
@@ -430,7 +442,7 @@ for epoch in range(start_epoch, args.epochs):
     logging.info(str(('epoch %d lr model1 %e lr model2 %e', epoch, model1_lr, model2_lr)))
 
     #training
-    epoch_loss_model1, epoch_loss_model2 = train(epoch, train_dataloader, un_dataloader, valid_dataloader, 
+    epoch_loss_model1, epoch_loss_model2, model1_score, model2_score = train(epoch, train_dataloader, un_dataloader, valid_dataloader, 
         architect, A, model1, model2,  model1_optim, model2_optim, model1_lr, model2_lr,instances_gone_train)
     
     # valid_batch_loss = train(epoch, train_dataloader, un_dataloader, valid_dataloader, 
@@ -447,7 +459,8 @@ for epoch in range(start_epoch, args.epochs):
     
     logging.info('\n')
 
-    epoch_val_loss = infer(valid_dataloader, model2, instances_gone_val)
+
+    epoch_val_loss, model2_score_val = infer(valid_dataloader, model2, instances_gone_val)
     print('+'*20+'VAL EPOCH STATS'+'+'*20)
     print(str(epoch_val_loss))
     logging.info('+'*20+'VAL EPOCH STATS'+'+'*20)
@@ -456,6 +469,9 @@ for epoch in range(start_epoch, args.epochs):
     writer.add_scalar('TrainLoss/model1', epoch_loss_model1, epoch)
     writer.add_scalar('TrainLoss/model2', epoch_loss_model2, epoch)
     writer.add_scalar('ValLoss/model2', epoch_val_loss, epoch)
+    writer.add_scalar('TrainBleu/model1', model1_score, epoch)
+    writer.add_scalar('TrainBleu/model2', model2_score, epoch)
+    writer.add_scalar('ValBleu/model2', model2_score_val, epoch)
     
     scheduler_model1.step()
     
