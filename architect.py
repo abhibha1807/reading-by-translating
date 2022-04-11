@@ -210,7 +210,7 @@ class Architect(object):
       print('computed unrolled model2')
       valid_batch_loss = 0
       #val batch inputs
-      for i in range(self.batch_size):
+      for i in range(val_inputs.size(0)):
         input_train = val_inputs[i][0]
         target_train = val_inputs[i][1]
        
