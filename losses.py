@@ -1,6 +1,7 @@
 import torch
 from dataset import *
 import gc
+import math
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
@@ -10,7 +11,7 @@ def loss1(inputs, model, idxs, A, batch_size, vocab):
     batch_loss = 0
     print('batch size:', inputs.size(0))
     for i in range(inputs.size(0)):
-        # try:
+      
         input_train = inputs[i][0]
         #print('dtype input:', input_train.dtype)
         # onehot_input = torch.zeros(input_train.size(0), vocab, device = device)
@@ -25,14 +26,11 @@ def loss1(inputs, model, idxs, A, batch_size, vocab):
         enc_hidden, enc_outputs = model.enc_forward(input_train)
         loss = model.dec_forward(target_train, enc_hidden, enc_outputs) # todo: find loss for each instnce and multiply A with the loss vec.
         print('loss and idx :', loss, idx)
-        loss = loss * idx
+        #loss = loss * idx #uncomment for basic implementation
         batch_loss += loss 
     print('batch loss loss1:',batch_loss)
-    return batch_loss
-        # except:
-        #     print('skipping this_______________________________________')
-        
-        
+    return batch_loss/inputs.size(0)
+      
     
 
 def loss2(un_inputs, model1, model2, batch_size, vocab):
@@ -41,32 +39,40 @@ def loss2(un_inputs, model1, model2, batch_size, vocab):
     
     #generate pseudo target by passing through decoder
     for i in range(batch_size):  
-        # try:
+      
             input_un = un_inputs[i][0]
             # onehot_input = torch.zeros(input_un.size(0), vocab, device = device)
             # index_tensor = input_un
             # onehot_input.scatter_(1, index_tensor, 1.)
             # input_un = onehot_input
-            # print('input:', input_un)
+            print('input:', input_un)
             enc_hidden, enc_outputs = model1.enc_forward(input_un)
-            print('enc hidden:', enc_hidden)
-            print('enc_outputs:', enc_outputs)
+            print('enc hidden:', enc_hidden, enc_hidden.grad_fn)
+            print('enc_outputs:', enc_outputs, enc_outputs.grad_fn)
 
             decoder_input = torch.tensor([[SOS_token]], device=device)#where to put SOS_token
             decoder_hidden = enc_hidden
-            print('forward pass through decoder')
+           # print('forward pass through decoder')
+            # decoder_input = input_un
+            # decoder_hidden = model1.dec.initHidden()
             
             dec_soft_idxs = []
             decoder_outputs = []
             for di in range(MAX_LENGTH):
-                decoder_output, decoder_hidden, decoder_attention = model1.dec(
-                    decoder_input, decoder_hidden, enc_outputs)
+                print(decoder_input)
+                embedded = model1.embedding_dec(decoder_input).view(1, 1, -1)
+                embedded = embedded/math.sqrt(256)
+                #embedded = model1.embedding(decoder_input[di])
+                print(embedded.size())
+                decoder_output, decoder_hidden = model1.dec(
+                    embedded, decoder_hidden)
                 topv, topi = decoder_output.topk(1)
                 decoder_input = topi.squeeze().detach()  # detach from history as input
-                #print('decoder output:', decoder_output.size())
+                
+                print('decoder output:', decoder_output,decoder_output.grad_fn)
                 dec_soft_idx, dec_idx = torch.max(decoder_output, dim = -1, keepdims = True)
                 dec_soft_idxs.append(dec_soft_idx) #save differentiable outputs
-                # print('dec soft idx size:', dec_soft_idx)
+                print('dec soft idx size:', dec_soft_idx, dec_soft_idx.grad_fn)
                 #print(dec_soft_idxs)
                 decoder_outputs.append(torch.unsqueeze(torch.argmax(decoder_output), dim = -1))
                 if decoder_input.item() == EOS_token:
@@ -76,19 +82,21 @@ def loss2(un_inputs, model1, model2, batch_size, vocab):
             print('before dec_soft_idxs:', dec_soft_idxs)# every tensor has grad fun assopciated with it.
             decoder_outputs = torch.stack(decoder_outputs)#differentiable,no break in computation graph
 
-            print('decoder_outputs:',decoder_outputs)
+            print('decoder_outputs:',decoder_outputs, decoder_outputs.grad_fn)
 
             # gumbel softmax (prepare target for generating pseudo input using encoder)
             onehot_input_encoder1 = torch.zeros(decoder_outputs.size(0), vocab, device = device)
-            #print(onehot_input.size())
+            print('onehot_input_encoder1:', onehot_input_encoder1, onehot_input_encoder1.grad_fn)
             index_tensor = decoder_outputs
-            #print(index_tensor.size())
+            #print(index_tensor)
             dec_soft_idxs = (torch.stack(dec_soft_idxs))
-            print('dec_soft_idxs:', dec_soft_idxs)
+            print('dec_soft_idxs:', dec_soft_idxs, dec_soft_idxs.grad_fn)
             onehot_input_encoder1 = onehot_input_encoder1.scatter_(1, index_tensor, 1.).float().detach() + (dec_soft_idxs).sum() - (dec_soft_idxs).sum().detach()
-            print('onehot_input_encoder1:', onehot_input_encoder1)
+            print('onehot_input_encoder1:', onehot_input_encoder1, onehot_input_encoder1.grad_fn)
 
             enc_hidden_, enc_outputs_ = model1.enc_forward(onehot_input_encoder1)
+            print('enc hidden_:', enc_hidden_, enc_hidden_.grad_fn)
+            print('enc_outputs_:', enc_outputs_, enc_outputs_.grad_fn)
             
             pseudo_target = decoder_outputs
 
@@ -96,27 +104,32 @@ def loss2(un_inputs, model1, model2, batch_size, vocab):
             # greedy decoding -> similar to model.generate() (hugging face)
             decoder_input = torch.tensor([[SOS_token]], device=device)#where to put SOS_token
             decoder_hidden = enc_hidden_
-            print('decoder_hidden:', decoder_hidden)
+            #print('decoder_hidden:', decoder_hidden)
 
             dec_soft_idxs = []
             decoder_outputs = []
             for di in range(MAX_LENGTH):
-                decoder_output, decoder_hidden, decoder_attention = model1.dec(
-                    decoder_input, decoder_hidden, enc_outputs_)
+                embedded = model1.embedding_dec(decoder_input).view(1, 1, -1)
+                embedded = embedded/math.sqrt(256)
+                decoder_output, decoder_hidden = model1.dec(
+                    embedded, decoder_hidden)
                 topv, topi = decoder_output.topk(1)
+                print('decoder output:', decoder_output,decoder_output.grad_fn)
                 decoder_input = topi.squeeze().detach()  # detach from history as input
                 dec_soft_idx, dec_idx = torch.max(decoder_output, dim = -1, keepdims = True)
+                print('dec soft idx size:', dec_soft_idx, dec_soft_idx.grad_fn)
                 dec_soft_idxs.append(dec_soft_idx)
                 decoder_outputs.append(torch.unsqueeze(torch.argmax(decoder_output), dim = -1))
 
                 if decoder_input.item() == EOS_token:
                     break
             
+            print('decoder_outputs:',decoder_outputs)
             # gumbel softmax 
             input_to_model2 = torch.stack(decoder_outputs)
             print('input_to_model2 :', input_to_model2)
             onehot_input_model2 = torch.zeros(input_to_model2.size(0), vocab, device = device)
-            #print(onehot_input.size())
+            print(onehot_input_model2.size(),onehot_input_model2.requires_grad)
             index_tensor = input_to_model2
             #print(index_tensor.size())
             dec_soft_idxs = (torch.stack(dec_soft_idxs))
@@ -125,21 +138,46 @@ def loss2(un_inputs, model1, model2, batch_size, vocab):
             print('onehot_input_model2:', onehot_input_model2)
 
             pseudo_input = onehot_input_model2 
-            # print('pseudo input:', pseudo_input, pseudo_input.size())
+            print('pseudo input:', pseudo_input, pseudo_input.sum())
 
             #model2 forward pass
             enc_hidden, enc_outputs = model2.enc_forward(pseudo_input)
             loss = model2.dec_forward(pseudo_target, enc_hidden, enc_outputs) # todo: find loss for each instnce and multiply A with the loss vec.
-            print('loss:', loss)
+            print('\nloss2:\n', loss)
+            #print('loss:', loss)
             batch_loss += loss 
 
-            del onehot_input_encoder1 , onehot_input_model2
+            #del onehot_input_encoder1 , onehot_input_model2
                 
             gc.collect()   
             #print('batch_loss:', batch_loss)
-    return batch_loss
-        # except:
-        #     print('skipping this_______________________________________')
 
-        
+        # input_train = un_inputs[i][0]
+       
+        # target_train = un_inputs[i][1]
+        # enc_hidden, enc_outputs = model2.enc_forward(input_train)
+        # loss = model2.dec_forward(target_train, enc_hidden, enc_outputs) # todo: find loss for each instnce and multiply A with the loss vec.
+        # print('loss and idx :', loss)
+        # batch_loss += loss 
+    return batch_loss/batch_size
 
+#un_inputs, model2, batch_size, vocab
+# def loss3(inputs, model, batch_size, vocab):
+ 
+   
+#     batch_loss = 0
+#     print('batch size:', inputs.size(0))
+#     for i in range(inputs.size(0)):
+      
+#         input_train = inputs[i][0]
+#         target_train = inputs[i][1]
+#         print('inout train:', input_train)
+#         print('target train:', target_train)
+#         enc_hidden, enc_outputs = model.enc_forward(input_train)
+#         print('enc hidden:', enc_hidden, enc_outputs)
+#         loss = model.dec_forward(target_train, enc_hidden, enc_outputs) # todo: find loss for each instnce and multiply A with the loss vec.
+#         loss = loss 
+#         batch_loss += loss 
+#     print('batch loss loss1:',batch_loss)
+#     return batch_loss/inputs.size(0)
+      
