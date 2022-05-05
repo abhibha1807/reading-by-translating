@@ -1,5 +1,3 @@
-
-   
 from Enc_Dec import *
 from dataset import *
 import math
@@ -145,5 +143,3 @@ class Model1(nn.Module):
     print(decoded_sentence)
     return decoded_sentence
 
-
-  

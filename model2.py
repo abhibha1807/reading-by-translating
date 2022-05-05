@@ -1,5 +1,3 @@
-
-   
 from Enc_Dec import *
 from dataset import *
 import math
@@ -136,4 +134,3 @@ class Model2(nn.Module):
     decoded_sentence = tokenizer.decode(outputs)
     #print(decoded_sentence)
     return decoded_sentence
-

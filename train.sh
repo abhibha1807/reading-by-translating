@@ -9,5 +9,5 @@ conda list
 # pip install tensorboard
 # pip install utils
 # pip install tokenizers
-# python /abhibha-volume/reading-by-translating/main.py
-python /abhibha-volume/reading-by-translating/basic.py
+python /abhibha-volume/reading-by-translating/main.py
+# python /abhibha-volume/reading-by-translating/basic.py
