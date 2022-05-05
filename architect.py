@@ -144,7 +144,7 @@ class Architect(object):
           v=torch.autograd.Variable(torch.zeros(p.size()).type(torch.float32),requires_grad=True).to(device).data
       p.data.sub_(2*R, v)
     loss = loss1(train_inputs, self.model1, idxs, self.A,  self.batch_size, self.vocab)
-    grads_n = torch.autograd.grad(loss, self.A.parameters())
+    grads_n = torch.autograd.grad(loss, self.A.parameters(), allow_unused=True )
     #print('grads n:', grads_n)
    
 
