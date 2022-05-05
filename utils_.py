@@ -208,4 +208,3 @@ def beam_decode(target_tensor, decoder_hiddens, decoder, encoder_outputs=None):
         decoded_batch.append(utterances)
 
     return decoded_batch
-
