@@ -193,7 +193,7 @@ un_dataloader = DataLoader(un_data, sampler=RandomSampler(un_data),
 
 #define A
 A = attention_params(len(train_data))
-A.requires_grad_ = True
+A.requires_grad_()
 print('A:', list(A.parameters()))
 A = A.to(device)
 architect = Architect(model1, model1_mom, model1_wd, A, A_lr, A_wd, device, model2, model2_wd, model2_mom, batch_size,vocab)
