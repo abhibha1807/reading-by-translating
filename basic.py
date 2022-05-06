@@ -103,7 +103,7 @@ model1_mom = args.model1_mom
 model2_mom = args.model2_mom
 A_wd = args.A_wd
 report_freq = args.batch_size
-
+print('running basic.py')
 args.save = '{}-{}-e3-ep-50-basic'.format(args.save, time.strftime("%Y%m%d-%H%M%S"))
 create_exp_dir(args.save, scripts_to_save=glob.glob('*.py'))
 print('saving in:', str(args.save))
