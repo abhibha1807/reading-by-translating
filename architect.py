@@ -170,22 +170,22 @@ class Architect(object):
     self.model1.train()
 
     loss_aug_p = loss2(un_inputs, unrolled_model1, self.model2, self.batch_size, self.vocab)
-    #print('loss aug p:', loss_aug_p)
+    print('loss aug p:', loss_aug_p)
     vector_dash = torch.autograd.grad(loss_aug_p, unrolled_model1.parameters(), retain_graph = True, allow_unused=True)
-    #print('vector dash:', vector_dash)
+    print('vector dash:', vector_dash)
 
     grad_part1 = self._hessian_vector_product_A(vector_dash, train_inputs, idxs)
-    #print('grad_part1:', grad_part1)
+    print('grad_part1:', grad_part1)
 
     # minus W
     for p, v in zip(self.model2.parameters(), vector_s_dash):
         p.data.sub_(2*R1, v)
 
     loss_aug_m = loss2(un_inputs, unrolled_model1, self.model2,self.batch_size, self.vocab)
-    #print('loss aug m:', loss_aug_m)
+    print('loss aug m:', loss_aug_m)
     vector_dash = torch.autograd.grad(loss_aug_m, unrolled_model1.parameters(), retain_graph = True, allow_unused=True)
     grad_part2 = self._hessian_vector_product_A(vector_dash, train_inputs, idxs)
-    #print('grad_part2:', grad_part2)
+    print('grad_part2:', grad_part2)
 
     for p, v in zip(self.model2.parameters(), vector_s_dash):
       p.data.add_(R1, v)
