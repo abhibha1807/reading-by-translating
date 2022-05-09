@@ -134,7 +134,7 @@ class Architect(object):
       p.data.add_(R, v)
     loss = loss1(train_inputs, self.model1, idxs, self.A,  self.batch_size, self.vocab)
     print('loss:', loss)
-    grads_p = torch.autograd.grad(loss, self.A.parameters(),  allow_unused=True)
+    grads_p = torch.autograd.grad(loss, self.A.parameters(),  allow_unused=True, create_graph = True)
     print('grads p:', grads_p)
   
 
@@ -145,7 +145,7 @@ class Architect(object):
       p.data.sub_(2*R, v)
     loss = loss1(train_inputs, self.model1, idxs, self.A,  self.batch_size, self.vocab)
     print('loss:', loss)
-    grads_n = torch.autograd.grad(loss, self.A.parameters(),  allow_unused=True)
+    grads_n = torch.autograd.grad(loss, self.A.parameters(),  allow_unused=True, create_graph = True)
     print('grads n:', grads_n)
    
 
