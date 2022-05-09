@@ -34,12 +34,17 @@ def get_bleu_score(model,test_inputs, tokenizer, vocab):
     actual = tokenizer.decode(list((test_inputs[1])))
     # predicted = tokenizer.padding(predicted, max_length = MAX_LENGTH)
     # actual = tokenizer.padding(actual, max_length = MAX_LENGTH)
-    predicted = pad_sentences(predicted, MAX_LENGTH)
-    actual = pad_sentences(actual,MAX_LENGTH)
+    # predicted = pad_sentences(predicted, MAX_LENGTH)
+    # actual = pad_sentences(actual,MAX_LENGTH)
+    print('\npredicted:\n', predicted)
+    print('\nactual:\n',actual)
+    print('bleu score0:', bleu(actual, predicted, smoothing_function=chencherry.method0))
+    print('bleu score1:', bleu(actual, predicted, smoothing_function=chencherry.method1))
+    print('bleu score2:', bleu(actual, predicted, smoothing_function=chencherry.method2))
+    print('bleu score3:', bleu(actual, predicted, smoothing_function=chencherry.method3))
+    print('bleu score4:', bleu(actual, predicted, smoothing_function=chencherry.method4))
+    print('bleu score5:', bleu(actual, predicted, smoothing_function=chencherry.method5))
 
-    print('predicted sentence:', predicted)
-    print('actual sentence:', actual)
-    print('bleu score:', bleu(actual, predicted, smoothing_function=chencherry.method1))
 
     return bleu(actual, predicted, smoothing_function=chencherry.method1), predicted, actual
 
