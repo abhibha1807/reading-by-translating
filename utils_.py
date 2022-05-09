@@ -1,4 +1,5 @@
 # https://huggingface.co/transformers/v3.3.1/_modules/transformers/modeling_fsmt.html embed scale from here 
+from jinja2 import pass_context
 from torchtext.data.metrics import bleu_score
 from model2 import *
 import os
@@ -36,17 +37,34 @@ def get_bleu_score(model,test_inputs, tokenizer, vocab):
     # actual = tokenizer.padding(actual, max_length = MAX_LENGTH)
     # predicted = pad_sentences(predicted, MAX_LENGTH)
     # actual = pad_sentences(actual,MAX_LENGTH)
-    # predicted = predicted.split(' ')
-    # actual = actual.split(' ')
-    print('\npredicted:\n', predicted.split(' '))
-    print('\nactual:\n',actual.split(' '))
-    print('bleu score0:', bleu([actual], predicted, smoothing_function=chencherry.method0))
-    print('bleu score1:', bleu([actual], predicted, smoothing_function=chencherry.method1))
-    print('bleu score2:', bleu([actual], predicted, smoothing_function=chencherry.method2))
-    print('bleu score3:', bleu([actual], predicted, smoothing_function=chencherry.method3))
-    print('bleu score4:', bleu([actual], predicted, smoothing_function=chencherry.method4))
-    print('bleu score5:', bleu([actual], predicted, smoothing_function=chencherry.method5))
-
+    predicted_ = predicted.split(' ')
+    actual_ = actual.split(' ')
+    print('\npredicted:\n', predicted_)
+    print('\nactual:\n',actual_)
+    try:
+        print('bleu score0:', bleu([actual_], predicted_, smoothing_function=chencherry.method0))
+    except:
+        pass
+    try:
+        print('bleu score1:', bleu([actual], predicted, smoothing_function=chencherry.method1))
+    except:
+        pass
+    try:
+        print('bleu score2:', bleu([actual], predicted, smoothing_function=chencherry.method2))
+    except:
+        pass
+    try:
+        print('bleu score3:', bleu([actual], predicted, smoothing_function=chencherry.method3))
+    except:
+        pass
+    try:
+        print('bleu score4:', bleu([actual], predicted, smoothing_function=chencherry.method4))
+    except:
+        pass
+    try:
+        print('bleu score5:', bleu([actual], predicted, smoothing_function=chencherry.method5))
+    except:
+        pass
 
     return bleu(actual, predicted, smoothing_function=chencherry.method1), predicted, actual
 
