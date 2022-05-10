@@ -144,7 +144,7 @@ def loss2(un_inputs, model1, model2, batch_size, vocab):
             enc_hidden, enc_outputs = model2.enc_forward(pseudo_input)
             loss = model2.dec_forward(pseudo_target, enc_hidden, enc_outputs) # todo: find loss for each instnce and multiply A with the loss vec.
             print('\nloss2:\n', loss)
-            #print('loss:', loss)
+            print('loss:', loss)
             batch_loss += loss 
 
             #del onehot_input_encoder1 , onehot_input_model2
