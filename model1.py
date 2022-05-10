@@ -46,9 +46,9 @@ class Model1(nn.Module):
     self.criterion = criterion
     self.embedding_enc = Embedding_Encoder(self.enc.embedding).requires_grad_()
     self.embedding_dec= Embedding_Decoder(self.dec.embedding).requires_grad_()
-    print('condn check1',self.dec.embedding.weight.size(), self.dec.out.weight.size())
+    #print('condn check1',self.dec.embedding.weight.size(), self.dec.out.weight.size())
     if self.dec.embedding.weight.size() == self.dec.out.weight.size():
-      print('condn fulfilled1')
+      #print('condn fulfilled1')
       self.dec.embedding.weight = self.dec.out.weight
     self.enc_hidden_size = enc_hidden_size
     self.dec_hidden_size = dec_hidden_size
@@ -56,17 +56,17 @@ class Model1(nn.Module):
 
   def enc_forward(self, input):
     print('forward pass through encoder')
-    print('input', input, input.size())
+    #print('input', input, input.size())
     encoder_hidden = self.enc.initHidden()
     #print('dtype hidden:', encoder_hidden.dtype)#torch.float32
     input_length = input.size(0)
     encoder_outputs = torch.zeros(input_length, self.enc.hidden_size, device=device)# how to pass max_length
     
     for ei in range(input_length):
-      print('input_ei:', input[ei])
+      #print('input_ei:', input[ei])
       embedded = self.embedding_enc(input[ei]).view(1, 1, -1)
       embedded = embedded/math.sqrt(self.enc_hidden_size)
-      print('embedded:', embedded.size(), self.embedding_enc(input[ei]).size())
+      #print('embedded:', embedded.size(), self.embedding_enc(input[ei]).size())
       encoder_output, encoder_hidden = self.enc(
           embedded, encoder_hidden)
       encoder_outputs[ei] = encoder_output[0, 0]
@@ -77,25 +77,25 @@ class Model1(nn.Module):
   
   def dec_forward(self, target, encoder_hidden, encoder_outputs):
     print('forward pass through decoder')
-    print('target size:', target.size())
+    #print('target size:', target.size())
     target_length = target.size(0)
     #print(target)
     decoder_input = torch.tensor([[SOS_token]], device=device) #where to put SOS_token
     decoder_hidden = encoder_hidden
-    print('dtype hidden:', decoder_hidden.size())#torch.float32
-    print('dtype decoder input:', decoder_input.size())#torch.int64
+    #print('dtype hidden:', decoder_hidden.size())#torch.float32
+    #print('dtype decoder input:', decoder_input.size())#torch.int64
     loss = 0
     for di in range(target_length):
       embedded = self.embedding_dec(decoder_input).view(1, 1, -1)
       embedded = embedded/math.sqrt(self.dec_hidden_size)
 
-      print('embedded size:', embedded.size())
+      #print('embedded size:', embedded.size())
       decoder_output, decoder_hidden = self.dec(
           embedded, decoder_hidden)
       topv, topi = decoder_output.topk(1)
       decoder_input = topi.squeeze().detach()  # detach from history as input
       #decoder_input = target[di]  #teacher forcing
-      print('decoder output:', decoder_output.size(), target[di].size() )
+      #print('decoder output:', decoder_output.size(), target[di].size() )
       
       loss += self.criterion(decoder_output, target[di])
       if decoder_input.item() == EOS_token:
