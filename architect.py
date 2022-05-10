@@ -155,7 +155,12 @@ class Architect(object):
           v=torch.autograd.Variable(torch.zeros(p.size()).type(torch.float32),requires_grad=True).to(device).data
       p.data.add_(R, v)
 
-    return [(x-y).div_(2*R) for x, y in zip(grads_p, grads_n)]
+    to_return = [(x-y).div_(2*R) for x, y in zip(grads_p, grads_n)]
+    if to_return != None:
+      return to_return 
+    else:
+      return torch.tensor([0])
+
 
 
 
