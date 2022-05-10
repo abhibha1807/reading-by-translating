@@ -51,9 +51,9 @@ class Model2(nn.Module):
     self.embedding_dec = Embedding_Decoder(self.dec.embedding).requires_grad_()
     #scale embeddings
     # self.enc_emb_scale = self.encoder.embed_scale
-    print('condn check2',self.dec.embedding.weight.size(), self.dec.out.weight.size())
+    #print('condn check2',self.dec.embedding.weight.size(), self.dec.out.weight.size())
     if self.dec.embedding.weight.size() == self.dec.out.weight.size():
-      print('condn fulfilled2')
+      #print('condn fulfilled2')
       self.dec.embedding.weight = self.dec.out.weight
     self.enc_hidden_size = enc_hidden_size
     self.dec_hidden_size = dec_hidden_size
@@ -93,7 +93,7 @@ class Model2(nn.Module):
             embedded, decoder_hidden)
         topv, topi = decoder_output.topk(1)
         decoder_input = topi.squeeze().detach()  # detach from history as input
-        print('decoder output model2:', decoder_output, target[di].size())
+        #print('decoder output model2:', decoder_output, target[di].size())
         #decoder_input = target[di]  #teacher forcing
         loss += self.criterion(decoder_output, target[di])
         print('calculated loss grad fn:', loss, loss.grad_fn)
