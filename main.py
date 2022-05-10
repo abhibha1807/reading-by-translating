@@ -347,8 +347,8 @@ def train(epoch, train_dataloader, un_dataloader, valid_dataloader, architect, A
       print('Epoch:'+str(epoch)+'batch_loss_model2:'+str(loss_model2))
     
       print("-"*70)
-      model1_score, pred_model1, actual_model1 = get_bleu_score(model1,train_inputs[0], tokenizer, vocab)
-      model2_score, pred_model2, actual_model2 = get_bleu_score(model2,train_inputs[0], tokenizer, vocab)
+      model1_score, pred_model1, actual_model1 = get_bleu_score(model1,val_inputs[0], tokenizer, vocab)
+      model2_score, pred_model2, actual_model2 = get_bleu_score(model2,val_inputs[0], tokenizer, vocab)
       print('\n lets look at predictions and scores for training \n')
       logging.info('actual model1'+ str(actual_model1))
       logging.info('predicted model1'+ str(pred_model1))
