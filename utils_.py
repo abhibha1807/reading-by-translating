@@ -40,32 +40,45 @@ def get_bleu_score(model,test_inputs, tokenizer, vocab):
     actual_ = actual.split(' ')
     print('\npredicted:\n', predicted_)
     print('\nactual:\n',actual_)
+    bleus = []
     try:
-        print('bleu score0:', bleu([actual_], predicted_, smoothing_function=chencherry.method0))
+        bleu0 = bleu([actual_], predicted_, smoothing_function=chencherry.method0)
+        print('bleu score0:', bleu0)
+        bleus.append(bleu0)
     except:
         pass
     try:
-        print('bleu score1:', bleu([actual], predicted, smoothing_function=chencherry.method1))
+        bleu1 = bleu([actual_], predicted_, smoothing_function=chencherry.method1)
+        print('bleu score1:',bleu1)
+        bleus.append(bleu1)
     except:
         pass
     try:
-        print('bleu score2:', bleu([actual], predicted, smoothing_function=chencherry.method2))
+        bleu2 = bleu([actual_], predicted_, smoothing_function=chencherry.method2)
+        print('bleu score2:',bleu2) 
+        bleus.append(bleu2)   
     except:
         pass
     try:
-        print('bleu score3:', bleu([actual], predicted, smoothing_function=chencherry.method3))
+        bleu3 = bleu([actual_], predicted_, smoothing_function=chencherry.method3)
+        print('bleu score3:',bleu3)   
+        bleus.append(bleu3)
     except:
         pass
     try:
-        print('bleu score4:', bleu([actual], predicted, smoothing_function=chencherry.method4))
+        bleu4 = bleu([actual_], predicted_, smoothing_function=chencherry.method4)
+        print('bleu score4:',bleu4)  
+        bleus.append(bleu4)  
     except:
         pass
     try:
-        print('bleu score5:', bleu([actual], predicted, smoothing_function=chencherry.method5))
+        bleu5 = bleu([actual_], predicted_, smoothing_function=chencherry.method5)
+        print('bleu score5:',bleu5) 
+        bleus.append(bleu5)    
     except:
         pass
 
-    return bleu(actual, predicted, smoothing_function=chencherry.method1), predicted, actual
+    return max(bleus), predicted, actual
 
 def create_exp_dir(path, scripts_to_save=None):
   if not os.path.exists(path):
