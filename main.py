@@ -29,12 +29,12 @@ print('using device', device)
 
 print('eecuting Attn Decoder')
 parser.add_argument('--begin_epoch', type=float, default=0, help='PC Method begin')
-parser.add_argument('--stop_epoch', type=float, default=5, help='Stop training on the framework')
+parser.add_argument('--stop_epoch', type=float, default=20, help='Stop training on the framework')
 parser.add_argument('--report_freq', type=float, default=10, help='report frequency')
 
-parser.add_argument('--epochs', type=int, default=20, help='num of training epochs')
+parser.add_argument('--epochs', type=int, default=50, help='num of training epochs')
 
-parser.add_argument('--batch_size', type=int, default=10, help='batch size')
+parser.add_argument('--batch_size', type=int, default=64, help='batch size')
 ####################################################################################
 parser.add_argument('--grad_clip', type=float, default=5, help='gradient clipping')
 parser.add_argument('--A_lr', type=float, default=3e-4, help='learning rate for A')
@@ -59,8 +59,8 @@ parser.add_argument('--hidden_size', type=int, default=256, help='hidden size')
 
 parser.add_argument('--model1_lr', type=float, default=1e-3, help='model1 starting lr')
 parser.add_argument('--model1_lr_min', type=float, default=5e-4, help='model1 min lr')
-parser.add_argument('--model2_lr', type=float, default=1e-8, help='model2 starting lr')
-parser.add_argument('--model2_lr_min', type=float, default=5e-9, help='model2 min lr')
+parser.add_argument('--model2_lr', type=float, default=1e-3, help='model2 starting lr')
+parser.add_argument('--model2_lr_min', type=float, default=5e-4, help='model2 min lr')
 
 
 
@@ -102,7 +102,7 @@ model2_mom = args.model2_mom
 A_wd = args.A_wd
 report_freq = args.batch_size
 
-args.save = '{}-{}-test-val'.format(args.save, time.strftime("%Y%m%d-%H%M%S"))
+args.save = '{}-{}-e20-50'.format(args.save, time.strftime("%Y%m%d-%H%M%S"))
 create_exp_dir(args.save, scripts_to_save=glob.glob('*.py'))
 print('saving in:', str(args.save))
 writer = SummaryWriter('runs/'+str(args.save))
