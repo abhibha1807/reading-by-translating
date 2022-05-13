@@ -6,6 +6,8 @@ from nltk.translate.bleu_score import SmoothingFunction
 from nltk.translate import bleu
 import shutil
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+from sacrebleu.metrics import BLEU
+
 # device = "cuda"
 
 import operator
@@ -75,6 +77,14 @@ def get_bleu_score(model,test_inputs, tokenizer, vocab):
         bleu5 = bleu([actual_], predicted_, smoothing_function=chencherry.method5)
         print('bleu score5:',bleu5) 
         bleus.append(bleu5)    
+    except:
+        pass
+
+    try:
+        sacrebleu = BLEU()
+        result = bleu.corpus_score(predicted_, [actual_])
+        print('sacre bleu score:',result) 
+        bleus.append(result)    
     except:
         pass
 
