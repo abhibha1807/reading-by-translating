@@ -14,7 +14,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: research
-        image: gitlab-registry.nautilus.optiputer.net/vamsirk/research-containers
+        image:gitlab-registry.nrp-nautilus.io/prp/jupyter-stack/prp:latest
         imagePullPolicy: Always
         workingDir: /abhibha-volume/reading-by-translating/
         command: ["bash","train.sh"]
