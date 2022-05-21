@@ -1,0 +1,1360 @@
+import operator, functools
+from sacremoses import MosesPunctNormalizer, MosesTokenizer
+from tqdm import tqdm
+# from accelerate import Accelerator
+import sys
+import wandb
+import nltk
+from nltk.tokenize import word_tokenize
+import os
+import random
+import tqdm
+import sys
+import time
+import glob
+import numpy as np
+import torch
+import utils
+import logging
+import gc
+import argparse
+
+import torch
+import torch.nn as nn
+import torch.utils
+import torch.nn.functional as F
+from torch.nn.utils.rnn import pad_sequence
+from torch.autograd import Variable
+from torch.optim import lr_scheduler
+from torch import optim
+import torch.backends.cudnn as cudnn
+from torch.utils.data import TensorDataset, DataLoader, RandomSampler, SequentialSampler, SubsetRandomSampler
+
+from tokenizers import Tokenizer
+import datasets
+from sacremoses import MosesPunctNormalizer, MosesTokenizer
+from data_set import *
+from transformers import GPT2Tokenizer, AutoTokenizer, AutoModelForSeq2SeqLM
+
+import torchtext
+import torch
+from torchtext.data.utils import get_tokenizer
+from collections import Counter
+from torchtext.vocab import Vocab,vocab
+from torchtext.utils import download_from_url, extract_archive
+import io
+
+import nltk
+import math
+from nltk.tokenize import word_tokenize
+from tqdm import tqdm
+# from accelerate import Accelerator
+# from RNN import *
+# from RNN_helsinki import *
+from attention_params import *
+# from mBART import *
+# from GPT import *
+import gc
+from architect_adam_rnn import *
+from hyperparams import *
+
+nltk.download('punkt')
+
+parser = argparse.ArgumentParser("Machine Translation")
+parser.add_argument('--dataset_name', type=str, default='wmt14_gigafren', help='dataset_name')
+parser.add_argument('--num_beams', type=int, default=2, help='Beam Size')
+parser.add_argument('--max_source_length', type=int, default=50, help='Max Source length')
+parser.add_argument('--max_target_length', type=int, default=50, help='Max Target length')
+parser.add_argument('--pad_to_max_length', type=bool, default=False, help='Pad to max length')
+parser.add_argument('--ignore_pad_token_for_loss', type=bool, default=True, help='Ignore pad token for loss')
+parser.add_argument('--per_device_train_batch_size', type=int, default=64, help='Train Batch Size')
+parser.add_argument('--per_device_eval_batch_size', type=int, default=64, help='Eval Batch Size')
+
+parser.add_argument('--mbart_learning_rate', type=float, default=1e-3, help='mBART learning rate')
+parser.add_argument('--mbart_learning_rate_min', type=float, default=5e-4, help='mBART min learning rate')
+parser.add_argument('--mbart_momentum', type=float, default=0.9, help='mBART momentum')
+parser.add_argument('--mbart_weight_decay', type=float, default=0, help='mBART weigth decay')
+
+parser.add_argument('--gpt_learning_rate', type=float, default=1e-3, help='GPT learning rate')
+parser.add_argument('--gpt_learning_rate_min', type=float, default=5e-4, help='GPT min learning rate')
+parser.add_argument('--gpt_momentum', type=float, default=0.9, help='GPT momentum')
+parser.add_argument('--gpt_weight_decay', type=float, default=0, help='GPT weigth decay')
+
+parser.add_argument('--rnn_learning_rate_adam', type=float, default=1e-3, help='RNN learning rate')
+parser.add_argument('--rnn_learning_rate_min_adam', type=float, default=5e-4, help='RNN min learning rate')
+parser.add_argument('--rnn_momentum', type=float, default=0.9, help='RNN momentum')
+parser.add_argument('--rnn_weight_decay', type=float, default=0, help='RNN weigth decay')
+parser.add_argument('--beta1', type=float, default=0.9, help='Beta 1')
+parser.add_argument('--beta2', type=float, default=0.999, help='Beta 2')
+parser.add_argument('--eps', type=float, default=1e-8, help='Epsilon')
+parser.add_argument('--rnn_learning_rate_sgd', type=float, default=1e-2, help='RNN learning rate sgd')
+parser.add_argument('--rnn_learning_rate_min_sgd', type=float, default=1e-3, help='RNN min learning rate sgd')
+
+parser.add_argument('--begin_epoch', type=int, default=0, help='Begin Epoch')
+parser.add_argument('--stop_epoch', type=int, default=5, help='Stop Epoch')
+parser.add_argument('--report_freq', type=int, default=50, help='Report Frequency')
+parser.add_argument('--gpu', type=int, default=0, help='GPU')
+parser.add_argument('--num_train_epochs', type=int, default=25, help='Train Epochs')
+parser.add_argument('--seed', type=int, default=seed_, help='Seed')
+
+parser.add_argument('--grad_clip', type=int, default=1, help='Grad clip')
+parser.add_argument('--A_momentum', type=float, default=0.9, help='A momentum')
+parser.add_argument('--A_learning_rate', type=float, default=1e-3, help='A learning rate')
+parser.add_argument('--A_weight_decay', type=float, default=1e-3, help='A weight decay')
+
+parser.add_argument('--B_momentum', type=float, default=0.9, help='B momentum')
+parser.add_argument('--B_learning_rate', type=float, default=1e-3, help='B learning rate')
+parser.add_argument('--B_weight_decay', type=float, default=1e-3, help='B weight decay')
+
+parser.add_argument('--lambda_par', type=float, default=0.5, help='Lambda parameter')
+parser.add_argument('--train_num_points', type=int, default=5000, help='Train number points')
+parser.add_argument('--save', type=str, default='EXP_aug', help='Save dir')
+parser.add_argument('--start_from_checkpoint', type=bool, default=False, help='Use checkpoint')
+parser.add_argument('--logging', type=bool, default=False, help='Use logging')
+parser.add_argument('--weight_decay', type=float, default=0.0, help='Weight decay')
+
+args = parser.parse_args()
+
+args.exp_name = "RNN_"+str(int(args.train_num_points/1000))+"k_aug"
+args.rnn_PATH = os.path.join(args.save,"rnn_"+str(int(args.train_num_points/1000))+".pt")
+args.mbart_PATH = os.path.join(args.save,'mBART_'+str(int(args.train_num_points/1000))+".pt")
+args.gpt_PATH = os.path.join(args.save,'GPT_'+str(int(args.train_num_points/1000))+".pt")
+
+class parse_args():
+    def __init__(self):
+        self.dataset_name = 'wmt14_gigafren'
+        self.predict_with_generate = True
+        self.dataset_config_name = 'fr-en'
+        self.num_beams = 2
+        self.max_source_length = 50
+        self.max_target_length = 50
+        self.val_max_target_length = 15
+        self.pad_to_max_length = False
+        self.ignore_pad_token_for_loss = True
+        self.preprocessing_num_workers = 4
+        self.max_length = 15
+        self.per_device_train_batch_size = 64
+        self.per_device_eval_batch_size = 64
+#         self.learning_rate = 5e-5
+#         self.weight_decay = 0.0
+#         self.num_train_epochs = 5
+        self.gradient_accumulation_steps = 1
+        self.lr_scheduler_type = 'linear'
+        self.num_warmup_steps = 0
+        
+        # BART and GPT and DS model
+        self.mbart_learning_rate = 1e-3
+        self.mbart_learning_rate_min = 5e-4
+        self.mbart_momentum = 0.9
+        self.mbart_weight_decay = 0
+        
+        self.gpt_learning_rate = 1e-3
+        self.gpt_learning_rate_min = 5e-4
+        self.gpt_momentum = 0.9
+        self.gpt_weight_decay = 0
+        
+        self.rnn_learning_rate = 1e-3
+        self.rnn_learning_rate_min = 1e-5
+        self.beta1 = 0.9
+        self.beta2 = 0.999
+        self.eps = 1e-08
+        self.rnn_weight_decay = 0
+        
+        self.begin_epoch = 0
+        self.stop_epoch = 5
+        self.report_freq = 50
+        self.gpu = 0
+        self.max_train_steps = None
+        self.num_train_epochs = 25
+        self.seed = seed_
+        
+        self.grad_clip = 1
+        self.A_momentum = 0.9
+        self.A_learning_rate = 3e-4
+        self.A_weight_decay = 1e-3
+        
+        self.B_learning_rate = 3e-4
+        self.B_weight_decay = 1e-3
+        self.B_momentum = 0.9
+        self.lambda_par = 0.5
+        
+        # Other hyperparameters
+        self.train_num_points = 5000
+        self.save = 'EXP_aug'
+        self.model_path = '/abhisingh-volume/french_english/saved_models'
+        self.exp_name = "RNN_"+str(int(self.train_num_points/1000))+"k_aug"
+        self.rnn_PATH = os.path.join(self.save,"rnn_"+str(int(self.train_num_points/1000))+".pt")
+        self.mbart_PATH = os.path.join(self.save,'mBART_'+str(int(self.train_num_points/1000))+".pt")
+        self.gpt_PATH = os.path.join(self.save,'GPT_'+str(int(self.train_num_points/1000))+".pt")
+        self.start_from_checkpoint = False
+        self.logging = True
+
+
+# args=parse_args()
+
+if not os.path.isdir(args.save) and args.logging==True:
+    os.mkdir(args.save) 
+    print(args.rnn_PATH)
+
+if args.logging == True:
+    os.environ['WANDB_API_KEY']='c0f0a59b4bd9dae783b5aa458996ebf0386e16de'
+    os.environ['WANDB_NAME']=args.exp_name
+    wandb.init(project="Translation",config=args)
+
+
+# In[9]:
+
+
+mpn = MosesPunctNormalizer(pre_replace_unicode_punct=True)
+
+
+# In[10]:
+
+
+try:
+    if args.logging==True:
+        utils.create_exp_dir(args.save, scripts_to_save=glob.glob('*.py'))
+except:
+    pass
+
+
+# In[11]:
+
+
+if args.logging == True:
+    log_format = '%(asctime)s %(message)s'
+    logging.basicConfig(stream=sys.stdout, level=logging.INFO,
+        format=log_format, datefmt='%m/%d %I:%M:%S %p')
+    
+    open(os.path.join(args.save, 'log.txt'),'w').close()
+    
+    fh = logging.FileHandler(os.path.join(args.save, 'log.txt'))
+    fh.setFormatter(logging.Formatter(log_format))
+    logging.getLogger().addHandler(fh)
+
+
+# In[12]:
+
+
+def setup_seed():
+    np.random.seed(args.seed)
+    torch.cuda.set_device(args.gpu)
+    cudnn.benchmark = True
+    torch.manual_seed(args.seed)
+    cudnn.enabled=True
+    torch.cuda.manual_seed(args.seed)
+
+
+# In[13]:
+
+
+setup_seed()
+
+
+# In[14]:
+
+
+en_de="Helsinki-NLP/opus-mt-en-de"
+
+
+# In[15]:
+
+
+def load_tokenizer():
+    mbart_tokenizer = AutoTokenizer.from_pretrained(en_de)
+    # Load the GPT-2 tokenizer.
+    gpt_tokenizer = GPT2Tokenizer.from_pretrained('distilgpt2')
+    gpt_tokenizer.pad_token = gpt_tokenizer.eos_token
+    # #### DS Tokenizer
+    rnn_tokenizer = AutoTokenizer.from_pretrained(en_de)
+#     rnn_tokenizer_german = get_tokenizer('moses', language='de')
+#     rnn_tokenizer_english = get_tokenizer('moses', language='en')
+#     rnn_tokenizer_french = Tokenizer.from_file("french_tokenizer_enfr.json")
+#     rnn_tokenizer_english = Tokenizer.from_file("english_tokenizer_enfr.json")
+    return mbart_tokenizer,gpt_tokenizer,rnn_tokenizer
+
+
+# In[16]:
+
+
+mbart_tokenizer,gpt_tokenizer,rnn_tokenizer = load_tokenizer()
+
+
+# In[17]:
+
+
+url_base = 'https://raw.githubusercontent.com/multi30k/dataset/master/data/task1/raw/'
+train_urls = ('train.de.gz', 'train.en.gz')
+val_urls = ('val.de.gz', 'val.en.gz')
+test_urls = ('test_2016_flickr.de.gz', 'test_2016_flickr.en.gz')
+
+
+# In[18]:
+
+
+train_filepaths = [extract_archive(download_from_url(url_base + url))[0] for url in train_urls]
+val_filepaths = [extract_archive(download_from_url(url_base + url))[0] for url in val_urls]
+test_filepaths = [extract_archive(download_from_url(url_base + url))[0] for url in test_urls]
+
+
+# In[19]:
+
+
+def data_process(filepaths):
+    raw_de_iter = iter(io.open(filepaths[0], encoding="utf8"))
+    raw_en_iter = iter(io.open(filepaths[1], encoding="utf8"))
+    data = []
+    i=0
+    for (raw_de, raw_en) in zip(raw_de_iter, raw_en_iter):
+        rnn_english = rnn_tokenizer(raw_en,padding=False,truncation=True,max_length=50)
+        rnn_german = rnn_tokenizer(raw_de,padding=False,truncation=True,max_length=50)
+        
+        gpt_english = gpt_tokenizer(raw_en, padding=False,truncation=False)
+    
+        mbart_english = mbart_tokenizer(raw_en, padding=False,truncation=False)
+        mbart_german = mbart_tokenizer(raw_de,padding=False,truncation=False)
+        
+        
+        data.append((rnn_german['input_ids'],rnn_english['input_ids'] ,gpt_english['input_ids'],gpt_english['attention_mask'],mbart_english['input_ids'],mbart_english['attention_mask'],mbart_german['input_ids'],mbart_german['attention_mask'],i))
+        i+=1
+    return data
+
+
+# In[20]:
+
+
+train_data = data_process(train_filepaths)[:args.train_num_points]
+val_data = data_process(val_filepaths)
+test_data = data_process(test_filepaths)
+
+
+# In[21]:
+
+
+use_file_aug = False
+if use_file_aug == True:
+    aug_path = ['aug.de','aug.en']
+    aug_data = data_process(aug_path)[:args.train_num_points]
+
+
+# In[22]:
+
+
+special_tokens_dict = {'additional_special_tokens': ['<s>']}
+num_added_toks = rnn_tokenizer.add_special_tokens(special_tokens_dict)
+
+
+# In[23]:
+
+
+rnn_tokenizer.bos_token = '<s>'
+
+
+# In[ ]:
+
+
+BOS_IDX = rnn_tokenizer.bos_token_id
+
+
+# In[ ]:
+
+
+def generate_batch(data_batch):
+    rnn_de_batch, rnn_en_batch = [], []
+    gpt_ids_batch, gpt_attn_batch = [], []
+    mbart_english_ids, mbart_english_attn = [], []
+    mbart_german_ids, mbart_german_attn = [], []
+    attn_idxs = []
+    for (de_item, en_item,gpt_id,gpt_attn,mbart_eng_id,mbart_eng_attn,mbart_de_id,mbart_de_attn,attn_idx) in data_batch:
+#         print(de_item)
+        rnn_de_batch.append(torch.cat([torch.tensor([BOS_IDX]), torch.tensor(de_item)], dim=0))
+        rnn_en_batch.append(torch.cat([torch.tensor([BOS_IDX]), torch.tensor(en_item)], dim=0))
+        gpt_ids_batch.append(torch.tensor(gpt_id,dtype=torch.int64))
+        gpt_attn_batch.append(torch.tensor(gpt_attn,dtype=torch.int64))
+        mbart_english_ids.append(torch.tensor(mbart_eng_id,dtype=torch.int64))
+        mbart_english_attn.append(torch.tensor(mbart_eng_attn,dtype=torch.int64))
+        mbart_german_ids.append(torch.tensor(mbart_de_id,dtype=torch.int64))
+        mbart_german_attn.append(torch.tensor(mbart_de_attn,dtype=torch.int64))
+        attn_idxs.append(torch.tensor(attn_idx,dtype = torch.int64))
+        
+#     print(gpt_ids_batch)
+    rnn_de_batch = pad_sequence(rnn_de_batch , batch_first=True, padding_value=rnn_tokenizer.pad_token_id)
+    rnn_en_batch = pad_sequence(rnn_en_batch , batch_first=True, padding_value=rnn_tokenizer.pad_token_id)
+    gpt_ids_batch = pad_sequence(gpt_ids_batch, batch_first=True, padding_value=gpt_tokenizer.pad_token_id)
+    gpt_attn_batch = pad_sequence(gpt_attn_batch, batch_first=True, padding_value=0)
+    mbart_english_ids = pad_sequence(mbart_english_ids, batch_first=True, padding_value=mbart_tokenizer.pad_token_id)
+    mbart_english_attn = pad_sequence(mbart_english_attn, batch_first=True, padding_value=0)
+    mbart_german_ids = pad_sequence(mbart_german_ids, batch_first=True, padding_value=mbart_tokenizer.pad_token_id)
+    mbart_german_attn = pad_sequence(mbart_german_attn, batch_first=True, padding_value=0)
+    attn_idxs = torch.tensor(attn_idxs)
+    
+    return rnn_de_batch,rnn_en_batch,gpt_ids_batch,gpt_attn_batch,mbart_english_ids,mbart_english_attn,mbart_german_ids,mbart_german_attn,attn_idxs
+
+
+# In[ ]:
+
+
+
+train_dataloader = DataLoader(train_data,batch_size=args.per_device_train_batch_size,
+                        shuffle=True, collate_fn=generate_batch)
+valid_dataloader = DataLoader(val_data, batch_size=args.per_device_train_batch_size,
+                        shuffle=True, collate_fn=generate_batch)
+test_dataloader = DataLoader(test_data, batch_size=args.per_device_train_batch_size,
+                       shuffle=True, collate_fn=generate_batch)
+
+
+# In[ ]:
+
+
+if use_file_aug:
+    aug_dataloader = DataLoader(aug_data,batch_size=args.per_device_train_batch_size,
+                            shuffle=True, collate_fn=generate_batch)
+
+
+# In[ ]:
+
+
+mt = MosesTokenizer(lang='en')
+
+
+# In[ ]:
+
+
+metric_train = datasets.load_metric('sacrebleu',tokenize=mt)
+metric_test = datasets.load_metric('sacrebleu',tokenize=mt)
+metric_valid = datasets.load_metric('sacrebleu',tokenize=mt)
+
+
+# In[ ]:
+
+
+mbart_criterion = torch.nn.CrossEntropyLoss(ignore_index = mbart_tokenizer.pad_token_id, reduction='none')
+mbart_criterion = mbart_criterion.cuda()
+
+
+# In[ ]:
+
+
+PAD_IDX = rnn_tokenizer.pad_token_id
+rnn_criterion=torch.nn.CrossEntropyLoss(ignore_index =PAD_IDX,reduction='mean')# reduction='mean'
+rnn_criterion=rnn_criterion.cuda()
+
+
+# In[ ]:
+
+
+gpt_criterion = torch.nn.CrossEntropyLoss(ignore_index = gpt_tokenizer.pad_token_id, reduction='none')
+gpt_criterion = gpt_criterion.cuda()
+
+
+# In[ ]:
+
+
+mbart_model = mBART(mbart_criterion, mbart_tokenizer,MODEL=en_de)
+mbart_model = mbart_model.cuda()
+
+
+# In[ ]:
+
+
+gpt_model = GPT(gpt_criterion, gpt_tokenizer)
+gpt_model = gpt_model.cuda()
+
+
+# In[ ]:
+
+
+rnn_model = RNN_MODEL(rnn_criterion,rnn_tokenizer)
+
+
+# In[ ]:
+
+
+rnn_model = rnn_model.cuda()
+
+
+# In[ ]:
+
+
+def init_weights(m: nn.Module):
+    for name, param in m.named_parameters():
+        if 'weight' in name:
+            nn.init.normal_(param.data, mean=0, std=0.01)
+        else:
+            nn.init.constant_(param.data, 0)
+
+
+# In[ ]:
+
+
+rnn_model.apply(init_weights)
+
+
+# In[ ]:
+
+
+def group_parameters(model):
+    no_decay = ["bias", "LayerNorm.weight"]
+    optimizer_grouped_parameters = [
+        {
+            "params": [p for n, p in model.named_parameters() if not any(nd in n for nd in no_decay)],
+            "weight_decay": args.weight_decay,
+        },
+        {
+            "params": [p for n, p in model.named_parameters() if any(nd in n for nd in no_decay)],
+            "weight_decay": 0.0,
+        },
+    ]
+    return optimizer_grouped_parameters
+
+
+# In[ ]:
+
+
+# Optimizers
+mbart_params = group_parameters(mbart_model)
+mbart_optimizer = torch.optim.SGD(mbart_params,args.mbart_learning_rate,momentum=args.mbart_momentum,weight_decay=args.mbart_weight_decay)
+
+
+gpt_params = group_parameters(gpt_model)
+gpt_optimizer = torch.optim.SGD(gpt_params,args.gpt_learning_rate,momentum=args.gpt_momentum,weight_decay=args.gpt_weight_decay)
+
+rnn_optimizer = optim.SGD(rnn_model.parameters(), lr = args.rnn_learning_rate_sgd, momentum=args.rnn_momentum)
+# rnn_optimizer = optim.AdamW(rnn_model.model.parameters(),args.rnn_learning_rate,betas=(args.beta1,args.beta2), eps=args.eps)
+
+
+# In[ ]:
+
+
+# Schedulers
+scheduler_mbart = torch.optim.lr_scheduler.CosineAnnealingLR(mbart_optimizer, float(args.num_train_epochs), eta_min=args.mbart_learning_rate_min)
+
+
+# scheduler_rnn = torch.optim.lr_scheduler.CosineAnnealingLR(rnn_optimizer, float(args.num_train_epochs), eta_min=args.rnn_learning_rate_min)
+
+scheduler_rnn = torch.optim.lr_scheduler.CosineAnnealingLR(rnn_optimizer, float(args.stop_epoch), eta_min=args.rnn_learning_rate_min_sgd)
+
+
+scheduler_gpt  = torch.optim.lr_scheduler.CosineAnnealingLR(gpt_optimizer, float(args.num_train_epochs), eta_min=args.gpt_learning_rate_min)
+
+
+# In[ ]:
+
+
+# load the attention parameters for the GPT-2 model
+A = attention_params(len(train_data))
+# attention_weights.load_state_dict(torch.load(os.path.join(args.save, 'A.pt')))
+A = A.cuda()
+
+
+# In[9]:
+
+
+# In[8]:
+# load the attention parameters for BART model
+B = attention_params(len(train_data))
+# attention_weights.load_state_dict(torch.load(os.path.join(args.save, 'B.pt')))
+B = B.cuda()
+
+
+# In[ ]:
+
+
+lr_gpt = scheduler_gpt.get_lr()[0]
+
+lr_mbart = scheduler_mbart.get_lr()[0]
+
+lr_rnn = scheduler_rnn.get_lr()[0]
+# early_stopping = EarlyStopping(path =args.model_path)
+
+start_epoch = 0
+
+architect = Architect(gpt_model, mbart_model, rnn_model, A, B, args)
+
+print("Starting the Epochs:")
+
+
+# In[ ]:
+
+
+def epoch_time(start_time, end_time):
+    elapsed_time = end_time - start_time
+    elapsed_mins = int(elapsed_time / 60)
+    elapsed_secs = int(elapsed_time - (elapsed_mins * 60))
+    return elapsed_mins, elapsed_secs
+
+
+# In[ ]:
+
+
+
+def evaluate(rnn_model, iterator):
+    
+    rnn_model.model.eval()
+    
+    epoch_loss = 0
+    
+    with torch.no_grad():
+    
+        for i, batch in enumerate(iterator):
+
+            src = batch[0].to(device)
+            trg = batch[1].to(device)
+
+            loss = rnn_model(src, trg, 0).loss #turn off teacher forcing
+            epoch_loss += loss.item()
+        
+    return epoch_loss / len(iterator)
+
+
+# In[ ]:
+
+
+def normalize_gen(gen_sentences):
+#     textfile = open(filename, "a")
+    lines=[]
+    for line in gen_sentences:
+#         for line in istream:
+        line = line.replace("▁"," ")
+#         line = line.replace("\u015e", "\u0218").replace("\u015f", "\u0219")
+#         line = line.replace("\u0162", "\u021a").replace("\u0163", "\u021b")
+#         line = line.replace("\u0218", "S").replace("\u0219", "s") #s-comma
+#         line = line.replace("\u021a", "T").replace("\u021b", "t") #t-comma
+#         line = line.replace("\u0102", "A").replace("\u0103", "a")
+#         line = line.replace("\u00C2", "A").replace("\u00E2", "a")
+#         line = line.replace("\u00CE", "I").replace("\u00EE", "i")
+#         line = line.strip()
+#         line = mpn.normalize(line)
+#         textfile.write(line+'\n')
+        lines.append(line)
+#     textfile.close()
+    return lines
+
+
+# In[ ]:
+
+
+def process_target_sentence(target_sentences):
+    ro_d_test_refs=[]
+    for line in target_sentences:
+        line = line.replace("▁"," ")
+        line = line.strip()
+#         line = mpn.normalize(line)
+#         if line is None:
+#             print("Something BAD")
+        ro_d_test_refs.append([line])
+    return ro_d_test_refs
+
+
+# In[ ]:
+
+
+def valid_generate(rnn_model, iterator, metric_valid, beam_width=1,temperature = 1.0, do_sample=False, repetition_penalty = 1.0,top_p = 0.9, top_k = 100):
+    
+    rnn_model.model.eval()
+    
+    epoch_loss = 0
+    
+    with torch.no_grad():
+    
+        for i, batch in enumerate(iterator):
+            trans_sentences = []
+            labels_sentences = []
+            src = batch[0].to(device)
+            trg = batch[1].to(device)
+
+            pred_sents = rnn_model.generate(src,beam_width=beam_width,temperature=temperature , do_sample=do_sample, repetition_penalty=repetition_penalty ,top_p=top_p, top_k=top_k)
+#             pred_sents = rnn_model.tokenizer_english.decode_batch(pred_sents.detach().numpy(),skip_special_tokens=True)
+            
+#             print(trg)
+            pred_sents = rnn_model.tokenizer.batch_decode(pred_sents,skip_special_tokens=True)
+            given_sents = rnn_model.tokenizer.batch_decode(trg,skip_special_tokens=True)
+#                 print(sent)
+#             print(pred_sents)
+#             print(given_sents)
+#             given_sents =  rnn_model.tokenizer_english.decode_batch(trg.detach().cpu().numpy(),skip_special_tokens=True)
+            pred_sents = normalize_gen(pred_sents)
+            given_sents = process_target_sentence(given_sents)
+#             print(given_sents)
+#             print(pred_sents)
+            metric_valid.add_batch(predictions=pred_sents, references=given_sents)
+            
+    print("Pred Sents: ",pred_sents[-2:])
+    print("Labels Sents: ",given_sents[-2:])
+    return metric_valid.compute()
+
+
+# In[ ]:
+
+
+metric_train = datasets.load_metric('sacrebleu',tokenize=mt)
+metric_test = datasets.load_metric('sacrebleu',tokenize=mt)
+metric_valid = datasets.load_metric('sacrebleu',tokenize=mt)
+
+
+# In[ ]:
+
+
+
+beam_width=1
+temperature = 1.0
+do_sample=False
+repetition_penalty = 1.1
+top_p = 0.9
+top_k = 100
+
+
+# In[ ]:
+
+
+best_bleu=0
+
+# In[ ]:
+if args.start_from_checkpoint:
+    try:
+        checkpoint = torch.load(args.rnn_PATH)
+        rnn_model.load_state_dict(checkpoint['model_state_dict'])
+        rnn_optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+        args.begin_epoch = checkpoint['epoch']
+        best_bleu = checkpoint['bleu']
+    except:
+        pass
+
+
+    try:
+        checkpoint = torch.load(args.mbart_PATH)
+        mbart_model.load_state_dict(checkpoint['model_state_dict'])
+        mbart_optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+    except:
+        pass
+
+
+    try:
+        checkpoint = torch.load(args.gpt_PATH)
+        gpt_model.load_state_dict(checkpoint['model_state_dict'])
+        gpt_optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+    except:
+        pass
+
+
+# In[ ]:
+
+
+print(args.begin_epoch)
+
+
+# In[ ]:
+
+
+best_bleu = valid_generate(rnn_model,valid_dataloader,metric_valid, beam_width=beam_width,temperature = temperature, do_sample=do_sample, repetition_penalty = repetition_penalty,top_p = top_p, top_k = top_k)['score']
+
+valid_loss = evaluate(rnn_model,valid_dataloader)
+
+print(valid_loss)
+print(best_bleu)
+if args.logging:
+    wandb.log({'Valid BLEU':best_bleu,'Epoch Interval':0})
+    wandb.log({'Valid Loss':valid_loss,'Epoch':0})
+
+
+# In[ ]:
+
+
+print(A([range(2)]))
+
+
+# In[ ]:
+
+
+activation = torch.nn.Sigmoid()
+
+
+# In[ ]:
+
+
+
+rnn_optimizer = optim.AdamW(rnn_model.model.parameters(),args.rnn_learning_rate_adam,betas=(args.beta1,args.beta2), eps=args.eps)
+
+
+scheduler_rnn = torch.optim.lr_scheduler.CosineAnnealingLR(rnn_optimizer, float(args.num_train_epochs), eta_min=args.rnn_learning_rate_min_adam)
+
+
+# In[ ]:
+if args.begin_epoch==5:
+    args.begin_epoch = 0
+
+for epoch in range(args.begin_epoch,args.num_train_epochs):
+# for epoch in range(args.begin_epoch,args.stop_epoch):
+#     if completed_steps >= args.max_train_steps:
+#         break
+#     lr_gpt = scheduler_gpt.get_lr()[0]
+
+#     lr_mbart = scheduler_mbart.get_lr()[0]
+
+    lr_DS = scheduler_rnn.get_lr()[0]
+    if args.logging:
+        logging.info(str(('epoch %d lr BART %e lr Clf %e', epoch, lr_gpt, lr_mbart, lr_DS)))
+    # training
+        
+    aug_loss  = utils.AverageMeter()
+    vanilla_loss = utils.AverageMeter()
+    objs = utils.AverageMeter()
+    train_ppl = utils.AverageMeter()
+    valid_ppl = utils.AverageMeter()
+    train_loss = utils.AverageMeter()
+    aug_loss = utils.AverageMeter()
+    gpt_loss = utils.AverageMeter()
+    mbart_loss = utils.AverageMeter()
+
+    #     top1 = utils.AvgrageMeter()
+    #     top5 = utils.AvgrageMeter()
+    #     rouge1 = utils.AvgrageMeter()
+    #     rougel = utils.AvgrageMeter()
+    #     bleu=utils.AvgrageMeter()
+    batch_loss_gpt, batch_loss_mbart, batch_loss_rnn, batch_count = 0, 0, 0, 0
+    valid_it = iter(valid_dataloader)
+
+    mbart_model.eval()
+
+    rnn_model.train()
+
+    gpt_model.eval()
+    start_time = time.time()
+#     for step, (train_batch,attn_idx ) in enumerate(train_dataloader):
+# rnn_de_batch,rnn_en_batch,gpt_ids_batch,gpt_attn_batch,mbart_english_ids,mbart_english_attn,mbart_german_ids,mbart_german_attn,attn_idxs
+    for step, train_batch in enumerate(train_dataloader):
+        rnn_src_ids = Variable(train_batch[0], requires_grad=False).cuda()
+        rnn_trg_ids = Variable(train_batch[1], requires_grad=False).cuda()
+
+        gpt_src_ids = Variable(train_batch[2],requires_grad=False).cuda()
+        gpt_src_attn = Variable(train_batch[3],requires_grad=False).cuda()
+
+#         mbart_src_ids = Variable(train_batch[4],requires_grad=False).cuda()
+#         mbart_src_attn = Variable(train_batch[5],requires_grad=False).cuda()
+
+#         mbart_trg_ids = Variable(train_batch[6],requires_grad=False).cuda()
+#         mbart_trg_attn = Variable(train_batch[7],requires_grad=False).cuda()
+        
+#         attn_idx = train_batch[8]
+
+#         n = rnn_src_ids.shape[0]
+        
+#         valid_batch = next(iter(valid_dataloader))
+        
+#         try:
+#             valid_batch = next(valid_it)
+#         except:
+#             valid_it = iter(valid_dataloader)
+#             valid_batch = next(valid_it)
+#         print(valid_batch)
+#         valid_rnn_src_ids = Variable(valid_batch[0], requires_grad=False).cuda()
+#         valid_rnn_trg_ids = Variable(valid_batch[1], requires_grad=False).cuda()
+# # article_DS, summary_DS, article_bart, article_bart_attn, summary_bart, summary_bart_attn, summary_gpt, summary_gpt_attn, valid_article_DS, valid_summary_DS, attn_idx, eta_gpt, eta_bart, eta_DS, gpt_optimizer, bart_optimizer, DS_optimizer
+#         if args.begin_epoch <= epoch <= args.stop_epoch:
+#             architect.step(rnn_src_ids, rnn_trg_ids, mbart_src_ids, mbart_src_attn, mbart_trg_ids,
+#                     mbart_trg_attn, gpt_src_ids, gpt_src_attn, valid_rnn_src_ids, valid_rnn_trg_ids, attn_idx, lr_gpt, lr_mbart, lr_rnn, gpt_optimizer, mbart_optimizer, rnn_optimizer)
+
+#         if args.begin_epoch <= epoch <= args.stop_epoch:
+#             gpt_optimizer.zero_grad()
+#             loss_gpt = CTG_loss(gpt_src_ids, gpt_src_attn, gpt_src_ids, gpt_src_attn, attn_idx, A, gpt_model)
+#             # store the batch loss
+#             batch_loss_gpt += loss_gpt.item()
+# #             print("GPT LOSS ", loss_gpt.item())
+#             gpt_loss.update(loss_gpt.item(),n)
+#             loss_gpt.backward()
+#             if args.logging:
+#                 wandb.log({'GPT Loss':loss_gpt.item()})
+#             nn.utils.clip_grad_norm(gpt_model.parameters(), args.grad_clip)
+
+#             gpt_optimizer.step()
+
+#             ######################################################################
+#             # Update the m-BART model
+#             mbart_optimizer.zero_grad()
+#             loss_mbart = CTG_loss(mbart_src_ids, mbart_src_attn, mbart_trg_ids, mbart_trg_attn, attn_idx, B, mbart_model)
+
+#             # store the batch loss
+#             batch_loss_mbart += loss_mbart.item()
+#             mbart_loss.update(loss_mbart.item(),n)
+#             if args.logging:
+#                 wandb.log({'mBART Loss':loss_mbart.item()})
+# #             print("mBART LOSS ", loss_mbart.item())
+#             nn.utils.clip_grad_norm(mbart_model.parameters(), args.grad_clip)
+
+#             mbart_optimizer.step()
+
+        # update the classifier model
+        # change it later since we need both S' and S to update
+
+        rnn_optimizer.zero_grad()
+
+        # the training loss
+        loss_tr = rnn_model.loss(rnn_src_ids, rnn_trg_ids)
+        
+#         rnn_src_ids = Variable(aug_batch[0], requires_grad=False).cuda()
+#         rnn_trg_ids = Variable(aug_batch[1], requires_grad=False).cuda()
+#         loss_aug = rnn_model.loss(rnn_src_ids, rnn_trg_ids)
+        
+        
+    #     print(rnn_src_ids)
+        # Loss on augmented dataset
+
+        loss_aug = calc_loss_aug(gpt_src_ids, gpt_src_attn, gpt_model, mbart_model, rnn_model)
+        
+    #         print("Augmentation Loss:")
+
+#         aug_loss.update(loss_aug.item(),n)
+#         vanilla_loss.update(loss_tr.item(),n)
+
+#         rnn_loss = loss_tr + (args.lambda_par*loss_aug)
+#         rnn_loss = loss_aug
+        rnn_loss = loss_tr + 0.5*loss_aug
+        if args.logging:
+            wandb.log({'Train data Loss':loss_tr.item()})
+            wandb.log({'Augmentation Loss':loss_aug.item()})
+            wandb.log({'Train Loss':rnn_loss.item()})
+    #         DS_loss=loss_tr
+
+        # store for printing
+        batch_loss_rnn += rnn_loss.item()
+
+        rnn_loss.backward()
+
+        nn.utils.clip_grad_norm(rnn_model.parameters(), args.grad_clip)
+
+        # update the classifier model
+        rnn_optimizer.step()
+#     for step,train_batch in enumerate(aug_dataloader):
+#         rnn_src_ids = Variable(train_batch[0], requires_grad=False).cuda()
+#         rnn_trg_ids = Variable(train_batch[1], requires_grad=False).cuda()
+#         rnn_optimizer.zero_grad()
+
+#         # the training loss
+#         loss_tr = rnn_model.loss(rnn_src_ids, rnn_trg_ids)
+#         wandb.log({'Aug data Loss':loss_tr.item()})
+#         rnn_loss = 0.2*loss_tr
+#         batch_loss_rnn += rnn_loss.item()
+
+#         rnn_loss.backward()
+
+#         nn.utils.clip_grad_norm(rnn_model.parameters(), args.grad_clip)
+#         rnn_optimizer.step()
+        
+    scheduler_rnn.step()
+#         pred_sents = rnn_model.generate(rnn_src_ids,1)
+#         pred_sents = rnn_model.tokenizer_english.decode_batch(pred_sents.detach().numpy(),skip_special_tokens=True)
+#         given_sents =  rnn_model.tokenizer_english.decode_batch(rnn_trg_ids.detach().cpu().numpy(),skip_special_tokens=True)
+#         pred_sents = normalize_gen(pred_sents)
+#         given_sents = process_target_sentence(given_sents)
+#         metric_train.add_batch(predictions=pred_sents, references=given_sents)
+        #         given_sents=DS_model.tokenizer.batch_decode(summary_DS,skip_special_tokens=True)
+        #         rouge_1,rouge_l=utils.rouge_sentences(pred_sents,given_sents)#rouge_sentences
+        #         bleu_scores=utils.bleu_sentences(pred_sents,given_sents)
+        #         bleu.update(bleu_scores,n)
+    #     train_refs=np.take(np.array(train_en_refs),attn_idx.cpu().numpy(),axis=0)
+    #     metric_train.add_batch(predictions=pred_sents,references=train_refs)
+#         objs.update(rnn_loss.item(), n)
+#         train_loss.update(loss_tr.item(),n)
+#         aug_loss.update(loss_aug.item(),n)
+        #         top1.update(prec1.item(), n)
+
+        #         top5.update(prec5.item(), n)
+        #         if rouge_1 is not None and rouge_l is not None:
+        #             rouge1.update(rouge_1,n)
+        # count the batch
+#         batch_count += 1
+#         print(f'\tTrain Loss: {objs.avg:.3f} | Train data Loss: {train_loss.avg:.3f} | Augmentation Loss: {aug_loss.avg:.3f} | Train PPL: {math.exp(objs.avg):7.3f} | GPT loss: {gpt_loss.avg:.3f} | mbart loss: {mbart_loss.avg:.3f}')
+
+#         break
+#         if step % args.report_freq == 0 or step == len(train_dataloader) - 1:
+#             valid_loss = evaluate(rnn_model, valid_dataloader)
+#             if valid_loss < best_valid_loss:
+#                 best_valid_loss = valid_loss
+#                 torch.save(rnn_model.model.state_dict(), 'tut3-model-mt-arch.pt')
+#                 valid_scores = valid_generate(rnn_model, valid_dataloader, metric_valid, beam_size = 1)
+#             end_time = time.time()
+#             epoch_mins, epoch_secs = epoch_time(start_time, end_time)
+#             train_scores = metric_train.compute()
+                
+#             print(f'Steps: {completed_steps} | Time: {epoch_mins}m {epoch_secs}s')
+#             print(f'\tTrain Loss: {objs.avg:.3f} | Train data Loss: {train_loss.avg:.3f} | Augmentation Loss: {aug_loss.avg:.3f} | Train PPL: {math.exp(objs.avg):7.3f} | GPT loss: {gpt_loss.avg:.3f} | mbart loss: {mbart_loss.avg:.3f}')
+#             print(f'\t Val. Loss: {valid_loss:.3f} |  Val. PPL: {math.exp(valid_loss):7.3f}')
+#             print("mBART loss :",mbart_loss.avg)
+#             print("GPT loss :",gpt_loss.avg)
+#             print("Valid BLEU: ",valid_scores['score'])
+#             print("Train BLEU: ",train_scores['score'])
+            
+#             logging.info(f"{'Steps':^7} | {'Epochs':^7} | {'Time':^12}")
+#             logging.info(f"{completed_steps:^7} | {epoch+1:^7} | {epoch_mins:^6} {'m':^1} {epoch_secs:^6} {'s':^1}")
+#             logging.info("-"*70)
+#             logging.info(f"{'Train Loss':^8} | {'Train Perplexiety':^14} | {'Train BLEU':^14}")
+#             logging.info(f"{objs.avg:^6.2} | {math.exp(objs.avg):^12.2} | {train_scores['score']:^12.2}")
+#             logging.info(f"{'Validation Loss':^8} | {'Validation Perplexiety':^14} | {'Validation BLEU':^14}")
+#             logging.info(f"{valid_loss:^6.2} | {math.exp(valid_loss):^12.2} | {valid_scores['score']:^12.2}")
+# #             logging.info(str(("Attention Weights A : ", A.alpha)))
+# #             logging.info(str(("Attention Weights B : ", B.alpha)))
+
+#             start_time = end_time
+# #             losses_train.reset()
+#             rnn_model.model.train()
+#         completed_steps+=1
+# #         if completed_steps >= args.max_train_steps:
+# #             break
+    
+# #     train_obj,train_ppl = train(epoch, train_dataloader, valid_dataloader, mbart_model, gpt_model, rnn_model, architect,
+# #     A, B, mbart_optimizer, gpt_optimizer, rnn_optimizer, lr_gpt, lr_mbart, lr_rnn)
+    valid_loss = evaluate(rnn_model,valid_dataloader)
+    print(valid_loss)
+    if args.logging:
+        wandb.log({'Valid Loss':valid_loss,'Epoch':epoch+1})
+    if (epoch+1)%5 == 0:
+        valid_bleu = valid_generate(rnn_model,valid_dataloader,metric_valid, beam_width=beam_width,temperature = temperature, do_sample=do_sample, repetition_penalty = repetition_penalty,top_p = top_p, top_k = top_k)['score']
+        if args.logging:
+            wandb.log({'Valid BLEU':valid_bleu,'Epoch Interval':epoch+1})
+        print(valid_bleu)
+        if valid_bleu>best_bleu:
+            best_bleu = valid_bleu
+            torch.save({
+            'epoch': epoch,
+            'model_state_dict': rnn_model.state_dict(),
+            'optimizer_state_dict': rnn_optimizer.state_dict(),
+            'loss': rnn_loss.item(),
+            'bleu': best_bleu,
+            }, args.rnn_PATH)
+
+            try:
+                torch.save({
+                'epoch': epoch,
+                'model_state_dict': mbart_model.state_dict(),
+                'optimizer_state_dict': mbart_optimizer.state_dict(),
+                }, args.mbart_PATH)
+            except:
+                pass
+
+            try:
+                torch.save({
+                'epoch': epoch,
+                'model_state_dict': gpt_model.state_dict(),
+                'optimizer_state_dict': gpt_optimizer.state_dict(),
+                }, args.gpt_PATH)
+            except:
+                pass          
+        print(valid_bleu)
+#     print("Attention Parameters A")
+#     print(activation(A.alpha).tolist())
+    
+#     print("Attention Parameters B")
+#     print(activation(B.alpha).tolist())
+    
+#     if args.logging:
+#         logging.info(str(("Attention Weights A : ",activation(A.alpha).tolist())))
+#         logging.info(str(("Attention Weights B : ", activation(B.alpha).tolist())))
+#     scheduler_gpt.step()
+
+#     scheduler_mbart.step()
+
+#     ################################################################################################
+
+#     # Early stopping
+
+#     early_stopping(valid_loss, gpt_model, mbart_model, rnn_model)
+
+#     if early_stopping.early_stop:
+#         logging.info("Early stopping")
+#         break
+
+
+# In[ ]:
+rnn_optimizer = optim.SGD(rnn_model.parameters(), lr = args.rnn_learning_rate_sgd, momentum=args.rnn_momentum)
+scheduler_rnn = torch.optim.lr_scheduler.CosineAnnealingLR(rnn_optimizer, float(args.stop_epoch), eta_min=args.rnn_learning_rate_min_sgd)
+
+
+# for epoch in range(args.num_train_epochs):
+for epoch in range(args.begin_epoch,args.stop_epoch):
+#     if completed_steps >= args.max_train_steps:
+#         break
+    lr_gpt = scheduler_gpt.get_lr()[0]
+
+    lr_mbart = scheduler_mbart.get_lr()[0]
+
+    lr_DS = scheduler_rnn.get_lr()[0]
+    
+    logging.info(str(('epoch %d lr BART %e lr Clf %e', epoch, lr_gpt, lr_mbart, lr_rnn)))
+    # training
+        
+    aug_loss  = utils.AverageMeter()
+    vanilla_loss = utils.AverageMeter()
+    objs = utils.AverageMeter()
+    train_ppl = utils.AverageMeter()
+    valid_ppl = utils.AverageMeter()
+    train_loss = utils.AverageMeter()
+    aug_loss = utils.AverageMeter()
+    gpt_loss = utils.AverageMeter()
+    mbart_loss = utils.AverageMeter()
+
+    #     top1 = utils.AvgrageMeter()
+    #     top5 = utils.AvgrageMeter()
+    #     rouge1 = utils.AvgrageMeter()
+    #     rougel = utils.AvgrageMeter()
+    #     bleu=utils.AvgrageMeter()
+    batch_loss_gpt, batch_loss_mbart, batch_loss_rnn, batch_count = 0, 0, 0, 0
+    valid_it = iter(valid_dataloader)
+
+    mbart_model.train()
+
+    rnn_model.train()
+
+    gpt_model.train()
+    start_time = time.time()
+#     for step, (train_batch,attn_idx ) in enumerate(train_dataloader):
+# rnn_de_batch,rnn_en_batch,gpt_ids_batch,gpt_attn_batch,mbart_english_ids,mbart_english_attn,mbart_german_ids,mbart_german_attn,attn_idxs
+    for step, train_batch in enumerate(train_dataloader):
+        rnn_src_ids = Variable(train_batch[0], requires_grad=False).cuda()
+        rnn_trg_ids = Variable(train_batch[1], requires_grad=False).cuda()
+
+        gpt_src_ids = Variable(train_batch[2],requires_grad=False).cuda()
+        gpt_src_attn = Variable(train_batch[3],requires_grad=False).cuda()
+
+        mbart_src_ids = Variable(train_batch[4],requires_grad=False).cuda()
+        mbart_src_attn = Variable(train_batch[5],requires_grad=False).cuda()
+
+        mbart_trg_ids = Variable(train_batch[6],requires_grad=False).cuda()
+        mbart_trg_attn = Variable(train_batch[7],requires_grad=False).cuda()
+        
+        attn_idx = train_batch[8]
+
+        n = rnn_src_ids.shape[0]
+        
+        valid_batch = next(iter(valid_dataloader))
+        
+#         try:
+#             valid_batch = next(valid_it)
+#         except:
+#             valid_it = iter(valid_dataloader)
+#             valid_batch = next(valid_it)
+#         print(valid_batch)
+        valid_rnn_src_ids = Variable(valid_batch[0], requires_grad=False).cuda()
+        valid_rnn_trg_ids = Variable(valid_batch[1], requires_grad=False).cuda()
+# article_DS, summary_DS, article_bart, article_bart_attn, summary_bart, summary_bart_attn, summary_gpt, summary_gpt_attn, valid_article_DS, valid_summary_DS, attn_idx, eta_gpt, eta_bart, eta_DS, gpt_optimizer, bart_optimizer, DS_optimizer
+        if args.begin_epoch <= epoch <= args.stop_epoch:
+            architect.step(rnn_src_ids, rnn_trg_ids, mbart_src_ids, mbart_src_attn, mbart_trg_ids,
+                    mbart_trg_attn, gpt_src_ids, gpt_src_attn, valid_rnn_src_ids, valid_rnn_trg_ids, attn_idx, lr_gpt, lr_mbart, lr_rnn, gpt_optimizer, mbart_optimizer, rnn_optimizer)
+
+        if args.begin_epoch <= epoch <= args.stop_epoch:
+            gpt_optimizer.zero_grad()
+            loss_gpt = CTG_loss(gpt_src_ids, gpt_src_attn, gpt_src_ids, gpt_src_attn, attn_idx, A, gpt_model)
+            # store the batch loss
+            batch_loss_gpt += loss_gpt.item()
+#             print("GPT LOSS ", loss_gpt.item())
+            gpt_loss.update(loss_gpt.item(),n)
+            loss_gpt.backward()
+            if args.logging:
+                wandb.log({'GPT Loss':loss_gpt.item()})
+            nn.utils.clip_grad_norm(gpt_model.parameters(), args.grad_clip)
+
+            gpt_optimizer.step()
+
+            ######################################################################
+            # Update the m-BART model
+            mbart_optimizer.zero_grad()
+            loss_mbart = CTG_loss(mbart_src_ids, mbart_src_attn, mbart_trg_ids, mbart_trg_attn, attn_idx, B, mbart_model)
+
+            # store the batch loss
+            batch_loss_mbart += loss_mbart.item()
+            mbart_loss.update(loss_mbart.item(),n)
+            if args.logging:
+                wandb.log({'mBART Loss':loss_mbart.item()})
+#             print("mBART LOSS ", loss_mbart.item())
+            nn.utils.clip_grad_norm(mbart_model.parameters(), args.grad_clip)
+
+            mbart_optimizer.step()
+
+        # update the classifier model
+        # change it later since we need both S' and S to update
+
+        rnn_optimizer.zero_grad()
+
+        # the training loss
+        loss_tr = rnn_model.loss(rnn_src_ids, rnn_trg_ids)
+        
+#         rnn_src_ids = Variable(aug_batch[0], requires_grad=False).cuda()
+#         rnn_trg_ids = Variable(aug_batch[1], requires_grad=False).cuda()
+#         loss_aug = rnn_model.loss(rnn_src_ids, rnn_trg_ids)
+        
+        
+    #     print(rnn_src_ids)
+        # Loss on augmented dataset
+
+        loss_aug = calc_loss_aug(gpt_src_ids, gpt_src_attn, gpt_model, mbart_model, rnn_model)
+        
+    #         print("Augmentation Loss:")
+
+#         aug_loss.update(loss_aug.item(),n)
+#         vanilla_loss.update(loss_tr.item(),n)
+
+#         rnn_loss = loss_tr + (args.lambda_par*loss_aug)
+#         rnn_loss = loss_aug
+        rnn_loss = loss_tr + 0.5*loss_aug
+        if args.logging:
+            wandb.log({'Train data Loss':loss_tr.item()})
+            wandb.log({'Augmentation Loss':loss_aug.item()})
+            wandb.log({'Train Loss':rnn_loss.item()})
+    #         DS_loss=loss_tr
+
+        # store for printing
+        batch_loss_rnn += rnn_loss.item()
+
+        rnn_loss.backward()
+
+        nn.utils.clip_grad_norm(rnn_model.parameters(), args.grad_clip)
+
+        # update the classifier model
+        rnn_optimizer.step()
+#     for step,train_batch in enumerate(aug_dataloader):
+#         rnn_src_ids = Variable(train_batch[0], requires_grad=False).cuda()
+#         rnn_trg_ids = Variable(train_batch[1], requires_grad=False).cuda()
+#         rnn_optimizer.zero_grad()
+
+#         # the training loss
+#         loss_tr = rnn_model.loss(rnn_src_ids, rnn_trg_ids)
+#         wandb.log({'Aug data Loss':loss_tr.item()})
+#         rnn_loss = 0.2*loss_tr
+#         batch_loss_rnn += rnn_loss.item()
+
+#         rnn_loss.backward()
+
+#         nn.utils.clip_grad_norm(rnn_model.parameters(), args.grad_clip)
+#         rnn_optimizer.step()
+        
+    scheduler_rnn.step()
+#         pred_sents = rnn_model.generate(rnn_src_ids,1)
+#         pred_sents = rnn_model.tokenizer_english.decode_batch(pred_sents.detach().numpy(),skip_special_tokens=True)
+#         given_sents =  rnn_model.tokenizer_english.decode_batch(rnn_trg_ids.detach().cpu().numpy(),skip_special_tokens=True)
+#         pred_sents = normalize_gen(pred_sents)
+#         given_sents = process_target_sentence(given_sents)
+#         metric_train.add_batch(predictions=pred_sents, references=given_sents)
+        #         given_sents=DS_model.tokenizer.batch_decode(summary_DS,skip_special_tokens=True)
+        #         rouge_1,rouge_l=utils.rouge_sentences(pred_sents,given_sents)#rouge_sentences
+        #         bleu_scores=utils.bleu_sentences(pred_sents,given_sents)
+        #         bleu.update(bleu_scores,n)
+    #     train_refs=np.take(np.array(train_en_refs),attn_idx.cpu().numpy(),axis=0)
+    #     metric_train.add_batch(predictions=pred_sents,references=train_refs)
+#         objs.update(rnn_loss.item(), n)
+#         train_loss.update(loss_tr.item(),n)
+#         aug_loss.update(loss_aug.item(),n)
+        #         top1.update(prec1.item(), n)
+
+        #         top5.update(prec5.item(), n)
+        #         if rouge_1 is not None and rouge_l is not None:
+        #             rouge1.update(rouge_1,n)
+        # count the batch
+#         batch_count += 1
+#         print(f'\tTrain Loss: {objs.avg:.3f} | Train data Loss: {train_loss.avg:.3f} | Augmentation Loss: {aug_loss.avg:.3f} | Train PPL: {math.exp(objs.avg):7.3f} | GPT loss: {gpt_loss.avg:.3f} | mbart loss: {mbart_loss.avg:.3f}')
+
+#         break
+#         if step % args.report_freq == 0 or step == len(train_dataloader) - 1:
+#             valid_loss = evaluate(rnn_model, valid_dataloader)
+#             if valid_loss < best_valid_loss:
+#                 best_valid_loss = valid_loss
+#                 torch.save(rnn_model.model.state_dict(), 'tut3-model-mt-arch.pt')
+#                 valid_scores = valid_generate(rnn_model, valid_dataloader, metric_valid, beam_size = 1)
+#             end_time = time.time()
+#             epoch_mins, epoch_secs = epoch_time(start_time, end_time)
+#             train_scores = metric_train.compute()
+                
+#             print(f'Steps: {completed_steps} | Time: {epoch_mins}m {epoch_secs}s')
+#             print(f'\tTrain Loss: {objs.avg:.3f} | Train data Loss: {train_loss.avg:.3f} | Augmentation Loss: {aug_loss.avg:.3f} | Train PPL: {math.exp(objs.avg):7.3f} | GPT loss: {gpt_loss.avg:.3f} | mbart loss: {mbart_loss.avg:.3f}')
+#             print(f'\t Val. Loss: {valid_loss:.3f} |  Val. PPL: {math.exp(valid_loss):7.3f}')
+#             print("mBART loss :",mbart_loss.avg)
+#             print("GPT loss :",gpt_loss.avg)
+#             print("Valid BLEU: ",valid_scores['score'])
+#             print("Train BLEU: ",train_scores['score'])
+            
+#             logging.info(f"{'Steps':^7} | {'Epochs':^7} | {'Time':^12}")
+#             logging.info(f"{completed_steps:^7} | {epoch+1:^7} | {epoch_mins:^6} {'m':^1} {epoch_secs:^6} {'s':^1}")
+#             logging.info("-"*70)
+#             logging.info(f"{'Train Loss':^8} | {'Train Perplexiety':^14} | {'Train BLEU':^14}")
+#             logging.info(f"{objs.avg:^6.2} | {math.exp(objs.avg):^12.2} | {train_scores['score']:^12.2}")
+#             logging.info(f"{'Validation Loss':^8} | {'Validation Perplexiety':^14} | {'Validation BLEU':^14}")
+#             logging.info(f"{valid_loss:^6.2} | {math.exp(valid_loss):^12.2} | {valid_scores['score']:^12.2}")
+# #             logging.info(str(("Attention Weights A : ", A.alpha)))
+# #             logging.info(str(("Attention Weights B : ", B.alpha)))
+
+#             start_time = end_time
+# #             losses_train.reset()
+#             rnn_model.model.train()
+#         completed_steps+=1
+# #         if completed_steps >= args.max_train_steps:
+# #             break
+    
+# #     train_obj,train_ppl = train(epoch, train_dataloader, valid_dataloader, mbart_model, gpt_model, rnn_model, architect,
+# #     A, B, mbart_optimizer, gpt_optimizer, rnn_optimizer, lr_gpt, lr_mbart, lr_rnn)
+    generate_aug_data(gpt_src_ids, gpt_src_attn, gpt_model, mbart_model, rnn_model)
+    valid_loss = evaluate(rnn_model,valid_dataloader)
+    print(valid_loss)
+    if args.logging:
+        wandb.log({'Valid Loss':valid_loss,'Epoch':epoch+1})
+    if (epoch+1)%5 == 0:
+        valid_bleu = valid_generate(rnn_model,valid_dataloader,metric_valid, beam_width=beam_width,temperature = temperature, do_sample=do_sample, repetition_penalty = repetition_penalty,top_p = top_p, top_k = top_k)['score']
+        if args.logging:
+            wandb.log({'Valid BLEU':valid_bleu,'Epoch Interval':epoch+1})
+        print(valid_bleu)
+        if valid_bleu>best_bleu:
+            best_bleu = valid_bleu
+            torch.save({
+            'epoch': epoch,
+            'model_state_dict': rnn_model.state_dict(),
+            'optimizer_state_dict': rnn_optimizer.state_dict(),
+            'loss': rnn_loss.item(),
+            'bleu': best_bleu,
+            }, args.rnn_PATH)
+
+            try:
+                torch.save({
+                'epoch': epoch,
+                'model_state_dict': mbart_model.state_dict(),
+                'optimizer_state_dict': mbart_optimizer.state_dict(),
+                }, args.mbart_PATH)
+            except:
+                pass
+
+            try:
+                torch.save({
+                'epoch': epoch,
+                'model_state_dict': gpt_model.state_dict(),
+                'optimizer_state_dict': gpt_optimizer.state_dict(),
+                }, args.gpt_PATH)
+            except:
+                pass          
+        print(valid_bleu)
+#     print("Attention Parameters A")
+#     print(activation(A.alpha).tolist())
+    
+#     print("Attention Parameters B")
+#     print(activation(B.alpha).tolist())
+    
+    if args.logging:
+        logging.info(str(("Attention Weights A : ",A.alpha.tolist())))
+        logging.info(str(("Attention Weights B : ", B.alpha.tolist())))
+    scheduler_gpt.step()
+
+    scheduler_mbart.step()
+
+#     ################################################################################################
+
+#     # Early stopping
+
+#     early_stopping(valid_loss, gpt_model, mbart_model, rnn_model)
+
+#     if early_stopping.early_stop:
+#         logging.info("Early stopping")
+#         break
+    
+    
+
+
+# In[ ]:
+
+
+    
+    
