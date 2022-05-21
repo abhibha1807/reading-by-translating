@@ -18,6 +18,7 @@ import time
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 import torch.backends.cudnn as cudnn
 from torch.utils.tensorboard import SummaryWriter
+torch.device("cuda")
 
 import glob
 # TASK: French (source) -> English (target)
