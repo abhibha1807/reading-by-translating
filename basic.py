@@ -19,6 +19,8 @@ from utils_ import *
 import time
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 import torch.backends.cudnn as cudnn
+from torch.utils import tensorboard
+
 from torch.utils.tensorboard import SummaryWriter
 from torchnlp.datasets import multi30k_dataset 
 import glob
