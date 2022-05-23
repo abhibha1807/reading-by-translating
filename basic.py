@@ -19,7 +19,7 @@ from utils_ import *
 import time
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 import torch.backends.cudnn as cudnn
-from torch.utils.tensorboard import SummaryWriter
+# from torch.utils.tensorboard import SummaryWriter
 from torchnlp.datasets import multi30k_dataset 
 import glob
 # TASK: French (source) -> English (target)
@@ -107,7 +107,7 @@ print('running basic.py')
 args.save = '{}-{}-test-30k'.format(args.save, time.strftime("%Y%m%d-%H%M%S"))
 create_exp_dir(args.save, scripts_to_save=glob.glob('*.py'))
 print('saving in:', str(args.save))
-writer = SummaryWriter('runs/'+str(args.save))
+# writer = SummaryWriter('runs/'+str(args.save))
 
 log_format = '%(asctime)s %(message)s'
 logging.basicConfig(stream=sys.stdout, level=logging.INFO,
