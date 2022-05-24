@@ -20,12 +20,14 @@ import time
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 import torch.backends.cudnn as cudnn
 # from torch.utils.tensorboard import SummaryWriter
-from torchnlp.datasets import multi30k_dataset 
+# from torchnlp.datasets import multi30k_dataset 
 import glob
 # TASK: French (source) -> English (target)
 # args 
 parser = argparse.ArgumentParser("main")
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+from torchtext.datasets import Multi30k
+
 
 print('using device', device)
 
@@ -133,10 +135,18 @@ print(random.choice(pairs))
 
 #train tokenizer
 tokenizer = get_tokenizer(pairs, max_length, min_freq, vocabsize, save_location)
-train = multi30k_dataset(train=True) 
-print(train[:2])
 
 
+train_iter = Multi30k(split='train')
+
+def tokenize(label, line):
+    return line.split()
+
+tokens = []
+for label, line in train_iter:
+    tokens += tokenize(label, line)
+
+print(tokens)
 #define models
 
 # vocab = tokenizer.get_vocab_size()
