@@ -130,8 +130,8 @@ logging.info('gpu device = %d' % args.gpu)
 logging.info("args = %s", args)
 
 #load data
-input_lang, output_lang, pairs = prepareData('eng', 'fra', True)
-print(random.choice(pairs))
+# input_lang, output_lang, pairs = prepareData('eng', 'fra', True)
+# print(random.choice(pairs))
 
 #train tokenizer
 tokenizer = get_tokenizer(pairs, max_length, min_freq, vocabsize, save_location)
@@ -142,11 +142,13 @@ train_iter = Multi30k(split='train')
 def tokenize(label, line):
     return line.split()
 
-tokens = []
+pairs = []
 for label, line in train_iter:
-    tokens += tokenize(label, line)
+    pairs.append([label,line])
+    
+input_lang, output_lang, pairs = prepareData('dutch', 'english', True)
+print(random.choice(pairs))
 
-print(tokens)
 #define models
 
 # vocab = tokenizer.get_vocab_size()

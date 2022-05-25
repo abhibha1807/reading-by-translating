@@ -73,6 +73,21 @@ def readLangs(lang1, lang2, reverse=False):
 
     return input_lang, output_lang, pairs
 
+def readLangs_multi30k(lang1, lang2, reverse=False):
+    print("Reading lines...")
+
+  
+    # Reverse pairs, make Lang instances
+    if reverse:
+        pairs = [list(reversed(p)) for p in pairs]
+        input_lang = Lang(lang2)
+        output_lang = Lang(lang1)
+    else:
+        input_lang = Lang(lang1)
+        output_lang = Lang(lang2)
+
+    return input_lang, output_lang, pairs
+
 
 eng_prefixes = (
     
@@ -108,7 +123,8 @@ def pad_sentences(pairs):
 
 
 def prepareData(lang1, lang2, reverse=False):
-    input_lang, output_lang, pairs = readLangs(lang1, lang2, reverse)
+    # input_lang, output_lang, pairs = readLangs(lang1, lang2, reverse)
+    input_lang, output_lang, pairs = readLangs_multi30k(lang1, lang2, reverse)
     print("Read %s sentence pairs" % len(pairs))
     pairs = filterPairs(pairs)
     # pairs = pad_sentences(pairs)
