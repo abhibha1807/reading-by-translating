@@ -126,7 +126,7 @@ def prepareData(pairs, lang1, lang2, reverse=False):
     # input_lang, output_lang, pairs = readLangs(lang1, lang2, reverse)
     input_lang, output_lang, pairs = readLangs_multi30k(pairs, lang1, lang2, reverse)
     print("Read %s sentence pairs" % len(pairs))
-    pairs = filterPairs(pairs)
+    #pairs = filterPairs(pairs)
     # pairs = pad_sentences(pairs)
     print("Trimmed to %s sentence pairs" % len(pairs))
     print("Counting words...")
