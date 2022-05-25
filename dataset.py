@@ -73,7 +73,7 @@ def readLangs(lang1, lang2, reverse=False):
 
     return input_lang, output_lang, pairs
 
-def readLangs_multi30k(lang1, lang2, reverse=False):
+def readLangs_multi30k(pairs, lang1, lang2, reverse=False):
     print("Reading lines...")
 
   
@@ -122,9 +122,9 @@ def pad_sentences(pairs):
   return (pairs)
 
 
-def prepareData(lang1, lang2, reverse=False):
+def prepareData(pairs, lang1, lang2, reverse=False):
     # input_lang, output_lang, pairs = readLangs(lang1, lang2, reverse)
-    input_lang, output_lang, pairs = readLangs_multi30k(lang1, lang2, reverse)
+    input_lang, output_lang, pairs = readLangs_multi30k(pairs, lang1, lang2, reverse)
     print("Read %s sentence pairs" % len(pairs))
     pairs = filterPairs(pairs)
     # pairs = pad_sentences(pairs)
