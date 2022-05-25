@@ -143,7 +143,7 @@ for label, line in train_iter:
 tokenizer = get_tokenizer(pairs, max_length, min_freq, vocabsize, save_location)
     
 input_lang, output_lang, pairs = prepareData(pairs, 'dutch', 'english', True)
-print(random.choice(pairs))
+print(pairs[0:5])
 
 #define models
 
