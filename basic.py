@@ -133,18 +133,14 @@ logging.info("args = %s", args)
 # input_lang, output_lang, pairs = prepareData('eng', 'fra', True)
 # print(random.choice(pairs))
 
-#train tokenizer
-tokenizer = get_tokenizer(pairs, max_length, min_freq, vocabsize, save_location)
-
-
 train_iter = Multi30k(split='train')
-
-def tokenize(label, line):
-    return line.split()
-
 pairs = []
 for label, line in train_iter:
     pairs.append([label,line])
+
+
+#train tokenizer
+tokenizer = get_tokenizer(pairs, max_length, min_freq, vocabsize, save_location)
     
 input_lang, output_lang, pairs = prepareData('dutch', 'english', True)
 print(random.choice(pairs))
