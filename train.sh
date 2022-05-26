@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 nvidia-smi
 pwd
-source activate /abhibha-volume/envs
+source activate /abhibha-volume/myenv
 conda info
 which python
 conda list
