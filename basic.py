@@ -232,7 +232,7 @@ A = A.to(device)
 # architect = Architect(model1, model1_mom, model1_wd, A, A_lr, A_wd, device, model2, model2_wd, model2_mom, batch_size,vocab)
 
 
-def train(epoch, train_dataloader, valid_dataloader, A, model1, model1_optim, instances_gone):
+def train(epoch, train_dataloader, valid_dataloader, A, model1, model1_optim, model1_lr,  instances_gone):
 
   # objs = utils.AvgrageMeter()
   # top1 = utils.AvgrageMeter()
