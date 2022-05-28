@@ -133,11 +133,7 @@ logging.info("args = %s", args)
 # input_lang, output_lang, pairs = prepareData('eng', 'fra', True)
 # print(random.choice(pairs))
 
-train_iter = IWSLT2017(split='train', language_pair=('de', 'en'))
-
-valid_iter = IWSLT2017(split='valid', language_pair=('de', 'en'))
-
-test_iter = IWSLT2017(split='test', language_pair=('de', 'en'))
+train_iter, valid_iter, test_iter = IWSLT2017()
 
 pairs = []
 train_pairs = []
