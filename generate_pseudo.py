@@ -140,18 +140,7 @@ train_pairs = []
 valid_pairs = []
 test_pairs = []
 
-for label, line in train_iter:
-    pairs.append([label,line])
-    train_pairs.append([label,line])
-
-for label, line in valid_iter:
-    pairs.append([label,line])
-    valid_pairs.append([label, line])
-
-for label, line in test_iter:
-    pairs.append([label,line])
-    test_pairs.append([label, line])
-
+print(type(train_iter))
 
 
 
