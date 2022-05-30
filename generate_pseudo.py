@@ -152,6 +152,7 @@ while(True):
     except:
         break
 
+print(train_pairs[0:5])
 #train tokenizer
 tokenizer = get_tokenizer(pairs, max_length, min_freq, vocabsize, save_location)
     
