@@ -145,7 +145,8 @@ test_pairs = []
 
 print(type(train_iter))
 
-
+for i in train_iter:
+    print(i)
 
 #train tokenizer
 tokenizer = get_tokenizer(pairs, max_length, min_freq, vocabsize, save_location)
