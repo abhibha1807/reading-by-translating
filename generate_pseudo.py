@@ -148,6 +148,7 @@ print(type(train_iter))
 while(True):
     try:
         src_sentence, tgt_sentence = next(iter(train_iter))
+        print(src_sentence, tgt_sentence)
         train_pairs.append([src_sentence, tgt_sentence])
     except:
         break
