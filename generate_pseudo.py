@@ -145,8 +145,12 @@ test_pairs = []
 
 print(type(train_iter))
 
-for i in train_iter:
-    print(i)
+while(True):
+    try:
+        src_sentence, tgt_sentence = next(iter(train_iter))
+        train_pairs.append([src_sentence, tgt_sentence])
+    except:
+        break
 
 #train tokenizer
 tokenizer = get_tokenizer(pairs, max_length, min_freq, vocabsize, save_location)
