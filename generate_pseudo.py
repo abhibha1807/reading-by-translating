@@ -28,6 +28,9 @@ parser = argparse.ArgumentParser("main")
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 from torchtext.datasets import Multi30k
 from torchtext.datasets import IWSLT2017
+import os
+
+
 
 print('using device', device)
 
@@ -151,6 +154,9 @@ input_lang, output_lang, pairs = prepareData(pairs, 'dutch', 'english', True)
 print(pairs[0:5])
 
 #define models
+path = os.getcwd()
+
+print(path)
 
 vocab = tokenizer.get_vocab_size()
 print('vocab:', vocab)
