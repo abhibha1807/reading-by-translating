@@ -143,7 +143,7 @@ train_pairs = []
 valid_pairs = []
 test_pairs = []
 
-print(type(train_iter))
+print(dir(train_iter))
 
 while(True):
     try:
