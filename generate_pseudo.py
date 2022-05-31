@@ -28,6 +28,9 @@ parser = argparse.ArgumentParser("main")
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 from torchtext.datasets import Multi30k
 from torchtext.datasets import IWSLT2016
+from datasets import load_dataset
+
+
 import os
 import dill
 
@@ -144,29 +147,31 @@ train_pairs = []
 valid_pairs = []
 test_pairs = []
 
+dataset = load_dataset("wmt16")
 
-train_iter = IWSLT2016(split='train')
+print(type(dataset))
+# train_iter = IWSLT2016(split='train')
 
-valid_iter = IWSLT2016(split='valid')
+# valid_iter = IWSLT2016(split='valid')
 
-test_iter = IWSLT2016(split='test')
+# test_iter = IWSLT2016(split='test')
 
-pairs = []
-train_pairs = []
-valid_pairs = []
-test_pairs = []
+# pairs = []
+# train_pairs = []
+# valid_pairs = []
+# test_pairs = []
 
-for label, line in train_iter:
-    pairs.append([label,line])
-    train_pairs.append([label,line])
+# for label, line in train_iter:
+#     pairs.append([label,line])
+#     train_pairs.append([label,line])
 
-for label, line in valid_iter:
-    pairs.append([label,line])
-    valid_pairs.append([label, line])
+# for label, line in valid_iter:
+#     pairs.append([label,line])
+#     valid_pairs.append([label, line])
 
-for label, line in test_iter:
-    pairs.append([label,line])
-    test_pairs.append([label, line])
+# for label, line in test_iter:
+#     pairs.append([label,line])
+#     test_pairs.append([label, line])
 
 
 
