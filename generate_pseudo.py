@@ -27,9 +27,9 @@ import glob
 parser = argparse.ArgumentParser("main")
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 from torchtext.datasets import Multi30k
-from torchtext.datasets import IWSLT2017
+from torchtext.datasets import IWSLT2016
 import os
-
+import dill
 
 
 print('using device', device)
@@ -145,11 +145,11 @@ valid_pairs = []
 test_pairs = []
 
 
-train_iter = IWSLT2017(split='train')
+train_iter = IWSLT2016(split='train')
 
-valid_iter = IWSLT2017(split='valid')
+valid_iter = IWSLT2016(split='valid')
 
-test_iter = IWSLT2017(split='test')
+test_iter = IWSLT2016(split='test')
 
 pairs = []
 train_pairs = []
