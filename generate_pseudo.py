@@ -153,6 +153,8 @@ print(dir(dataset))
 
 print(dataset.keys())
 
+print(dataset.keys()['train'])
+
 # train_iter = IWSLT2016(split='train')
 
 # valid_iter = IWSLT2016(split='valid')
