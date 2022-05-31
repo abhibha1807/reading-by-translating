@@ -151,6 +151,8 @@ dataset = load_dataset("wmt16", 'de-en')
 
 print(dir(dataset))
 
+print(dataset.keys())
+
 # train_iter = IWSLT2016(split='train')
 
 # valid_iter = IWSLT2016(split='valid')
