@@ -136,24 +136,48 @@ logging.info("args = %s", args)
 # input_lang, output_lang, pairs = prepareData('eng', 'fra', True)
 # print(random.choice(pairs))
 
-train_iter, valid_iter, test_iter = IWSLT2017()
-src_sentence, tgt_sentence = next(iter(train_iter))
-print(src_sentence, tgt_sentence)
+# train_iter, valid_iter, test_iter = IWSLT2017()
+# src_sentence, tgt_sentence = next(iter(train_iter))
 
 pairs = []
 train_pairs = []
 valid_pairs = []
 test_pairs = []
 
-print(dir(train_iter))
 
-while(True):
-    try:
-        src_sentence, tgt_sentence = next(iter(train_iter))
-        print(src_sentence, tgt_sentence)
-        train_pairs.append([src_sentence, tgt_sentence])
-    except:
-        break
+train_iter = IWSLT2017(split='train')
+
+valid_iter = IWSLT2017(split='valid')
+
+test_iter = IWSLT2017(split='test')
+
+pairs = []
+train_pairs = []
+valid_pairs = []
+test_pairs = []
+
+for label, line in train_iter:
+    pairs.append([label,line])
+    train_pairs.append([label,line])
+
+for label, line in valid_iter:
+    pairs.append([label,line])
+    valid_pairs.append([label, line])
+
+for label, line in test_iter:
+    pairs.append([label,line])
+    test_pairs.append([label, line])
+
+
+
+
+# while(True):
+#     try:
+#         src_sentence, tgt_sentence = next(iter(train_iter))
+#         print(src_sentence, tgt_sentence)
+#         train_pairs.append([src_sentence, tgt_sentence])
+#     except:
+#         break
 
 print(train_pairs[0:5])
 #train tokenizer
