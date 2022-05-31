@@ -147,7 +147,7 @@ train_pairs = []
 valid_pairs = []
 test_pairs = []
 
-dataset = load_dataset("wmt16", 'de_en')
+dataset = load_dataset("wmt16", 'de-en')
 
 print(type(dataset))
 # train_iter = IWSLT2016(split='train')
