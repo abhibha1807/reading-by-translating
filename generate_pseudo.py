@@ -149,7 +149,8 @@ test_pairs = []
 
 dataset = load_dataset("wmt16", 'de-en')
 
-print(type(dataset))
+print(dir(dataset))
+
 # train_iter = IWSLT2016(split='train')
 
 # valid_iter = IWSLT2016(split='valid')
