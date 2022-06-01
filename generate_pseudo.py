@@ -151,9 +151,9 @@ dataset = load_dataset("wmt16", 'de-en')
 
 print(dir(dataset))
 
-df_train = dataset.data['train'].to_pandas
-df_val = dataset.data['validation'].to_pandas
-df_test = dataset.data['test'].to_pandas
+df_train = dataset.data['train'].to_pandas()
+df_val = dataset.data['validation'].to_pandas()
+df_test = dataset.data['test'].to_pandas()
 
 train_iter = list(df_train['translation'])
 valid_iter = list(df_val['translation'])
