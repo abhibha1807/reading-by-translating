@@ -151,33 +151,31 @@ dataset = load_dataset("wmt16", 'de-en')
 
 print(dir(dataset))
 
-print(dataset.keys())
+df_train = dataset.data['train'].to_pandas
+df_val = dataset.data['validation'].to_pandas
+df_test = dataset.data['test'].to_pandas
 
-print(dataset.keys()['train'])
+train_iter = list(df_train['translation'])
+valid_iter = list(df_val['translation'])
+test_iter = list(df_test['translation'])
 
-# train_iter = IWSLT2016(split='train')
 
-# valid_iter = IWSLT2016(split='valid')
+pairs = []
+train_pairs = []
+valid_pairs = []
+test_pairs = []
 
-# test_iter = IWSLT2016(split='test')
+for i in train_iter:
+    train_pairs.append([i['de'], i['en']])
+    pairs.append([i['de'], i['en']])
 
-# pairs = []
-# train_pairs = []
-# valid_pairs = []
-# test_pairs = []
+for i in valid_iter:
+    valid_pairs.append([i['de'], i['en']])
+    pairs.append([i['de'], i['en']])
 
-# for label, line in train_iter:
-#     pairs.append([label,line])
-#     train_pairs.append([label,line])
-
-# for label, line in valid_iter:
-#     pairs.append([label,line])
-#     valid_pairs.append([label, line])
-
-# for label, line in test_iter:
-#     pairs.append([label,line])
-#     test_pairs.append([label, line])
-
+for i in test_iter:
+    test_pairs.append([i['de'], i['en']])
+    pairs.append([i['de'], i['en']])
 
 
 
