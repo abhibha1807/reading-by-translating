@@ -31,6 +31,7 @@ from torchtext.datasets import IWSLT2016
 from datasets import load_dataset
 import os
 import dill
+from tokenizers import BertWordPieceTokenizer
 
 
 print('using device', device)
@@ -57,7 +58,7 @@ parser.add_argument('--gpu', type=int, default=0, help='gpu device id')
 parser.add_argument('--seed', type=int, default=100, help='random seed')
 parser.add_argument('--max_length', type=int, default=10, help='max length of sentences')
 parser.add_argument('--vocabsize', type=int, default=4000, help='total vocab size')
-parser.add_argument('--save_location', type=str, default='./reading-by-translating/', help='save location')
+parser.add_argument('--save_location', type=str, default='./reading-by-translating', help='save location')
 parser.add_argument('--min_freq', type=int, default=5, help='min freq of words to be included in vocab')
 parser.add_argument('--train_portion', type=float, default=0.9, help='fraction of dataset for training')
 
@@ -187,8 +188,13 @@ for i in test_iter:
 
 print(train_pairs[0:5])
 #train tokenizer
-tokenizer = get_tokenizer(pairs, max_length, min_freq, vocabsize, save_location)
-    
+# tokenizer = get_tokenizer(pairs[0:10], max_length, min_freq, vocabsize, save_location)
+
+#load tokenizer
+tokenizer = BertWordPieceTokenizer.from_pretrained('./reading-by-translating')
+
+print('tokenizer loaded!!!!')
+
 input_lang, output_lang, pairs = prepareData(pairs, 'dutch', 'english', True)
 print(pairs[0:5])
 
