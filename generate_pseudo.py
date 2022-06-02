@@ -235,14 +235,13 @@ model1 = model1.to(device)
 # # Print the number of training valid and test examples
 # logging.info('dataset')
 
-
-# train_data = get_train_dataset(train_pairs, tokenizer)
+train_data = get_train_dataset(pairs, tokenizer)
 # # un_data = get_un_dataset(val_pairs, tokenizer)
 # valid_data = get_valid_dataset(valid_pairs, tokenizer)
 
 # # logging.info(f"{len(train_data):^7} | { len(un_data):^7} | { len(valid_data):^7}")
-
-# logging.info(f"{len(train_data):^7} | { len(valid_data):^7}")
+# print(train_data[0:5])
+# logging.info(f"{len(train_data):^7}")
 
 # train_dataloader = DataLoader(train_data, sampler=RandomSampler(train_data), 
 #                         batch_size=batch_size, pin_memory=True, num_workers=0)
@@ -282,8 +281,8 @@ model1 = model1.to(device)
 #     idxs = Variable(batch[1],requires_grad=False).to(device) #A
 #     # un_batch = next(iter(un_dataloader)) 
 #     # un_inputs = Variable(un_batch[0], requires_grad=False).to(device)
-#     val_batch = next(iter(valid_dataloader)) 
-#     val_inputs = Variable(val_batch[0], requires_grad=False).to(device)
+#     # val_batch = next(iter(valid_dataloader)) 
+#     # val_inputs = Variable(val_batch[0], requires_grad=False).to(device)
 
 #     #print('\n', train_inputs, '\n')
    
@@ -296,7 +295,7 @@ model1 = model1.to(device)
 #     # if epoch <= args.stop_epoch:
       
 #     #logging.info('otherwise')
-#     model1_optim.zero_grad()
+#     # model1_optim.zero_grad()
 #     loss_model1 = loss1(train_inputs, model1, idxs, A, batch_size, vocab)
 #     print('training loss model1:', loss_model1)
     
