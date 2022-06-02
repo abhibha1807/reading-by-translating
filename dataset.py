@@ -1,7 +1,6 @@
 from __future__ import unicode_literals, print_function, division
 
 import re
-from tkinter import _Padding
 import torch
 from io import open
 import unicodedata
@@ -111,16 +110,22 @@ def filterPairs(pairs):
     return [pair for pair in pairs if filterPair(pair)]
 
 def pad_sentences(pairs):
-  for i in range(len(pairs)):
-    n_en = len(pairs[i][0].split(' '))
-    n_fr = len(pairs[i][1].split(' '))
+    #find max len
+    # MAX_LENGTH = 0
+    # for i in pairs:
+    #     if len(i.split(' ')) > MAX_LENGTH:
+    #         MAX_LENGTH = len(i.split(' '))
+
+    for i in range(len(pairs)):
+        n_en = len(pairs[i][0].split(' '))
+        n_fr = len(pairs[i][1].split(' '))
     if n_en < MAX_LENGTH:
-      for j in range(n_en, MAX_LENGTH):
-        pairs[i][0] = pairs[i][0] + ' PAD'
+        for j in range(n_en, MAX_LENGTH):
+            pairs[i][0] = pairs[i][0] + ' PAD'
     if n_fr < MAX_LENGTH:
-      for j in range(n_fr, MAX_LENGTH):
-        pairs[i][1] = pairs[i][1] + ' PAD'
-  return (pairs)
+        for j in range(n_fr, MAX_LENGTH):
+            pairs[i][1] = pairs[i][1] + ' PAD'
+    return (pairs)
 
 
 def prepareData(pairs, lang1, lang2, reverse=False):
@@ -155,14 +160,13 @@ def tensorsFromPair(pair, input_lang, output_lang):
     target_tensor = tensorFromSentence(output_lang, pair[1])
     return torch.stack((input_tensor, target_tensor))
 
-
 def get_train_dataset(pairs, tokenizer):
   attn_idx = torch.arange(len(pairs))
   #print(attn_idx)
   tensor_pairs = []
   for pair in pairs:
-    source = torch.unsqueeze(torch.tensor(tokenizer.encode(pair[0], padding=True).ids), dim=-1)
-    target = torch.unsqueeze(torch.tensor(tokenizer.encode(pair[1], padding=True).ids), dim=-1)
+    source = torch.unsqueeze(torch.tensor(tokenizer.encode(pair[0]).ids), dim=-1)
+    target = torch.unsqueeze(torch.tensor(tokenizer.encode(pair[1]).ids), dim=-1)
     #print(pair[0], pair[1])
     #print(source, target)
     tensor_pairs.append(torch.stack([source, target]))
