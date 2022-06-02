@@ -58,7 +58,7 @@ parser.add_argument('--gpu', type=int, default=0, help='gpu device id')
 parser.add_argument('--seed', type=int, default=100, help='random seed')
 parser.add_argument('--max_length', type=int, default=10, help='max length of sentences')
 parser.add_argument('--vocabsize', type=int, default=4000, help='total vocab size')
-parser.add_argument('--save_location', type=str, default='./reading-by-translating', help='save location')
+parser.add_argument('--save_location', type=str, default='./reading-by-translating/', help='save location')
 parser.add_argument('--min_freq', type=int, default=5, help='min freq of words to be included in vocab')
 parser.add_argument('--train_portion', type=float, default=0.9, help='fraction of dataset for training')
 
@@ -176,22 +176,15 @@ for i in test_iter:
     test_pairs.append([i['de'], i['en']])
     pairs.append([i['de'], i['en']])
 
-
-
-# while(True):
-#     try:
-#         src_sentence, tgt_sentence = next(iter(train_iter))
-#         print(src_sentence, tgt_sentence)
-#         train_pairs.append([src_sentence, tgt_sentence])
-#     except:
-#         break
+#sample 1000 pairs
+pairs = pairs[0:1000]
 
 print(train_pairs[0:5])
 #train tokenizer
-# tokenizer = get_tokenizer(pairs[0:10], max_length, min_freq, vocabsize, save_location)
+tokenizer = get_tokenizer(pairs, max_length, min_freq, vocabsize, save_location+'vocab1k.txt')
 
 #load tokenizer
-tokenizer = BertWordPieceTokenizer("./reading-by-translating/vocab.txt", lowercase=True)
+# tokenizer = BertWordPieceTokenizer("./reading-by-translating/vocab.txt", lowercase=True)
 
 print('tokenizer loaded!!!!')
 
@@ -205,9 +198,9 @@ print(path)
 
 vocab = tokenizer.get_vocab_size()
 print('vocab:', vocab)
-criterion = nn.NLLLoss(ignore_index = tokenizer.token_to_id("[PAD]"), reduction='none')
+# criterion = nn.NLLLoss(ignore_index = tokenizer.token_to_id("[PAD]"), reduction='none')
 #criterion = nn.CrossEntropyLoss(ignore_index = tokenizer.token_to_id("[PAD]"),  reduction='none')
-criterion = criterion.to(device)
+# criterion = criterion.to(device)
 model1 = torch.load('./EXP-20220526-104436-test-30k/model1.pt')
 # model1 = Model1(vocab, vocab, criterion)
 # # model2 = Model2( vocab, vocab, criterion)
