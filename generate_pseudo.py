@@ -181,10 +181,10 @@ pairs = pairs[0:1000]
 
 print(train_pairs[0:5])
 #train tokenizer
-tokenizer = get_tokenizer(pairs, max_length, min_freq, vocabsize, save_location+'vocab1k.txt')
+# tokenizer = get_tokenizer(pairs, max_length, min_freq, vocabsize, save_location+'vocab1k.txt')
 
 #load tokenizer
-# tokenizer = BertWordPieceTokenizer("./reading-by-translating/vocab.txt", lowercase=True)
+tokenizer = BertWordPieceTokenizer("./reading-by-translating/vocab1k.txt/vocab.txt")
 
 print('tokenizer loaded!!!!')
 
