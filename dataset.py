@@ -165,7 +165,8 @@ def get_train_dataset(pairs, tokenizer):
   #print(attn_idx)
   tensor_pairs = []
   for pair in pairs:
-    pad_src = tokenizer.padding(enc_src)
+    print(pair[0])
+    pad_src = tokenizer.padding(pair[0])
     print(pad_src)
     enc_src = tokenizer.encode(pad_src)
     print(enc_src)
