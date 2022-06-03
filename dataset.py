@@ -130,6 +130,7 @@ def pad_sentences(pairs):
     if n_fr < MAX_LENGTH:
         for j in range(n_fr, MAX_LENGTH):
             pairs[i][1] = pairs[i][1] + ' PAD'
+    print(pairs[0:5])
     return (pairs)
 
 
