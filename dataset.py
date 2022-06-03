@@ -122,14 +122,16 @@ def pad_sentences(pairs):
     print('maxlen:', MAX_LENGTH)
 
     for i in range(len(pairs)):
-        n_en = len(pairs[i][0].split(' '))
-        n_fr = len(pairs[i][1].split(' '))
-    if n_en < MAX_LENGTH:
-        for j in range(n_en, MAX_LENGTH):
-            pairs[i][0] = pairs[i][0] + ' PAD'
-    if n_fr < MAX_LENGTH:
-        for j in range(n_fr, MAX_LENGTH):
-            pairs[i][1] = pairs[i][1] + ' PAD'
+        fr = pairs[i][0].split(' ')
+        en = pairs[i][1].split(' ')
+        while(len(fr)<MAX_LENGTH):
+            fr.append('PAD')
+        while(len(en)<MAX_LENGTH):
+            en.append('PAD')
+        pairs[i][0] = ' '.join(fr)
+        pairs[i][1] = ' '.join(en)
+
+
     print(pairs[0:5])
     return (pairs)
 
