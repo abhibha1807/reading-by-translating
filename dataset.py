@@ -113,8 +113,12 @@ def pad_sentences(pairs):
     #find max len
     MAX_LENGTH = 0
     for i in pairs:
-        if len(i.split(' ')) > MAX_LENGTH:
-            MAX_LENGTH = len(i.split(' '))
+        if len(i[0].split(' ')) > MAX_LENGTH:
+            MAX_LENGTH = len(i[0].split(' '))
+    for i in pairs:
+        if len(i[1].split(' ')) > MAX_LENGTH:
+            MAX_LENGTH = len(i[1].split(' '))
+
     print('maxlen:', MAX_LENGTH)
 
     for i in range(len(pairs)):
