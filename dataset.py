@@ -111,10 +111,11 @@ def filterPairs(pairs):
 
 def pad_sentences(pairs):
     #find max len
-    # MAX_LENGTH = 0
-    # for i in pairs:
-    #     if len(i.split(' ')) > MAX_LENGTH:
-    #         MAX_LENGTH = len(i.split(' '))
+    MAX_LENGTH = 0
+    for i in pairs:
+        if len(i.split(' ')) > MAX_LENGTH:
+            MAX_LENGTH = len(i.split(' '))
+    print('maxlen:', MAX_LENGTH)
 
     for i in range(len(pairs)):
         n_en = len(pairs[i][0].split(' '))
@@ -133,7 +134,7 @@ def prepareData(pairs, lang1, lang2, reverse=False):
     input_lang, output_lang, pairs = readLangs_multi30k(pairs, lang1, lang2, reverse)
     print("Read %s sentence pairs" % len(pairs))
     #pairs = filterPairs(pairs)
-    # pairs = pad_sentences(pairs)
+    pairs = pad_sentences(pairs)
     print("Trimmed to %s sentence pairs" % len(pairs))
     print("Counting words...")
     for pair in pairs:
@@ -165,22 +166,22 @@ def get_train_dataset(pairs, tokenizer):
   #print(attn_idx)
   tensor_pairs = []
   for pair in pairs:
-    print(pair[0])
-    pad_src = tokenizer.padding(pair[0])
-    print(pad_src)
-    enc_src = tokenizer.encode(pad_src)
-    print(enc_src)
+    # print(pair[0])
+    # pad_src = tokenizer.padding(pair[0])
+    # print(pad_src)
+    # enc_src = tokenizer.encode(pad_src)
+    # print(enc_src)
     
-#     source = torch.unsqueeze(torch.tensor(tokenizer.encode(pair[0]).ids), dim=-1)
-#     target = torch.unsqueeze(torch.tensor(tokenizer.encode(pair[1]).ids), dim=-1)
-#     #print(pair[0], pair[1])
-#     #print(source, target)
-#     tensor_pairs.append(torch.stack([source, target]))
-#   #print('train tensor pairs:', tensor_pairs)
-#   print(torch.stack((tensor_pairs)).size())
-#   train_data = TensorDataset(torch.stack((tensor_pairs)), attn_idx)
-#   #print('train data:', train_data)
-#   return train_data
+    source = torch.unsqueeze(torch.tensor(tokenizer.encode(pair[0]).ids), dim=-1)
+    target = torch.unsqueeze(torch.tensor(tokenizer.encode(pair[1]).ids), dim=-1)
+    #print(pair[0], pair[1])
+    #print(source, target)
+    tensor_pairs.append(torch.stack([source, target]))
+  #print('train tensor pairs:', tensor_pairs)
+  print(torch.stack((tensor_pairs)).size())
+  train_data = TensorDataset(torch.stack((tensor_pairs)), attn_idx)
+  #print('train data:', train_data)
+  return train_data
 
 def get_un_dataset(pairs, tokenizer):
   tensor_pairs = []
