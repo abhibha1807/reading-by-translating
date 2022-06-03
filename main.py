@@ -1,3 +1,4 @@
+#The whole pipeline
 import utils
 from torch.utils.data import DataLoader, RandomSampler
 from torch.autograd import Variable

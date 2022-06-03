@@ -1,5 +1,5 @@
 
-   
+# just train model1 on a basic MT dataset (here Multi30K) and record scores
 import utils
 from torch.utils.data import DataLoader, RandomSampler
 from torch.autograd import Variable

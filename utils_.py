@@ -43,8 +43,8 @@ def get_bleu_score(model,test_inputs, tokenizer, vocab):
     # actual = pad_sentences(actual,MAX_LENGTH)
     predicted_ = predicted.split(' ')
     actual_ = actual.split(' ')
-    print('\npredicted:\n', predicted_)
-    print('\nactual:\n',actual_)
+    # print('\npredicted:\n', predicted_)
+    # print('\nactual:\n',actual_)
     bleus = []
     try:
         bleu0 = bleu([actual_], predicted_, smoothing_function=chencherry.method0)
