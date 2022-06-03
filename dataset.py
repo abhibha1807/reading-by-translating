@@ -165,16 +165,21 @@ def get_train_dataset(pairs, tokenizer):
   #print(attn_idx)
   tensor_pairs = []
   for pair in pairs:
-    source = torch.unsqueeze(torch.tensor(tokenizer(pair[0], padding=True).ids), dim=-1)
-    target = torch.unsqueeze(torch.tensor(tokenizer(pair[1], padding=True).ids), dim=-1)
-    #print(pair[0], pair[1])
-    #print(source, target)
-    tensor_pairs.append(torch.stack([source, target]))
-  #print('train tensor pairs:', tensor_pairs)
-  print(torch.stack((tensor_pairs)).size())
-  train_data = TensorDataset(torch.stack((tensor_pairs)), attn_idx)
-  #print('train data:', train_data)
-  return train_data
+    pad_src = tokenizer.padding(enc_src)
+    print(pad_src)
+    enc_src = tokenizer.encode(pad_src)
+    print(enc_src)
+    
+#     source = torch.unsqueeze(torch.tensor(tokenizer.encode(pair[0]).ids), dim=-1)
+#     target = torch.unsqueeze(torch.tensor(tokenizer.encode(pair[1]).ids), dim=-1)
+#     #print(pair[0], pair[1])
+#     #print(source, target)
+#     tensor_pairs.append(torch.stack([source, target]))
+#   #print('train tensor pairs:', tensor_pairs)
+#   print(torch.stack((tensor_pairs)).size())
+#   train_data = TensorDataset(torch.stack((tensor_pairs)), attn_idx)
+#   #print('train data:', train_data)
+#   return train_data
 
 def get_un_dataset(pairs, tokenizer):
   tensor_pairs = []
