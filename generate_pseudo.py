@@ -342,11 +342,11 @@ def train(epoch, un_dataloader, valid_dataloader,  model1, model2, model2_optim,
 
     print('model2 enc embeding grad:', model2.enc.embedding.weight.grad.data.sum())
     print(list(model2.parameters())[0].grad)
-    print('model2 enc gru grad:', model2.enc.gru.weight.grad)
+    # print('model2 enc gru grad:', model2.enc.gru.weight.grad)
     
     print('model2 dec attn grad:', model2.dec.attn.weight.grad)
     print('model2 dec attn combine grad:', model2.dec.attn_combine.weight.grad)
-    print('model2 dec gru grad:', model2.dec.gru.weight.grad)
+    # print('model2 dec gru grad:', model2.dec.gru.weight.grad)
     nn.utils.clip_grad_norm_(model2.parameters(), args.grad_clip)
     model2_optim.step()
     d = list(model2.parameters())[0].clone()
