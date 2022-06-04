@@ -281,7 +281,7 @@ def train(epoch, un_dataloader, valid_dataloader,  model1, model2, model2_optim,
 
     
   for step, batch in enumerate(un_dataloader):
-    # model1.train()
+    model1.train()
     model2.train()
     # train_inputs = Variable(batch[0], requires_grad=False).to(device) #train inputs.
     # idxs = Variable(batch[1],requires_grad=False).to(device) #A
