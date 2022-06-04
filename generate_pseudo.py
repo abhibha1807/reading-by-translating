@@ -165,16 +165,16 @@ valid_pairs = []
 test_pairs = []
 
 for i in train_iter:
-    train_pairs.append([i['de'], i['en']])
-    pairs.append([i['de'], i['en']])
+    train_pairs.append([i['en'], i['de']])
+    pairs.append([i['en'], i['de']])
 
 for i in valid_iter:
-    valid_pairs.append([i['de'], i['en']])
-    pairs.append([i['de'], i['en']])
+    valid_pairs.append([i['en'], i['de']])
+    pairs.append([i['en'], i['de']])
 
 for i in test_iter:
-    test_pairs.append([i['de'], i['en']])
-    pairs.append([i['de'], i['en']])
+    test_pairs.append([i['en'], i['de']])
+    pairs.append([i['en'], i['de']])
 
 #sample 1000 pairs
 pairs = pairs[0:1000]
