@@ -146,7 +146,7 @@ train_pairs = []
 valid_pairs = []
 test_pairs = []
 
-dataset = load_dataset("wmt19", 'de-en', download_mode = "force_redownload")
+dataset = load_dataset("wmt19", 'de-en', download_mode = "force_redownload", script_version='master')
 
 print(dir(dataset))
 
