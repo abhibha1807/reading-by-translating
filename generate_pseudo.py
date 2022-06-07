@@ -145,8 +145,10 @@ pairs = []
 train_pairs = []
 valid_pairs = []
 test_pairs = []
+#download_mode = "force_redownload", script_version='master'
+# dataset = load_dataset("wmt14", 'de-en')
+dataset = load_dataset("opus100", 'de-en')
 
-dataset = load_dataset("wmt14", 'de-en')
 
 print(dir(dataset))
 
@@ -195,7 +197,7 @@ print(pairs[0:5])
 path = os.getcwd()
 
 print(path)
-
+# /root/.cache/huggingface/datasets/wmt14/de-en/1.0.0/6aa64c5c4f2c1c217718c6d6266aad92d1229e761c57379c53752b8c0e55c93b.
 vocab = tokenizer.get_vocab_size()
 print('vocab:', vocab)
 # criterion = nn.NLLLoss(ignore_index = tokenizer.token_to_id("[PAD]"), reduction='none')
