@@ -26,8 +26,8 @@ import glob
 # args 
 parser = argparse.ArgumentParser("main")
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-from torchtext.datasets import Multi30k
-from torchtext.datasets import IWSLT2016
+# from torchtext.datasets import Multi30k
+# from torchtext.datasets import IWSLT2016
 from datasets import load_dataset
 import os
 import dill
