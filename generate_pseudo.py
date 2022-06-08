@@ -32,7 +32,7 @@ from datasets import load_dataset
 import os
 import dill
 from tokenizers import BertWordPieceTokenizer
-
+ 
 
 print('using device', device)
 
@@ -147,18 +147,18 @@ valid_pairs = []
 test_pairs = []
 #download_mode = "force_redownload", script_version='master'
 # dataset = load_dataset("wmt14", 'de-en')
-dataset = load_dataset("opus100", 'de-en')
+# dataset = load_dataset("opus100", 'de-en')
 
 
-print(dir(dataset))
+# print(dir(dataset))
 
-df_train = dataset.data['train'].to_pandas()
-df_val = dataset.data['validation'].to_pandas()
-df_test = dataset.data['test'].to_pandas()
+# df_train = dataset.data['train'].to_pandas()
+# df_val = dataset.data['validation'].to_pandas()
+# df_test = dataset.data['test'].to_pandas()
 
-train_iter = list(df_train['translation'])
-valid_iter = list(df_val['translation'])
-test_iter = list(df_test['translation'])
+# train_iter = list(df_train['translation'])
+# valid_iter = list(df_val['translation'])
+# test_iter = list(df_test['translation'])
 
 
 pairs = []
@@ -166,24 +166,37 @@ train_pairs = []
 valid_pairs = []
 test_pairs = []
 
-for i in train_iter:
-    train_pairs.append([i['en'], i['de']])
-    pairs.append([i['en'], i['de']])
+# for i in train_iter:
+#     train_pairs.append([i['en'], i['de']])
+#     pairs.append([i['en'], i['de']])
 
-for i in valid_iter:
-    valid_pairs.append([i['en'], i['de']])
-    pairs.append([i['en'], i['de']])
+# for i in valid_iter:
+#     valid_pairs.append([i['en'], i['de']])
+#     pairs.append([i['en'], i['de']])
 
-for i in test_iter:
-    test_pairs.append([i['en'], i['de']])
-    pairs.append([i['en'], i['de']])
+# for i in test_iter:
+#     test_pairs.append([i['en'], i['de']])
+#     pairs.append([i['en'], i['de']])
+
+my_file = open("newstest2013.en", "r")
+data = my_file.read()
+data_en = data.split('\n')
+
+my_file = open("newstest2013.de", "r")
+data = my_file.read()
+data_de = data.split('\n')
+
+for i in range(len(data_en)):
+  pairs.append([data_de[i], data_en[i]])
+
+print(len(pairs))
 
 #sample 1000 pairs
 pairs = pairs[0:1000]
 
 print(train_pairs[0:5])
 #train tokenizer
-tokenizer = get_tokenizer(pairs, max_length, min_freq, vocabsize, save_location+'vocab1k')
+tokenizer = get_tokenizer(pairs, max_length, min_freq, vocabsize, save_location+'vocab_newstest_1k')
 
 #load tokenizer
 # tokenizer = BertWordPieceTokenizer("./reading-by-translating/vocab1k/vocab.txt")
