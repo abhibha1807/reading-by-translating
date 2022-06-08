@@ -57,7 +57,8 @@ parser.add_argument('--A_wd', type=float, default=0, help=' weight decay for A')
 parser.add_argument('--gpu', type=int, default=0, help='gpu device id')
 parser.add_argument('--seed', type=int, default=100, help='random seed')
 parser.add_argument('--max_length', type=int, default=109, help='max length of sentences')
-parser.add_argument('--vocabsize', type=int, default=3280, help='total vocab size')
+parser.add_argument('--vocabsize', type=int, default=3280
+, help='total vocab size')
 parser.add_argument('--save_location', type=str, default='./reading-by-translating/', help='save location')
 parser.add_argument('--min_freq', type=int, default=5, help='min freq of words to be included in vocab')
 parser.add_argument('--train_portion', type=float, default=0.9, help='fraction of dataset for training')
@@ -92,7 +93,7 @@ parser.add_argument('--save', type=str, default='EXP', help='experiment name')
 args = parser.parse_args()
 
 max_length = args.max_length
-vocabsize = args.vocabsize
+vocabsize = 3280
 save_location = args.save_location
 min_freq = args.min_freq
 train_portion = args.train_portion
