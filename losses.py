@@ -92,7 +92,7 @@ def loss2(un_inputs, model1, model2, batch_size, vocab):
             dec_soft_idxs = (torch.stack(dec_soft_idxs))
             print('dec_soft_idxs:', dec_soft_idxs, dec_soft_idxs.grad_fn)
             onehot_input_encoder1 = onehot_input_encoder1.scatter_(1, index_tensor, 1.).float().detach() + (dec_soft_idxs).sum() - (dec_soft_idxs).sum().detach()
-            print('onehot_input_encoder1:', onehot_input_encoder1, onehot_input_encoder1.grad_fn)
+            #print('onehot_input_encoder1:', onehot_input_encoder1, onehot_input_encoder1.grad_fn)
 
             enc_hidden_, enc_outputs_ = model1.enc_forward(onehot_input_encoder1)
             print('enc hidden_:', enc_hidden_, enc_hidden_.grad_fn)
