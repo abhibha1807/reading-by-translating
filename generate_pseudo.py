@@ -57,8 +57,7 @@ parser.add_argument('--A_wd', type=float, default=0, help=' weight decay for A')
 parser.add_argument('--gpu', type=int, default=0, help='gpu device id')
 parser.add_argument('--seed', type=int, default=100, help='random seed')
 parser.add_argument('--max_length', type=int, default=109, help='max length of sentences')
-parser.add_argument('--vocabsize', type=int, default=3280
-, help='total vocab size')
+parser.add_argument('--vocabsize', type=int, default=4000, help='total vocab size')
 parser.add_argument('--save_location', type=str, default='./reading-by-translating/', help='save location')
 parser.add_argument('--min_freq', type=int, default=5, help='min freq of words to be included in vocab')
 parser.add_argument('--train_portion', type=float, default=0.9, help='fraction of dataset for training')
@@ -93,7 +92,7 @@ parser.add_argument('--save', type=str, default='EXP', help='experiment name')
 args = parser.parse_args()
 
 max_length = args.max_length
-vocabsize = 3280
+vocabsize = args.vocabsize
 save_location = args.save_location
 min_freq = args.min_freq
 train_portion = args.train_portion
@@ -214,6 +213,7 @@ print(path)
 # /root/.cache/huggingface/datasets/wmt14/de-en/1.0.0/6aa64c5c4f2c1c217718c6d6266aad92d1229e761c57379c53752b8c0e55c93b.
 vocab = tokenizer.get_vocab_size()
 print('vocab:', vocab)
+vocabsize = vocab 
 # criterion = nn.NLLLoss(ignore_index = tokenizer.token_to_id("[PAD]"), reduction='none')
 criterion = nn.CrossEntropyLoss(ignore_index = tokenizer.token_to_id("[PAD]"),  reduction='none')
 criterion = criterion.to(device)
