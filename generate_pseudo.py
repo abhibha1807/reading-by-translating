@@ -59,7 +59,7 @@ parser.add_argument('--seed', type=int, default=100, help='random seed')
 parser.add_argument('--max_length', type=int, default=109, help='max length of sentences')
 parser.add_argument('--vocabsize', type=int, default=4000, help='total vocab size')
 parser.add_argument('--save_location', type=str, default='./reading-by-translating/', help='save location')
-parser.add_argument('--min_freq', type=int, default=5, help='min freq of words to be included in vocab')
+parser.add_argument('--min_freq', type=int, default=1, help='min freq of words to be included in vocab')
 parser.add_argument('--train_portion', type=float, default=0.9, help='fraction of dataset for training')
 
 parser.add_argument('--un_portion', type=float, default=0.5, help='fraction of training dataset for creating unlabled dataset')
@@ -213,13 +213,12 @@ print(path)
 # /root/.cache/huggingface/datasets/wmt14/de-en/1.0.0/6aa64c5c4f2c1c217718c6d6266aad92d1229e761c57379c53752b8c0e55c93b.
 vocab = tokenizer.get_vocab_size()
 print('vocab:', vocab)
-vocabsize = vocab 
 # criterion = nn.NLLLoss(ignore_index = tokenizer.token_to_id("[PAD]"), reduction='none')
 criterion = nn.CrossEntropyLoss(ignore_index = tokenizer.token_to_id("[PAD]"),  reduction='none')
 criterion = criterion.to(device)
 model1 = torch.load('./EXP-20220526-104436-test-30k/model1.pt')
 # model1 = Model1(vocab, vocab, criterion)
-model2 = Model2(vocab, vocab, criterion)
+model2 = Model2(vocabsize, vocabsize, criterion)
 model1 = model1.to(device)
 model2 = model2.to(device)
 # #momentum=model1_mom,weight_decay=model1_wd,  momentum=model1_mom,weight_decay=model1_wd
