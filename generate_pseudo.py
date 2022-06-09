@@ -187,7 +187,7 @@ data = my_file.read()
 data_de = data.split('\n')
 
 for i in range(len(data_en)):
-  pairs.append([data_de[i], data_en[i]])
+  pairs.append([data_en[i], data_de[i]])
 
 print(len(pairs))
 
