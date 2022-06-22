@@ -26,7 +26,7 @@ import glob
 # args 
 parser = argparse.ArgumentParser("main")
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-# from torchtext.datasets import Multi30k
+from torchtext.datasets import Multi30k
 # from torchtext.datasets import IWSLT2016
 from datasets import load_dataset
 import os
@@ -178,6 +178,13 @@ test_pairs = []
 #     test_pairs.append([i['en'], i['de']])
 #     pairs.append([i['en'], i['de']])
 
+test_iter = Multi30k(split='test')
+
+for label, line in test_iter:
+    pairs.append([label,line])
+    test_pairs.append([label, line])
+
+
 my_file = open("newstest2013.en", "r")
 data = my_file.read()
 data_en = data.split('\n')
@@ -204,6 +211,8 @@ tokenizer = get_tokenizer(pairs, max_length, min_freq, vocabsize, save_location+
 print('tokenizer loaded!!!!')
 
 input_lang, output_lang, pairs = prepareData(pairs, 'dutch', 'english', True)
+# input_lang, output_lang, test_pairs = prepareData(test_pairs, 'dutch', 'english', True)
+
 print(pairs[0:5])
 
 #define models
@@ -251,7 +260,8 @@ scheduler_model2  = torch.optim.lr_scheduler.CosineAnnealingLR(model2_optim, flo
 logging.info('dataset')
 
 un_portion = pairs[0:900]
-valid_portion = pairs[900:]
+# valid_portion = pairs[900:]
+valid_portion = test_pairs
 
 # train_data = get_train_dataset(train_portion, tokenizer)
 un_data = get_un_dataset(un_portion, tokenizer)
