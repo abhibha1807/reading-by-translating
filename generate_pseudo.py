@@ -32,8 +32,8 @@ from torchtext.datasets import Multi30k
 import os
 import dill
 from tokenizers import BertWordPieceTokenizer
- from torchtext.utils import download_from_url, extract_archive
-
+from torchtext.utils import download_from_url, extract_archive
+import io
 
 print('using device', device)
 
@@ -148,22 +148,8 @@ test_filepaths = [extract_archive(download_from_url(url_base + url))[0] for url 
 def data_process(filepaths):
     raw_de_iter = iter(io.open(filepaths[0], encoding="utf8"))
     raw_en_iter = iter(io.open(filepaths[1], encoding="utf8"))
-    data = []
-    i=0
-    for (raw_de, raw_en) in zip(raw_de_iter, raw_en_iter):
-        rnn_english = rnn_tokenizer(raw_en,padding=False,truncation=True,max_length=50)
-        rnn_german = rnn_tokenizer(raw_de,padding=False,truncation=True,max_length=50)
-        
-        gpt_english = gpt_tokenizer(raw_en, padding=False,truncation=False)
-    
-        mbart_english = mbart_tokenizer(raw_en, padding=False,truncation=False)
-        mbart_german = mbart_tokenizer(raw_de,padding=False,truncation=False)
-        
-        
-        data.append((rnn_german['input_ids'],rnn_english['input_ids'] ,gpt_english['input_ids'],gpt_english['attention_mask'],mbart_english['input_ids'],mbart_english['attention_mask'],mbart_german['input_ids'],mbart_german['attention_mask'],i))
-        i+=1
-    return data
-
+    print(raw_de_iter)
+    print(raw_en_iter)
 
 # In[17]:
 
