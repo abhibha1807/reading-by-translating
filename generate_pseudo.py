@@ -153,7 +153,7 @@ def data_process(filepaths):
 
 # In[17]:
 
-train_data = data_process(train_filepaths)[:args.train_num_points]
+train_data = data_process(train_filepaths)[:900]
 val_data = data_process(val_filepaths)
 test_data = data_process(test_filepaths)
 
