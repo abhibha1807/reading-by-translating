@@ -146,16 +146,22 @@ val_filepaths = [extract_archive(download_from_url(url_base + url))[0] for url i
 test_filepaths = [extract_archive(download_from_url(url_base + url))[0] for url in test_urls]
 
 def data_process(filepaths):
-    raw_de_iter = iter(io.open(filepaths[0], encoding="utf8"))
-    raw_en_iter = iter(io.open(filepaths[1], encoding="utf8"))
-    print(raw_de_iter)
-    print(raw_en_iter)
+  raw_pairs =[]
+  raw_de_iter = iter(io.open(filepaths[0], encoding="utf8"))
+  raw_en_iter = iter(io.open(filepaths[1], encoding="utf8"))
+  print(raw_de_iter)
+  print(raw_en_iter)
+  for (raw_de, raw_en) in zip(raw_de_iter, raw_en_iter):
+    raw_pairs.append([raw_de, raw_en])
+  return raw_pairs
 
 # In[17]:
 
 train_data = data_process(train_filepaths)[:900]
 val_data = data_process(val_filepaths)
 test_data = data_process(test_filepaths)
+
+print(train_data)
 
 
 # #load data
