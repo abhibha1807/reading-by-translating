@@ -226,6 +226,19 @@ data_de = data.split('\n')
 for i in range(len(data_en)):
   pairs.append([data_en[i], data_de[i]])
 
+
+
+my_file = open("newstest2014.en", "r")
+data = my_file.read()
+data_en = data.split('\n')
+
+my_file = open("newstest2014.de", "r")
+data = my_file.read()
+data_de = data.split('\n')
+
+for i in range(len(data_en)):
+  pairs.append([data_en[i], data_de[i]])
+
 print(len(pairs))
 
 #sample 1000 pairs
