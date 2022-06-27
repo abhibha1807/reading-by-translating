@@ -42,9 +42,9 @@ parser.add_argument('--begin_epoch', type=float, default=0, help='PC Method begi
 parser.add_argument('--stop_epoch', type=float, default=5, help='Stop training on the framework')
 parser.add_argument('--report_freq', type=float, default=10, help='report frequency')
 
-parser.add_argument('--epochs', type=int, default=50, help='num of training epochs')
+parser.add_argument('--epochs', type=int, default=30, help='num of training epochs')
 
-parser.add_argument('--batch_size', type=int, default=10, help='batch size')
+parser.add_argument('--batch_size', type=int, default=64, help='batch size')
 ####################################################################################
 parser.add_argument('--grad_clip', type=float, default=5, help='gradient clipping')
 parser.add_argument('--A_lr', type=float, default=3e-4, help='learning rate for A')
@@ -112,7 +112,7 @@ model2_mom = args.model2_mom
 A_wd = args.A_wd
 report_freq = args.batch_size
 print('running generate_pseudo.py')
-args.save = '{}-{}-train-m2'.format(args.save, time.strftime("%Y%m%d-%H%M%S"))
+args.save = '{}-{}-train-9k-multi30k'.format(args.save, time.strftime("%Y%m%d-%H%M%S"))
 create_exp_dir(args.save, scripts_to_save=glob.glob('*.py'))
 print('saving in:', str(args.save))
 writer = SummaryWriter('runs/'+str(args.save))
@@ -157,8 +157,8 @@ def data_process(filepaths):
 
 # In[17]:
 
-train_data = data_process(train_filepaths)[:900]
-val_data = data_process(val_filepaths)
+# train_data = data_process(train_filepaths)
+# val_data = data_process(val_filepaths)
 test_data = data_process(test_filepaths)
 
 print(len(test_data))
@@ -229,7 +229,7 @@ for i in range(len(data_en)):
 print(len(pairs))
 
 #sample 1000 pairs
-pairs = pairs[0:1000]
+pairs = pairs[0:10000]
 
 print(train_pairs[0:5])
 #train tokenizer
@@ -289,7 +289,8 @@ scheduler_model2  = torch.optim.lr_scheduler.CosineAnnealingLR(model2_optim, flo
 # # Print the number of training valid and test examples
 logging.info('dataset')
 
-un_portion = pairs[0:900]
+
+un_portion = pairs
 # valid_portion = pairs[900:]
 valid_portion = test_data
 
