@@ -112,7 +112,7 @@ model2_mom = args.model2_mom
 A_wd = args.A_wd
 report_freq = args.batch_size
 print('running generate_pseudo.py')
-args.save = '{}-{}-train-5k-multi30k'.format(args.save, time.strftime("%Y%m%d-%H%M%S"))
+args.save = '{}-{}-train-10k-wmt'.format(args.save, time.strftime("%Y%m%d-%H%M%S"))
 create_exp_dir(args.save, scripts_to_save=glob.glob('*.py'))
 print('saving in:', str(args.save))
 writer = SummaryWriter('runs/'+str(args.save))
