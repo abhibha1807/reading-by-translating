@@ -156,7 +156,7 @@ def data_process(examples):
     i=0
     for (raw_de, raw_en) in zip(raw_de_iter, raw_en_iter):
        pairs.append([raw_de, raw_en])
-    return pairs
+    # return pairs
 
 
 args.preprocessing_num_workers=1
@@ -170,8 +170,8 @@ processed_dataset_train = train_data.map(
     desc="Running tokenizer on dataset",
 )
 
-print(len(processed_dataset_train))
-print(processed_dataset_train[0:10])
+print(len(pairs))
+print(pairs[0:10])
 
 # url_base = 'https://raw.githubusercontent.com/multi30k/dataset/master/data/task1/raw/'
 # train_urls = ('train.de.gz', 'train.en.gz')
