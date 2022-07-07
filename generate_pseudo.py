@@ -138,6 +138,36 @@ logging.info("args = %s", args)
 dataset = load_dataset("wmt14", 'de-en')
 print(type(dataset))
 
+# train_data = shuffled_dataset['train'].select(np.arange(0,10000))
+# test_data = dataset['test'].select(np.arange(0,1000))
+valid_data = dataset['validation'].select(np.arange(0,1000))
+
+source_lang='en'
+target_lang='de'
+
+def data_process(examples):
+    raw_en_iter = [ex[source_lang] for ex in examples["translation"]]
+    raw_de_iter = [ex[target_lang] for ex in examples["translation"]]
+    data = []
+    
+    i=0
+    for (raw_de, raw_en) in zip(raw_de_iter, raw_en_iter):
+       print(raw_de, raw_en)
+
+
+args.preprocessing_num_workers=1
+column_names = dataset["train"].column_names
+
+processed_dataset_train = valid_data.map(
+    data_process,
+    batched=True,
+    num_proc=args.preprocessing_num_workers,
+    remove_columns=column_names,
+    desc="Running tokenizer on dataset",
+)
+
+print(processed_dataset_train)
+
 # url_base = 'https://raw.githubusercontent.com/multi30k/dataset/master/data/task1/raw/'
 # train_urls = ('train.de.gz', 'train.en.gz')
 # val_urls = ('val.de.gz', 'val.en.gz')
